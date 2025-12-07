@@ -1,0 +1,53 @@
+version: "3.9"
+
+services:
+  db:
+    image: postgres:15
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: root
+      POSTGRES_DB: online_judge_db
+    ports:
+      - "5433:5432"
+    volumes:
+      - db_data:/var/lib/postgres/data
+    networks:
+      - app_network
+
+  backend:
+    build: ./backend
+    container_name: online_judge_backend
+    restart: always
+    env_file: ./backend/.env
+    depends_on:
+      - db
+    ports:
+      - "3000:3000"
+    networks:
+      - app_network
+    command: npm run start:dev
+    volumes:
+      - ./backend:/app
+      - /app/node_modules
+      - /var/run/docker.sock:/var/run/docker.sock
+
+  # frontend:
+  #   build: ./frontend
+  #   container_name: online_judge_frontend
+  #   restart: always
+  #   depends_on:
+  #     - backend
+  #   command: npm run dev -- --host 0.0.0.0
+  #   ports:
+  #     - "8080:5173"
+  #   networks:
+  #     - app_network
+  #   volumes:
+  #     - ./frontend:/app
+  #     - /app/node_modules
+
+networks:
+  app_network:
+
+volumes:
+  db_data:
