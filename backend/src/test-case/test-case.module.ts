@@ -9,5 +9,6 @@ import { ProblemModule } from 'src/problem/problem.module';
   imports: [TypeOrmModule.forFeature([TestCase]), ProblemModule],
   controllers: [TestCaseController],
   providers: [TestCaseService],
+  exports: [TestCaseService],
 })
 export class TestCaseModule {}
