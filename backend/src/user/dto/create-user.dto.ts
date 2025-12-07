@@ -5,6 +5,7 @@ import {
   MaxLength,
   Matches,
   IsNotEmpty,
+  IsAlphanumeric,
 } from 'class-validator';
 
 export class CreateUserDto {
@@ -16,6 +17,7 @@ export class CreateUserDto {
   @IsString()
   @IsNotEmpty()
   @MaxLength(32)
+  @IsAlphanumeric()
   username: string;
 
   @IsString()

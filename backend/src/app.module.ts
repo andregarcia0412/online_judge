@@ -5,6 +5,8 @@ import { SubmissionModule } from './submission/submission.module';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { UserModule } from './user/user.module';
+import { ProblemModule } from './problem/problem.module';
+import { TestCaseModule } from './test-case/test-case.module';
 
 @Module({
   imports: [ConfigModule.forRoot({
@@ -26,7 +28,9 @@ import { UserModule } from './user/user.module';
     inject: [ConfigService]
   }),
   SubmissionModule,
-  UserModule
+  UserModule,
+  ProblemModule,
+  TestCaseModule
 ],
   controllers: [AppController],
   providers: [AppService],
