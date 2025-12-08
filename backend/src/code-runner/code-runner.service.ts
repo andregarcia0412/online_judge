@@ -47,8 +47,6 @@ export class CodeRunnerService {
     fileName: string,
     input: string,
   ) {
-    await this.downloadImage(imageName, docker);
-
     const container = await docker.createContainer({
       Image: imageName,
       Cmd: ['python', fileName],

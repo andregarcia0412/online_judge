@@ -19,6 +19,8 @@ export class TestRunnerService {
 
     let result: any;
 
+    this.codeRunnerService.downloadImage(languages.python.imageName, docker);
+
     for (let i = 0; i < testCases.length; i++) {
       const testCase = testCases[i];
 
