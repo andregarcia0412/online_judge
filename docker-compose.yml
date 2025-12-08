@@ -31,20 +31,20 @@ services:
       - /app/node_modules
       - /var/run/docker.sock:/var/run/docker.sock
 
-  # frontend:
-  #   build: ./frontend
-  #   container_name: online_judge_frontend
-  #   restart: always
-  #   depends_on:
-  #     - backend
-  #   command: npm run dev -- --host 0.0.0.0
-  #   ports:
-  #     - "8080:5173"
-  #   networks:
-  #     - app_network
-  #   volumes:
-  #     - ./frontend:/app
-  #     - /app/node_modules
+  frontend:
+    build: ./frontend
+    container_name: online_judge_frontend
+    restart: always
+    depends_on:
+      - backend
+    command: npm run dev -- --host 0.0.0.0
+    ports:
+      - "8080:5173"
+    networks:
+      - app_network
+    volumes:
+      - ./frontend:/app
+      - /app/node_modules
 
 networks:
   app_network:

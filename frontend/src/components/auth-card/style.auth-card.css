@@ -1,0 +1,56 @@
+.auth-card {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  height: 796px;
+  width: 480px;
+  background: linear-gradient(rgba(0, 0, 0, 0.14));
+  backdrop-filter: blur(5px);
+  border: 1px solid #afafaf;
+  border-radius: 20px;
+  padding: 50px;
+}
+
+.inputs-wrapper {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-direction: column;
+  width: 100%;
+  gap: 24px;
+}
+
+.button-wrapper {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-direction: column;
+  width: 100%;
+  gap: 12px;
+}
+
+.auth-card-title {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  color: #fff;
+  align-self: flex-start;
+}
+
+.forgot-password-link {
+  color: #fff;
+  text-decoration: none;
+}
+
+.forgot-password-link:hover {
+  text-decoration: underline;
+}
+
+.password-checkbox {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  gap: 12px;
+  width: 100%;
+}

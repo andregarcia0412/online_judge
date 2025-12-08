@@ -1,0 +1,26 @@
+.checkbox {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 16px;
+  height: 16px;
+  background: #fff;
+  border-radius: 4px;
+
+  & img {
+    width: 16px;
+    height: 16px;
+  }
+}
+
+.checked {
+  background: linear-gradient(to bottom, #7cc1f3, #d27eef);
+}
+
+.checkbox-container {
+  display: flex;
+  align-items: center;
+  color: #fff;
+  gap: 10px;
+  width: fit-content;
+}
