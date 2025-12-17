@@ -6,6 +6,7 @@ import {
   Matches,
   IsNotEmpty,
   IsAlphanumeric,
+  IsStrongPassword,
 } from 'class-validator';
 
 export class CreateUserDto {
@@ -24,8 +25,6 @@ export class CreateUserDto {
   @MinLength(8)
   @MaxLength(32)
   @IsNotEmpty()
-  @Matches(/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&]).+$/, {
-    message: 'Use upper/lowercase, numbers, and symbols.',
-  })
+  @IsStrongPassword()
   password: string;
 }
