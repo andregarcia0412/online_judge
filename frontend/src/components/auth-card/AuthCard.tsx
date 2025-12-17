@@ -12,7 +12,7 @@ const AuthCard = () => {
         <p>Glad you're back!</p>
       </div>
       <div className="inputs-wrapper">
-        <AuthInput type="text" placeholder="Username or email" />
+        <AuthInput type="text" placeholder="Email" />
         <div className="password-checkbox">
           <AuthInput type="password" placeholder="Password" />
           <Checkbox label={"Remember me"} />
