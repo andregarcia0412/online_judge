@@ -7,6 +7,7 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import { UserModule } from './user/user.module';
 import { ProblemModule } from './problem/problem.module';
 import { TestCaseModule } from './test-case/test-case.module';
+import { AuthModule } from './auth/auth.module';
 
 @Module({
   imports: [ConfigModule.forRoot({
@@ -30,7 +31,8 @@ import { TestCaseModule } from './test-case/test-case.module';
   SubmissionModule,
   UserModule,
   ProblemModule,
-  TestCaseModule
+  TestCaseModule,
+  AuthModule
 ],
   controllers: [AppController],
   providers: [AppService],

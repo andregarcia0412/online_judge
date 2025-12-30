@@ -69,16 +69,7 @@ export class UserService {
       throw new NotFoundException('User not found');
     }
 
-    return new ReturnUserDto(
-      user.id_user,
-      user.email,
-      user.username,
-      user.points,
-      user.total_submissions,
-      user.total_resolved,
-      user.streak,
-      user.creation_date,
-    );
+    return user;
   }
 
   update(id_user: number, updateUserDto: UpdateUserDto) {
