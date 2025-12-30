@@ -10,6 +10,17 @@
   font-size: 16px;
 }
 
+.password-input {
+  position: relative;
+  display: flex;
+  align-items: center;
+
+  & img {
+    position: absolute;
+    left: 88%;
+  }
+}
+
 .auth-input::placeholder {
   color: #fff;
 }

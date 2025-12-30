@@ -36,6 +36,7 @@
   justify-content: center;
   color: #fff;
   align-self: flex-start;
+  padding-bottom: 24px;
 }
 
 .forgot-password-link {
@@ -53,4 +54,8 @@
   justify-content: center;
   gap: 12px;
   width: 100%;
+}
+
+.error-message {
+  color: #f44336;
 }
