@@ -4,17 +4,17 @@ import React from "react";
 
 interface CheckboxProps {
   label: string | null;
+  checked: boolean;
+  setChecked: (checked: boolean) => void;
 }
 
-const Checkbox = (props: CheckboxProps) => {
-  const [isChecked, setChecked] = React.useState<boolean>(false);
-
+const Checkbox = ({ label, checked, setChecked }: CheckboxProps) => {
   return (
-    <div className="checkbox-container" onClick={() => setChecked(!isChecked)}>
-      <div className={`checkbox ${isChecked ? "checked" : ""}`}>
-        {isChecked && <img src={Check} />}
+    <div className="checkbox-container" onClick={() => setChecked(!checked)}>
+      <div className={`checkbox ${checked ? "checked" : ""}`}>
+        {checked && <img src={Check} />}
       </div>
-      {props.label && <label>{props.label}</label>}
+      {label && <label>{label}</label>}
     </div>
   );
 };

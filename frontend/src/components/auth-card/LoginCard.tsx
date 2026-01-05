@@ -12,6 +12,8 @@ type AuthCardProps = {
   setPassword: (password: string) => void;
   loading: boolean;
   errorMessage: string;
+  checked: boolean;
+  setChecked: (checked: boolean) => void;
 };
 
 const LoginCard = ({
@@ -20,6 +22,8 @@ const LoginCard = ({
   setPassword,
   loading,
   errorMessage,
+  checked,
+  setChecked,
 }: AuthCardProps) => {
   return (
     <div className="auth-card">
@@ -35,7 +39,11 @@ const LoginCard = ({
             setText={setPassword}
             isPassword={true}
           />
-          <Checkbox label={"Remember me"} />
+          <Checkbox
+            label={"Remember me"}
+            checked={checked}
+            setChecked={setChecked}
+          />
         </div>
 
         <div className="button-wrapper">

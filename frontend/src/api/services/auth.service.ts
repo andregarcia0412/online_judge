@@ -1,17 +1,10 @@
-import type { LoginResponseDto } from "../../data/dto/auth.dto";
-import { LoginSchema } from "../../validations/login.schema";
+import type { LoginDto, LoginResponseDto } from "../../data/dto/auth.dto";
 import { api } from "../api.client";
 
-export const login = async (
-  email: string,
-  password: string
+export const loginService = async (
+  loginData: LoginDto
 ): Promise<LoginResponseDto> => {
-  const parsed = LoginSchema.safeParse({ email, password });
-
-  if (!parsed.success) {
-    throw parsed.error;
-  }
-
+  const { email, password } = loginData;
   const response = await api.post<LoginResponseDto>("/auth/login", {
     email: email,
     password: password,
