@@ -18,6 +18,7 @@
   & img {
     position: absolute;
     left: 88%;
+    cursor: pointer;
   }
 }
 

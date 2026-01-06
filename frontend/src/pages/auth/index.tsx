@@ -3,9 +3,10 @@ import LoginCard from "../../components/auth-card/LoginCard";
 import "./style.css";
 import { LoginSchema } from "../../validations/login.schema";
 import { useAuthContext } from "../../contexts/AuthContext";
+import { AxiosError } from "axios";
 
 const Auth = () => {
-  const { userData, login } = useAuthContext();
+  const { login } = useAuthContext();
 
   const [email, setEmail] = React.useState<string>("");
   const [password, setPassword] = React.useState<string>("");
@@ -17,23 +18,22 @@ const Auth = () => {
     if (loading) {
       return;
     }
+
+    const parsed = LoginSchema.safeParse({ email, password });
+
+    if (!parsed.success) {
+      setErrorMessage(parsed.error.issues[0].message);
+      return;
+    }
+
     setLoading(true);
     try {
-      const parsed = LoginSchema.safeParse({ email, password });
-
-      if (!parsed.success) {
-        setErrorMessage(parsed.error.issues[0].message);
-        return;
-      }
-
       await login({ email, password }, checked);
       setErrorMessage("");
     } catch (e) {
-      if (e instanceof Error) {
-        console.error(e.message);
-        return;
+      if (e instanceof AxiosError) {
+        setErrorMessage(e.response?.data.message);
       }
-      setErrorMessage("Invalid email or password");
     } finally {
       setLoading(false);
     }

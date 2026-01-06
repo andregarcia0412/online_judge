@@ -1,10 +1,10 @@
-import React from "react";
-import type { LoginDto, LoginResponseDto } from "../../data/dto/auth.dto";
 import AuthButton from "../auth-button/AuthButton";
 import AuthInput from "../auth-input/AuthInput";
 import Checkbox from "../checkbox/Checkbox";
 import { Divider } from "../divider/Divider";
 import "./style.auth-card.css";
+import GoogleIcon from "../../assets/google-icon-logo-svgrepo-com.svg";
+import GithubIcon from "../../assets/github-original.svg";
 
 type AuthCardProps = {
   login: () => void;
@@ -56,6 +56,21 @@ const LoginCard = ({
       </div>
 
       <Divider text="Or" />
+
+      <div className="icons-container">
+        <img src={GoogleIcon} />
+        <img src={GithubIcon} style={{ filter: "invert(100%)" }} />
+      </div>
+
+      <p className="footer-text">
+        Don't have an account?{" "}
+        <span
+          style={{ fontWeight: "bold", cursor: "pointer" }}
+          onClick={() => console.log("Redirect to Sign Up")}
+        >
+          Sign Up!
+        </span>
+      </p>
     </div>
   );
 };
