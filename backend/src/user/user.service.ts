@@ -20,7 +20,13 @@ export class UserService {
 
   async create(createUserDto: CreateUserDto) {
     if (await this.userRepository.findOneBy({ email: createUserDto.email })) {
-      throw new ConflictException('User already exists');
+      throw new ConflictException('This email is already in use');
+    }
+
+    if (
+      await this.userRepository.findOneBy({ username: createUserDto.username })
+    ) {
+      throw new ConflictException('This username is already in use');
     }
 
     const hash = await bcrypt.hash(createUserDto.password, 10);
