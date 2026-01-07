@@ -23,7 +23,7 @@ export const registerService = async (
 ): Promise<RegisterResponseDto> => {
   const { username, email, password } = registerData;
 
-  const response = await api.post<RegisterResponseDto>("/auth/register", {
+  const response = await api.post<RegisterResponseDto>("/user", {
     username: username,
     email: email,
     password: password,

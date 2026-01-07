@@ -5,9 +5,13 @@ import { LoginSchema } from "../../validations/login.schema";
 import { useAuthContext } from "../../contexts/AuthContext";
 import { AxiosError } from "axios";
 import { RegisterCard } from "../../components/auth-card/RegisterCard";
+import { RegisterSchema } from "../../validations/register.schema";
+import { registerService } from "../../api/services/auth.service";
+import { useNavigate } from "react-router-dom";
 
 export const Auth = () => {
   const { login } = useAuthContext();
+  const navigate = useNavigate();
 
   const [isRegister, setIsRegister] = React.useState<boolean>(false);
 
@@ -35,6 +39,8 @@ export const Auth = () => {
     try {
       await login({ email, password }, checked);
       setErrorMessage("");
+
+      navigate("/");
     } catch (e) {
       if (e instanceof AxiosError) {
         setErrorMessage(e.response?.data.message);
@@ -45,7 +51,47 @@ export const Auth = () => {
   };
 
   const handleRegister = async (): Promise<void> => {
-    console.log("hello world");
+    if (loading) {
+      return;
+    }
+
+    const parsed = RegisterSchema.safeParse({
+      username,
+      email,
+      password,
+      confirmPassword,
+    });
+
+    if (!parsed.success) {
+      setErrorMessage(parsed.error.issues[0].message);
+      return;
+    }
+
+    setLoading(true);
+
+    try {
+      await registerService({ username, email, password });
+      await login({ email, password }, checked);
+      setErrorMessage("");
+
+      navigate("/");
+    } catch (e) {
+      if (e instanceof AxiosError) {
+        setErrorMessage(e.response?.data.message);
+      }
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const switchCard = (): void => {
+    setIsRegister(!isRegister);
+    setUsername("");
+    setEmail("");
+    setPassword("");
+    setConfirmPassword("");
+    setErrorMessage("");
+    setChecked(false);
   };
 
   if (isRegister) {
@@ -61,8 +107,7 @@ export const Auth = () => {
           errorMessage={errorMessage}
           checked={checked}
           setChecked={setChecked}
-          isRegister={isRegister}
-          setIsRegister={setIsRegister}
+          switchCard={switchCard}
         />
       </div>
     );
@@ -78,8 +123,7 @@ export const Auth = () => {
         errorMessage={errorMessage}
         checked={checked}
         setChecked={setChecked}
-        isRegister={isRegister}
-        setIsRegister={setIsRegister}
+        switchCard={switchCard}
       />
     </div>
   );

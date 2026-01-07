@@ -11,21 +11,10 @@ export const RegisterSchema = z
 
     password: z
       .string()
-      .min(8)
-      .max(32)
-      .regex(
-        /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&]).+$/,
-        "Use uppercase and lowercase letters, numbers and symbols"
-      ),
+      .min(8, "Password must be at least 8 characters")
+      .max(32, "Password must have less than 32 characters"),
 
-    confirmPassword: z
-      .string()
-      .min(8)
-      .max(32)
-      .regex(
-        /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&]).+$/,
-        "Use uppercase and lowercase letters, numbers and symbols"
-      ),
+    confirmPassword: z.string(),
   })
   .refine((data) => data.password === data.confirmPassword, {
     message: "The passwords don't match",

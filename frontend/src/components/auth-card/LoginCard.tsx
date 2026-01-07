@@ -14,8 +14,7 @@ type AuthCardProps = {
   errorMessage: string;
   checked: boolean;
   setChecked: (checked: boolean) => void;
-  isRegister: boolean;
-  setIsRegister: (isRegister: boolean) => void;
+  switchCard: () => void;
 };
 
 export const LoginCard = ({
@@ -26,8 +25,7 @@ export const LoginCard = ({
   errorMessage,
   checked,
   setChecked,
-  isRegister,
-  setIsRegister,
+  switchCard,
 }: AuthCardProps) => {
   return (
     <div className="auth-card">
@@ -70,7 +68,7 @@ export const LoginCard = ({
         Don't have an account?{" "}
         <span
           style={{ fontWeight: "bold", cursor: "pointer" }}
-          onClick={() => setIsRegister(!isRegister)}
+          onClick={switchCard}
         >
           Sign Up!
         </span>

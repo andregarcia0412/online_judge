@@ -16,8 +16,7 @@ type AuthCardProps = {
   errorMessage: string;
   checked: boolean;
   setChecked: (checked: boolean) => void;
-  isRegister: boolean;
-  setIsRegister: (isRegister: boolean) => void;
+  switchCard: () => void;
 };
 
 export const RegisterCard = ({
@@ -30,14 +29,13 @@ export const RegisterCard = ({
   errorMessage,
   checked,
   setChecked,
-  isRegister,
-  setIsRegister,
+  switchCard,
 }: AuthCardProps) => {
   return (
     <div className="auth-card">
       <div className="auth-card-title">
         <h1>Register</h1>
-        <p>Glad you're back!</p>
+        <p>Just some details to get you in!</p>
       </div>
       <div className="inputs-wrapper">
         <AuthInput
@@ -47,17 +45,19 @@ export const RegisterCard = ({
         />
         <AuthInput placeholder="Email" setText={setEmail} isPassword={false} />
         <div className="password-checkbox">
-          <AuthInput
-            placeholder="Password"
-            setText={setPassword}
-            isPassword={true}
-          />
+          <div className="inputs-wrapper">
+            <AuthInput
+              placeholder="Password"
+              setText={setPassword}
+              isPassword={true}
+            />
 
-          <AuthInput
-            placeholder="Confirm password"
-            setText={setConfirmPassword}
-            isPassword={true}
-          />
+            <AuthInput
+              placeholder="Confirm password"
+              setText={setConfirmPassword}
+              isPassword={true}
+            />
+          </div>
 
           <Checkbox
             label={"Remember me"}
@@ -67,11 +67,8 @@ export const RegisterCard = ({
         </div>
 
         <div className="button-wrapper">
-          <AuthButton text="Login" onClick={register} loading={loading} />
+          <AuthButton text="Register" onClick={register} loading={loading} />
           {errorMessage && <p className="error-message">{errorMessage}</p>}
-          <a href="/" className="forgot-password-link">
-            Forgot password?
-          </a>
         </div>
       </div>
 
@@ -82,13 +79,13 @@ export const RegisterCard = ({
         <img src={GithubIcon} style={{ filter: "invert(100%)" }} />
       </div>
 
-      <p className="footer-text" onClick={() => setIsRegister(!isRegister)}>
-        Don't have an account?{" "}
+      <p className="footer-text">
+        Already have an account?{" "}
         <span
           style={{ fontWeight: "bold", cursor: "pointer" }}
-          onClick={() => console.log("Redirect to Sign Up")}
+          onClick={switchCard}
         >
-          Sign Up!
+          Login!
         </span>
       </p>
     </div>
