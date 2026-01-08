@@ -49,7 +49,12 @@ export const LoginCard = ({
         </div>
 
         <div className="button-wrapper">
-          <AuthButton text="Login" onClick={login} loading={loading} />
+          <AuthButton
+            text="Login"
+            onClick={login}
+            loading={loading}
+            background="linear-gradient(to right, #628eff 0%, #8740cd 53%, #8740cd 100%)"
+          />
           {errorMessage && <p className="error-message">{errorMessage}</p>}
           <a href="/" className="forgot-password-link">
             Forgot password?

@@ -60,6 +60,7 @@ export const RegisterCard = ({
           </div>
 
           <Checkbox
+            checkedColor="linear-gradient(to bottom, #5fa0ff, #7d8bff)"
             label={"Remember me"}
             checked={checked}
             setChecked={setChecked}
@@ -67,7 +68,12 @@ export const RegisterCard = ({
         </div>
 
         <div className="button-wrapper">
-          <AuthButton text="Register" onClick={register} loading={loading} />
+          <AuthButton
+            text="Register"
+            onClick={register}
+            loading={loading}
+            background="linear-gradient(to right, #2E4CEE 0%, #221EBF 53%, #040F75 100%)"
+          />
           {errorMessage && <p className="error-message">{errorMessage}</p>}
         </div>
       </div>

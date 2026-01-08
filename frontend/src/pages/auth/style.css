@@ -1,6 +1,50 @@
 .auth-container {
-  background-color: #0F0F0F;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 40px;
+  background-color: #0f0f0f;
   width: 100%;
   min-height: 100vh;
   height: 100%;
+}
+
+.auth-title {
+  color: #fff;
+  font-size: 84px;
+  font-weight: normal;
+}
+
+.top-circle {
+  position: absolute;
+  left: 60%;
+  top: 3%;
+  height: 302px;
+  width: 302px;
+  border-radius: 302px;
+}
+
+.bottom-circle {
+  position: absolute;
+  top: 82%;
+  left: 85%;
+  height: 220px;
+  width: 220px;
+  border-radius: 220px;
+}
+
+.color1 {
+  background: linear-gradient(to bottom, #530061, #0d0a30);
+}
+
+.color2 {
+  background: linear-gradient(60deg, #300061, #0a1030);
+}
+
+.color3 {
+  background: linear-gradient(to bottom, #190061, #0a1b30);
+}
+
+.color4 {
+  background: linear-gradient(60deg, #190061, #0a1b30);
 }

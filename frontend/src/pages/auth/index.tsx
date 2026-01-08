@@ -97,6 +97,7 @@ export const Auth = () => {
   if (isRegister) {
     return (
       <div className="auth-container">
+        <h1 className="auth-title">Roll the Carpet!</h1>
         <RegisterCard
           register={handleRegister}
           setUsername={setUsername}
@@ -109,12 +110,15 @@ export const Auth = () => {
           setChecked={setChecked}
           switchCard={switchCard}
         />
+        <div className="top-circle color3" />
+        <div className="bottom-circle color4" />
       </div>
     );
   }
 
   return (
     <div className="auth-container">
+      <h1 className="auth-title">Welcome Back!</h1>
       <LoginCard
         login={handleLogin}
         setEmail={setEmail}
@@ -125,6 +129,8 @@ export const Auth = () => {
         setChecked={setChecked}
         switchCard={switchCard}
       />
+      <div className="top-circle color1" />
+      <div className="bottom-circle color2" />
     </div>
   );
 };

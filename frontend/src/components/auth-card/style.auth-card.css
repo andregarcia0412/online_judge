@@ -4,13 +4,16 @@
   flex-direction: column;
   justify-content: center;
   align-items: center;
-  height: 796px;
+  height: 85vh;
+  min-height: 675px;
+  min-width: 350px;
   width: 480px;
   background: linear-gradient(rgba(0, 0, 0, 0.14));
   backdrop-filter: blur(5px);
   border: 1px solid #afafaf;
   border-radius: 20px;
   padding: 50px;
+  z-index: 1;
 }
 
 .inputs-wrapper {
@@ -79,5 +82,9 @@
   position: absolute;
   color: #fff;
   justify-self: flex-end;
-  bottom: 40px;
+  bottom: 3%;
+}
+
+.footer-text span:hover {
+  text-decoration: underline;
 }
