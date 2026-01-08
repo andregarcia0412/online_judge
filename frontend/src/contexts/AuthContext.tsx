@@ -24,7 +24,9 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
   React.useEffect(() => {
     const loadUserData = async () => {
       try {
-        const storedData = localStorage.getItem("userData");
+        const storedData =
+          localStorage.getItem("userData") ||
+          sessionStorage.getItem("userData");
 
         if (!storedData) {
           return;
@@ -62,7 +64,8 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
       if (rememberMe) {
         localStorage.setItem("userData", JSON.stringify(response));
       } else {
-        localStorage.removeItem("professionalData");
+        sessionStorage.setItem("userData", JSON.stringify(response));
+        localStorage.removeItem("userData");
       }
     } catch (e) {
       throw e;
