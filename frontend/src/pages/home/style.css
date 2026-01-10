@@ -30,3 +30,28 @@
   gap: 20px;
   width: 100%;
 }
+
+.home-title {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-direction: column;
+  text-align: center;
+  gap: 12px;
+
+  & h1 {
+    color: #fff;
+    font-size: 48px;
+    & span {
+      background: linear-gradient(to right, #7d8bff, #3b82f6);
+      -webkit-background-clip: text;
+      background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+  }
+
+  & p {
+    color: #9ca3af;
+    font-size: 20px;
+  }
+}
