@@ -18,6 +18,11 @@ export const Home = () => {
     console.log("pesquisou");
   };
 
+  //TODO: tela melhor para loading
+  if(!userData){
+    return <h1>loading...</h1>
+  }
+
   return (
     <div>
       <HomeHeader setText={setQuickSearchText} handleSearch={handleSearch} />
@@ -64,8 +69,8 @@ export const Home = () => {
           />
         </div>
         <ProfileCard
-          username={userData?.user.username}
-          email={userData?.user.email}
+          username={userData.user.username}
+          email={userData.user.email}
         />
       </div>
     </div>
