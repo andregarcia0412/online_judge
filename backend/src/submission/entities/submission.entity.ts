@@ -2,8 +2,8 @@ import { Entity, PrimaryGeneratedColumn, Column } from 'typeorm';
 
 @Entity('Submission')
 export class Submission {
-  @PrimaryGeneratedColumn({ type: 'integer' })
-  id_submission: number;
+  @PrimaryGeneratedColumn('uuid')
+  id_submission: string;
 
   @Column('uuid')
   id_user: string;

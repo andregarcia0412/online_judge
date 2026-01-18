@@ -61,7 +61,7 @@ export class SubmissionService {
     return this.submissionRepository.find();
   }
 
-  findOneById(id_submission: number) {
+  findOneById(id_submission: string) {
     return this.submissionRepository.findOneBy({ id_submission });
   }
 
@@ -69,11 +69,11 @@ export class SubmissionService {
     return this.submissionRepository.findBy({ id_user });
   }
 
-  update(id_submission: number, updateSubmissionDto: UpdateSubmissionDto) {
+  update(id_submission: string, updateSubmissionDto: UpdateSubmissionDto) {
     return this.submissionRepository.update(id_submission, updateSubmissionDto);
   }
 
-  remove(id_submission: number) {
+  remove(id_submission: string) {
     return this.submissionRepository.delete(id_submission);
   }
 }

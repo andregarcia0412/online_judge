@@ -35,11 +35,11 @@ export class SubmissionController {
     @Param('id') id: string,
     @Body() updateSubmissionDto: UpdateSubmissionDto,
   ) {
-    return this.submissionService.update(+id, updateSubmissionDto);
+    return this.submissionService.update(id, updateSubmissionDto);
   }
 
   @Delete(':id')
   remove(@Param('id') id: string) {
-    return this.submissionService.remove(+id);
+    return this.submissionService.remove(id);
   }
 }
