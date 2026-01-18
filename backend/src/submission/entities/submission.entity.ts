@@ -5,8 +5,8 @@ export class Submission {
   @PrimaryGeneratedColumn({ type: 'integer' })
   id_submission: number;
 
-  @Column({ type: 'integer' })
-  id_user: number;
+  @Column('uuid')
+  id_user: string;
 
   @Column({ type: 'integer' })
   id_problem: number;

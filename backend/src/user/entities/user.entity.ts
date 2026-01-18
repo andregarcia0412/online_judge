@@ -3,7 +3,7 @@ import { Entity, PrimaryGeneratedColumn, Column } from 'typeorm';
 @Entity('User')
 export class User {
   @PrimaryGeneratedColumn('uuid')
-  id_user: number;
+  id_user: string;
 
   @Column({ type: 'text', unique: true })
   email: string;

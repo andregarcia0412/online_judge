@@ -1,10 +1,14 @@
-import { IsString, IsNotEmpty, IsNumber, IsPositive } from 'class-validator';
+import {
+  IsString,
+  IsNotEmpty,
+  IsNumber,
+  IsPositive,
+  IsUUID,
+} from 'class-validator';
 
 export class CreateSubmissionDto {
-  @IsNumber()
-  @IsNotEmpty()
-  @IsPositive()
-  id_user: number;
+  @IsUUID()
+  id_user: string;
 
   @IsNumber()
   @IsNotEmpty()

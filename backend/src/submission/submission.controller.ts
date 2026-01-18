@@ -26,8 +26,8 @@ export class SubmissionController {
   }
 
   @Get(':id')
-  findOne(@Param('id') id: string) {
-    return this.submissionService.findAllByUserId(+id);
+  findOne(@Param('id_user') id_user: string) {
+    return this.submissionService.findAllByUserId(id_user);
   }
 
   @Patch(':id')

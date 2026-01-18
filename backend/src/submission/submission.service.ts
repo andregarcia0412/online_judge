@@ -7,7 +7,6 @@ import { Repository } from 'typeorm';
 import { Submission } from './entities/submission.entity';
 import { ProblemService } from 'src/problem/problem.service';
 import { TestCaseService } from 'src/test-case/test-case.service';
-import { CodeRunnerService } from 'src/code-runner/code-runner.service';
 import { TestRunnerService } from 'src/test-runner/test-runner.service';
 
 @Injectable()
@@ -19,7 +18,6 @@ export class SubmissionService {
     private userService: UserService,
     private problemService: ProblemService,
     private testCaseService: TestCaseService,
-    private codeRunnerService: CodeRunnerService,
     private testRunnerService: TestRunnerService,
   ) {}
 
@@ -47,6 +45,7 @@ export class SubmissionService {
     const testResult = await this.testRunnerService.runTests(
       testCases,
       createSubmissionDto.text,
+      createSubmissionDto.language,
     );
     const newSubmission = this.submissionRepository.create({
       ...createSubmissionDto,
@@ -66,7 +65,7 @@ export class SubmissionService {
     return this.submissionRepository.findOneBy({ id_submission });
   }
 
-  findAllByUserId(id_user: number) {
+  findAllByUserId(id_user: string) {
     return this.submissionRepository.findBy({ id_user });
   }
 
