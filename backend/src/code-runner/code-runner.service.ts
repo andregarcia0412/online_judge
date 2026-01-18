@@ -1,6 +1,9 @@
 import { Injectable } from '@nestjs/common';
 import Docker from 'dockerode';
+import { LanguageConfig } from 'src/test-runner/language-config.interface';
 import tar from 'tar-stream';
+
+const MAX_OUTPUT = 10000;
 
 @Injectable()
 export class CodeRunnerService {
@@ -43,25 +46,28 @@ export class CodeRunnerService {
   async executeCode(
     userCode: string,
     docker: Docker,
-    imageName: string,
-    fileName: string,
+    language: LanguageConfig,
     input: string,
   ) {
     const container = await docker.createContainer({
-      Image: imageName,
-      Cmd: ['python', fileName],
+      Image: language.imageName,
+      Cmd: ['sh', '-c', language.runCommand],
       Tty: false,
       WorkingDir: '/app',
 
       HostConfig: {
         Memory: 128 * 1024 * 1024,
         NanoCpus: 1000000000,
+        PidsLimit: 32,
         NetworkMode: 'none',
         AutoRemove: true,
       },
     });
 
-    const codeTarStream = this.createSourceCodePack(fileName, userCode);
+    const codeTarStream = this.createSourceCodePack(
+      language.fileName,
+      userCode,
+    );
 
     await container.putArchive(codeTarStream, {
       path: '/app',
@@ -69,6 +75,25 @@ export class CodeRunnerService {
 
     await container.start();
     const start = performance.now();
+
+    let finished = false;
+    let timedOut = false;
+
+    const timeout = setTimeout(async () => {
+      if (finished) {
+        return;
+      }
+
+      timedOut = true;
+      try {
+        await container.kill();
+      } catch (e) {
+        console.error(
+          'Error killing container',
+          e instanceof Error ? e.message : 'Unknown Error',
+        );
+      }
+    }, language.timeoutMs);
 
     const stream = await container.logs({
       follow: true,
@@ -80,19 +105,45 @@ export class CodeRunnerService {
     let stderr = '';
     let errorOcurred = false;
     await new Promise((resolve, reject) => {
-      stream.on('data', (chunk) => {
+      stream.on('data', async (chunk) => {
         const streamType = chunk[0];
         const cleaned = chunk.slice(8).toString('utf8');
 
         if (streamType == 2) {
-          errorOcurred = true;
           stderr += cleaned;
+          errorOcurred = true;
+
+          if (stderr.length > MAX_OUTPUT) {
+            stderr = stderr.slice(0, MAX_OUTPUT);
+            try {
+              await container.kill();
+            } catch (e) {
+              console.error(
+                'Error killing container',
+                e instanceof Error ? e.message : 'Unknown Error',
+              );
+            }
+          }
         } else {
           stdout += cleaned;
+
+          if (stdout.length > MAX_OUTPUT) {
+            stdout = stdout.slice(0, MAX_OUTPUT);
+            try {
+              await container.kill();
+            } catch (e) {
+              console.error(
+                'Error killing container',
+                e instanceof Error ? e.message : 'Unknown Error',
+              );
+            }
+          }
         }
       });
 
       stream.on('end', () => {
+        finished = true;
+        clearTimeout(timeout);
         resolve(stdout);
       });
 
@@ -103,6 +154,15 @@ export class CodeRunnerService {
 
     const end = performance.now();
     const executionTime = end - start;
+
+    if (timedOut) {
+      return {
+        output: stdout,
+        errOutput: 'Exceeded time limit',
+        timeMs: language.timeoutMs,
+        errorOcurred: true,
+      };
+    }
 
     return {
       output: stdout,

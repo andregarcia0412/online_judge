@@ -1,25 +1,25 @@
-import { Injectable } from '@nestjs/common';
+import { BadRequestException, Injectable } from '@nestjs/common';
 import { CodeRunnerService } from 'src/code-runner/code-runner.service';
 import { TestCase } from 'src/test-case/entities/test-case.entity';
 import Docker from 'dockerode';
 import { TestResult } from './dto/test-result.dto';
+import { LANGUAGES } from 'src/code-runner/languages';
 
 @Injectable()
 export class TestRunnerService {
   constructor(private codeRunnerService: CodeRunnerService) {}
 
-  async runTests(testCases: TestCase[], userCode: string): Promise<TestResult> {
+  async runTests(testCases: TestCase[], userCode: string, selectedLanguage: string): Promise<TestResult> {
     const docker = new Docker();
-    const languages = {
-      python: {
-        imageName: 'python:3.9-alpine',
-        fileName: 'main.py',
-      },
-    };
+    const language = LANGUAGES[selectedLanguage];
+    
+    if(!language){
+      throw new BadRequestException("Invalid language name")
+    }
 
     let result: any;
 
-    await this.codeRunnerService.downloadImage(languages.python.imageName, docker);
+    await this.codeRunnerService.downloadImage(language.imageName, docker);
 
     for (let i = 0; i < testCases.length; i++) {
       const testCase = testCases[i];
@@ -27,8 +27,7 @@ export class TestRunnerService {
       result = await this.codeRunnerService.executeCode(
         userCode,
         docker,
-        languages.python.imageName,
-        languages.python.fileName,
+        language,
         testCase.input,
       );
 
