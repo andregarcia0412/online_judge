@@ -1,4 +1,4 @@
-package com.llm_gateway.dto;
+package com.llmgateway.dto;
 
 public class Message {
     private String role;

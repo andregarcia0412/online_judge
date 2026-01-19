@@ -1,4 +1,4 @@
-package com.llm_gateway.dto.ask;
+package com.llmgateway.dto.ask;
 
 public class AskResponseDto {
     private String response;

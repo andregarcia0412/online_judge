@@ -1,4 +1,4 @@
-package com.llm_gateway;
+package com.llmgateway;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;

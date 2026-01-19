@@ -1,8 +1,13 @@
-package com.llm_gateway.dto.ask;
+package com.llmgateway.dto.ask;
+
+import jakarta.validation.constraints.NotBlank;
 
 public class AskRequestDto {
+    @NotBlank(message = "Language can't be blank")
     private String language;
+    @NotBlank(message = "Code can't be blank")
     private String code;
+    @NotBlank(message = "Question can't be blank")
     private String question;
 
     public AskRequestDto(String language, String code, String question) {
