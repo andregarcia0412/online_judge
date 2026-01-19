@@ -46,6 +46,22 @@ services:
       - ./frontend:/app
       - /app/node_modules
 
+  java-service:
+    build: ./llm-gateway
+    container_name: llmgateway
+    restart: always
+    network_mode: "host"
+    depends_on:
+      - backend
+
+  # redis:
+  #   image: redis:alpine
+  #   container_name: redis-dev
+  #   ports:
+  #     - "6379:6379"
+  #   networks:
+  #     - app_network
+
 networks:
   app_network:
 
