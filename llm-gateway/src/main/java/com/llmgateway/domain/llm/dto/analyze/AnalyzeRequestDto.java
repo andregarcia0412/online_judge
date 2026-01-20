@@ -1,4 +1,4 @@
-package com.llmgateway.llm.dto.analyze;
+package com.llmgateway.domain.llm.dto.analyze;
 
 import jakarta.validation.constraints.NotBlank;
 public record AnalyzeRequestDto (

@@ -1,4 +1,4 @@
-package com.llmgateway.llm.dto.generate;
+package com.llmgateway.domain.llm.dto.generate;
 
 import jakarta.validation.constraints.NotBlank;
 

@@ -1,13 +1,13 @@
-package com.llmgateway.llm;
+package com.llmgateway.domain.llm;
 
-import com.llmgateway.common.Result;
-import com.llmgateway.llm.dto.Message;
-import com.llmgateway.llm.dto.analyze.AnalyzeRequestDto;
-import com.llmgateway.llm.dto.analyze.AnalyzeResponseDto;
-import com.llmgateway.llm.dto.ask.AskRequestDto;
-import com.llmgateway.llm.dto.ask.AskResponseDto;
-import com.llmgateway.llm.dto.chat.ChatRequest;
-import com.llmgateway.llm.dto.generate.GenerateRequest;
+import com.llmgateway.domain.common.Result;
+import com.llmgateway.domain.llm.dto.Message;
+import com.llmgateway.domain.llm.dto.analyze.AnalyzeRequestDto;
+import com.llmgateway.domain.llm.dto.analyze.AnalyzeResponseDto;
+import com.llmgateway.domain.llm.dto.ask.AskRequestDto;
+import com.llmgateway.domain.llm.dto.ask.AskResponseDto;
+import com.llmgateway.domain.llm.dto.chat.ChatRequest;
+import com.llmgateway.domain.llm.dto.generate.GenerateRequest;
 import org.springframework.stereotype.Service;
 import tools.jackson.databind.ObjectMapper;
 

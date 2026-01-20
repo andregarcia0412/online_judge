@@ -1,4 +1,4 @@
-package com.llmgateway.common;
+package com.llmgateway.domain.common;
 
 public class Result<T> {
     private final T data;

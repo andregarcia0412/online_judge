@@ -1,4 +1,4 @@
-package com.llmgateway.llm.dto.analyze;
+package com.llmgateway.domain.llm.dto.analyze;
 
 public record AnalyzeResponseDto (
     String model,

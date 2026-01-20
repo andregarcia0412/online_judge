@@ -1,6 +1,6 @@
-package com.llmgateway.llm.dto.chat;
+package com.llmgateway.domain.llm.dto.chat;
 
-import com.llmgateway.llm.dto.Message;
+import com.llmgateway.domain.llm.dto.Message;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotEmpty;
 

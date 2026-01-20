@@ -1,10 +1,10 @@
-package com.llmgateway.llm;
+package com.llmgateway.domain.llm;
 
-import com.llmgateway.common.Result;
-import com.llmgateway.llm.dto.analyze.AnalyzeRequestDto;
-import com.llmgateway.llm.dto.analyze.AnalyzeResponseDto;
-import com.llmgateway.llm.dto.ask.AskRequestDto;
-import com.llmgateway.llm.dto.ask.AskResponseDto;
+import com.llmgateway.domain.common.Result;
+import com.llmgateway.domain.llm.dto.analyze.AnalyzeRequestDto;
+import com.llmgateway.domain.llm.dto.analyze.AnalyzeResponseDto;
+import com.llmgateway.domain.llm.dto.ask.AskRequestDto;
+import com.llmgateway.domain.llm.dto.ask.AskResponseDto;
 import jakarta.validation.Valid;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
