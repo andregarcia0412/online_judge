@@ -1,10 +1,9 @@
-package com.llmgateway.controller;
+package com.llmgateway.llm;
 
-import com.llmgateway.dto.analyze.AnalyzeRequestDto;
-import com.llmgateway.dto.analyze.AnalyzeResponseDto;
-import com.llmgateway.dto.ask.AskRequestDto;
-import com.llmgateway.dto.ask.AskResponseDto;
-import com.llmgateway.service.LlmService;
+import com.llmgateway.llm.dto.analyze.AnalyzeRequestDto;
+import com.llmgateway.llm.dto.analyze.AnalyzeResponseDto;
+import com.llmgateway.llm.dto.ask.AskRequestDto;
+import com.llmgateway.llm.dto.ask.AskResponseDto;
 import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
