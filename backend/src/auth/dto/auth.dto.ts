@@ -1,3 +1,4 @@
+import { ApiProperty } from '@nestjs/swagger';
 import { ReturnUserDto } from 'src/user/dto/return-user.dto';
 
 export class AuthResponseDto {
@@ -7,7 +8,10 @@ export class AuthResponseDto {
     this.user = user;
   }
 
+  @ApiProperty()
   token: string;
+  @ApiProperty()
   expiresIn: number;
+  @ApiProperty()
   user: ReturnUserDto;
 }

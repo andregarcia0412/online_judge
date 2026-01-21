@@ -1,3 +1,4 @@
+import { ApiProperty } from '@nestjs/swagger';
 import {
   IsString,
   IsNotEmpty,
@@ -8,17 +9,21 @@ import {
 
 export class CreateSubmissionDto {
   @IsUUID()
+  @ApiProperty()
   id_user: string;
 
   @IsNumber()
   @IsNotEmpty()
   @IsPositive()
+  @ApiProperty()
   id_problem: number;
 
   @IsString()
+  @ApiProperty()
   text: string;
 
   @IsString()
   @IsNotEmpty()
+  @ApiProperty()
   language: string;
 }

@@ -1,3 +1,5 @@
+import { ApiProperty } from '@nestjs/swagger';
+
 export class ReturnUserDto {
   constructor(
     id: string,
@@ -19,19 +21,27 @@ export class ReturnUserDto {
     this.creation_date = creation_date;
   }
 
+  @ApiProperty()
   id: string;
 
+  @ApiProperty()
   email: string;
 
+  @ApiProperty()
   username: string;
 
+  @ApiProperty()
   points: number;
 
+  @ApiProperty()
   total_submissions: number;
 
+  @ApiProperty()
   total_resolved: number;
 
+  @ApiProperty()
   streak: number;
 
+  @ApiProperty()
   creation_date: Date;
 }
