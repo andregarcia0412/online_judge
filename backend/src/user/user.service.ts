@@ -35,7 +35,7 @@ export class UserService {
     const newUser = await this.userRepository.save(createUserDto);
 
     return new ReturnUserDto(
-      newUser.id_user,
+      newUser.id,
       newUser.email,
       newUser.username,
       newUser.points,
@@ -50,14 +50,14 @@ export class UserService {
     return this.userRepository.find();
   }
 
-  async findOneById(id_user: string) {
-    const user = await this.userRepository.findOneBy({ id_user });
+  async findOneById(id: string) {
+    const user = await this.userRepository.findOneBy({ id });
     if (!user) {
       throw new NotFoundException('User not found');
     }
 
     return new ReturnUserDto(
-      user.id_user,
+      user.id,
       user.email,
       user.username,
       user.points,
@@ -78,11 +78,11 @@ export class UserService {
     return user;
   }
 
-  update(id_user: string, updateUserDto: UpdateUserDto) {
-    return this.userRepository.update(id_user, updateUserDto);
+  update(id: string, updateUserDto: UpdateUserDto) {
+    return this.userRepository.update(id, updateUserDto);
   }
 
-  remove(id_user: string) {
-    return this.userRepository.delete(id_user);
+  remove(id: string) {
+    return this.userRepository.delete(id);
   }
 }

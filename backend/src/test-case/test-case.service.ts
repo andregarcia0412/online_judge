@@ -29,19 +29,19 @@ export class TestCaseService {
     return this.testCaseRepository.find();
   }
 
-  findOneById(id_test_case: number) {
-    return this.testCaseRepository.findOneBy({ id_test_case });
+  findOneById(id: string) {
+    return this.testCaseRepository.findOneBy({ id });
   }
 
   findAllByProblemId(id_problem: number) {
     return this.testCaseRepository.findBy({ id_problem });
   }
 
-  update(id: number, updateTestCaseDto: UpdateTestCaseDto) {
+  update(id: string, updateTestCaseDto: UpdateTestCaseDto) {
     return this.testCaseRepository.update(id, updateTestCaseDto);
   }
 
-  remove(id: number) {
+  remove(id: string) {
     return this.testCaseRepository.delete(id);
   }
 }

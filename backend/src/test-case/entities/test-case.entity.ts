@@ -2,8 +2,8 @@ import { Column, Entity, PrimaryGeneratedColumn } from 'typeorm';
 
 @Entity('TestCase')
 export class TestCase {
-  @PrimaryGeneratedColumn({ type: 'integer' })
-  id_test_case: number;
+  @PrimaryGeneratedColumn('uuid')
+  id: string;
 
   @Column({ type: 'integer' })
   id_problem: number;

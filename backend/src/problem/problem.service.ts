@@ -25,8 +25,8 @@ export class ProblemService {
     return this.problemRepository.find();
   }
 
-  findOneById(id_problem: number) {
-    return this.problemRepository.findOneBy({ id_problem });
+  findOneById(id: number) {
+    return this.problemRepository.findOneBy({ id });
   }
 
   findOneByTitle(title: string) {

@@ -61,19 +61,19 @@ export class SubmissionService {
     return this.submissionRepository.find();
   }
 
-  findOneById(id_submission: string) {
-    return this.submissionRepository.findOneBy({ id_submission });
+  findOneById(id: string) {
+    return this.submissionRepository.findOneBy({ id });
   }
 
   findAllByUserId(id_user: string) {
     return this.submissionRepository.findBy({ id_user });
   }
 
-  update(id_submission: string, updateSubmissionDto: UpdateSubmissionDto) {
-    return this.submissionRepository.update(id_submission, updateSubmissionDto);
+  update(id: string, updateSubmissionDto: UpdateSubmissionDto) {
+    return this.submissionRepository.update(id, updateSubmissionDto);
   }
 
-  remove(id_submission: string) {
-    return this.submissionRepository.delete(id_submission);
+  remove(id: string) {
+    return this.submissionRepository.delete(id);
   }
 }

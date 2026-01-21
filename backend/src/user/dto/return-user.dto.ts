@@ -1,6 +1,6 @@
 export class ReturnUserDto {
   constructor(
-    id_user: string,
+    id: string,
     email: string,
     username: string,
     points: number,
@@ -9,7 +9,7 @@ export class ReturnUserDto {
     streak: number,
     creation_date: Date,
   ) {
-    this.id_user = id_user;
+    this.id = id;
     this.email = email;
     this.username = username;
     this.points = points;
@@ -19,7 +19,7 @@ export class ReturnUserDto {
     this.creation_date = creation_date;
   }
 
-  id_user: string;
+  id: string;
 
   email: string;
 

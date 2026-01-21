@@ -19,16 +19,16 @@ export class TestCaseController {
 
   @Get(':id')
   findOne(@Param('id') id: string) {
-    return this.testCaseService.findOneById(+id);
+    return this.testCaseService.findOneById(id);
   }
 
   @Patch(':id')
   update(@Param('id') id: string, @Body() updateTestCaseDto: UpdateTestCaseDto) {
-    return this.testCaseService.update(+id, updateTestCaseDto);
+    return this.testCaseService.update(id, updateTestCaseDto);
   }
 
   @Delete(':id')
   remove(@Param('id') id: string) {
-    return this.testCaseService.remove(+id);
+    return this.testCaseService.remove(id);
   }
 }
