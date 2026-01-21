@@ -22,13 +22,13 @@ export class AuthService {
       throw new BadRequestException('Incorrect email or password');
     }
 
-    const payload = { sub: user.id_user, email: user.email };
+    const payload = { sub: user.id, email: user.email };
     const token = this.jwtService.sign(payload, {
       expiresIn: this.configService.get<number>('JWT_EXPIRATION_TIME'),
     });
 
     const returnUser: ReturnUserDto = new ReturnUserDto(
-      user.id_user,
+      user.id,
       user.email,
       user.username,
       user.points,
