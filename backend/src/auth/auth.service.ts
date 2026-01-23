@@ -35,9 +35,9 @@ export class AuthService {
         },
         {
           secret: this.configService.get<string>('JWT_ACCESS_SECRET'),
-          expiresIn: this.configService.get<number>(
+          expiresIn: this.configService.get<string>(
             'JWT_ACCESS_EXPIRATION_TIME',
-          ),
+          ) as any,
         },
       ),
       this.jwtService.signAsync(
@@ -47,9 +47,9 @@ export class AuthService {
         },
         {
           secret: this.configService.get<string>('JWT_REFRESH_SECRET'),
-          expiresIn: this.configService.get<number>(
+          expiresIn: this.configService.get<string>(
             'JWT_REFRESH_EXPIRATION_TIME',
-          ),
+          ) as any,
         },
       ),
     ]);
@@ -75,7 +75,7 @@ export class AuthService {
 
     const newRefreshToken = this.refreshTokenRepository.create({
       id_user: user.id,
-      expires_in: this.configService.get<number>('JWT_REFRESH_EXPIRATION_TIME'),
+      expires_in: this.configService.get<string>('JWT_REFRESH_EXPIRATION_TIME') as any,
       token: hashedToken,
     });
 
@@ -95,7 +95,7 @@ export class AuthService {
     return new AuthResponseDto(
       tokens.access_token,
       tokens.refresh_token,
-      this.configService.get<number>('JWT_REFRESH_EXPIRATION_TIME')!,
+      this.configService.get<string>('JWT_REFRESH_EXPIRATION_TIME') as any,
       returnUser,
     );
   }

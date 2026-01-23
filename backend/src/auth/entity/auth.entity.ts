@@ -11,7 +11,7 @@ export class RefreshToken {
   @Column({ type: 'text' })
   token: string;
 
-  @Column({ type: 'integer' })
+  @Column({ type: 'text' })
   expires_in: number;
 
   @Column({ type: 'timestamp', default: () => 'CURRENT_TIMESTAMP' })
