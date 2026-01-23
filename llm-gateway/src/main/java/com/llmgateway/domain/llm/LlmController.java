@@ -10,6 +10,8 @@ import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import jakarta.validation.Valid;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -20,6 +22,9 @@ import java.util.Map;
 @CrossOrigin(origins = "*")
 public class LlmController {
     private final LlmService llmService;
+
+    @Value("${X-API-PASSWORD}")
+    private String apiSecret;
 
     public LlmController(LlmService llmService){
         this.llmService = llmService;
@@ -35,7 +40,11 @@ public class LlmController {
             ),
     })
     @PostMapping("/analyze")
-    public ResponseEntity<?> analyzeComplexity(@Valid @RequestBody AnalyzeRequestDto request){
+    public ResponseEntity<?> analyzeComplexity(@Valid @RequestBody AnalyzeRequestDto request, @RequestHeader(value = "Authorization", required= false) String incomingToken){
+        if(incomingToken == null || !incomingToken.equals(this.apiSecret)){
+            return ResponseEntity.status(HttpStatus.FORBIDDEN).body("Invalid API Token");
+        }
+
         Result<AnalyzeResponseDto> result = llmService.analyzeComplexity(request);
 
         if(!result.isOk()){
@@ -55,7 +64,10 @@ public class LlmController {
             )
     })
     @PostMapping("/ask")
-    public ResponseEntity<?> askLlm(@Valid @RequestBody AskRequestDto request){
+    public ResponseEntity<?> askLlm(@Valid @RequestBody AskRequestDto request, @RequestHeader(value = "Authorization", required = false) String incomingToken){
+        if(incomingToken == null || !incomingToken.equals(this.apiSecret)){
+            return ResponseEntity.status(HttpStatus.FORBIDDEN).body("Invalid API Token");
+        }
         Result<AskResponseDto> result = llmService.askLlm(request);
 
         if(!result.isOk()){
