@@ -8,6 +8,7 @@ import { UserModule } from './user/user.module';
 import { ProblemModule } from './problem/problem.module';
 import { TestCaseModule } from './test-case/test-case.module';
 import { AuthModule } from './auth/auth.module';
+import { LlmModule } from './llm/llm.module';
 
 @Module({
   imports: [ConfigModule.forRoot({
@@ -32,7 +33,8 @@ import { AuthModule } from './auth/auth.module';
   UserModule,
   ProblemModule,
   TestCaseModule,
-  AuthModule
+  AuthModule,
+  LlmModule
 ],
   controllers: [AppController],
   providers: [AppService],

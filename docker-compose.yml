@@ -57,6 +57,8 @@ services:
       - app_network
     ports:
       - "8081:8081"
+    env_file:
+      - ./backend/.env
 
   ollama:
     image: ollama/ollama:latest
