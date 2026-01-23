@@ -17,7 +17,7 @@ export class LlmService {
     private readonly httpService: HttpService,
   ) {
     this.apiUrl = this.configService.get<string>('LLM_API_URL');
-    this.apiSecret = this.configService.get<string>('X-API-PASSWORD');
+    this.apiSecret = this.configService.get<string>('X_API_PASSWORD');
   }
 
   async analyze(
@@ -33,7 +33,7 @@ export class LlmService {
           {
             headers: {
               'Content-Type': 'application/json',
-              Authorization: this.apiSecret,
+              'X-API-PASSWORD': this.apiSecret,
             },
           },
         ),
@@ -42,13 +42,13 @@ export class LlmService {
     } catch (e) {
       throw e;
     }
-  } //senha pra api do ollama?
+  }
 
   async ask(askRequestDto: AskRequestDto): Promise<AskResponseDto> {
     try {
       const response = await lastValueFrom(
         this.httpService.post(
-          `${this.apiUrl}/llm/analyze`,
+          `${this.apiUrl}/llm/ask`,
           {
             language: askRequestDto.language,
             code: askRequestDto.code,
@@ -57,7 +57,7 @@ export class LlmService {
           {
             headers: {
               'Content-Type': 'application/json',
-              Authorization: this.apiSecret,
+              'X-API-PASSWORD': this.apiSecret,
             },
           },
         ),

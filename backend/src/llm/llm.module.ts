@@ -3,9 +3,10 @@ import { LlmService } from './llm.service';
 import { LlmController } from './llm.controller';
 import { HttpModule } from '@nestjs/axios';
 import { ConfigModule } from '@nestjs/config';
+import { AuthModule } from 'src/auth/auth.module';
 
 @Module({
-  imports: [HttpModule, ConfigModule],
+  imports: [HttpModule, ConfigModule, AuthModule],
   controllers: [LlmController],
   providers: [LlmService],
 })

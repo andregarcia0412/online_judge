@@ -1,4 +1,9 @@
-import { BadRequestException, Injectable } from '@nestjs/common';
+import {
+  BadRequestException,
+  ForbiddenException,
+  Injectable,
+  UnauthorizedException,
+} from '@nestjs/common';
 import { AuthResponseDto } from './dto/auth.dto';
 import { LoginDto } from './dto/login.dto';
 import { UserService } from '../user/user.service.js';
@@ -6,14 +11,54 @@ import { JwtService } from '@nestjs/jwt';
 import { ConfigService } from '@nestjs/config';
 import * as bcrypt from 'bcrypt';
 import { ReturnUserDto } from 'src/user/dto/return-user.dto';
+import { Repository } from 'typeorm';
+import { RefreshToken } from './entity/auth.entity';
+import { InjectRepository } from '@nestjs/typeorm';
+import { RefreshResponseDto } from './dto/refresh-response.dto';
 
 @Injectable()
 export class AuthService {
   constructor(
+    @InjectRepository(RefreshToken)
+    private refreshTokenRepository: Repository<RefreshToken>,
     private userService: UserService,
     private jwtService: JwtService,
     private configService: ConfigService,
   ) {}
+
+  private async getTokens(userId: string, email: string) {
+    const [at, rt] = await Promise.all([
+      this.jwtService.signAsync(
+        {
+          sub: userId,
+          email,
+        },
+        {
+          secret: this.configService.get<string>('JWT_ACCESS_SECRET'),
+          expiresIn: this.configService.get<number>(
+            'JWT_ACCESS_EXPIRATION_TIME',
+          ),
+        },
+      ),
+      this.jwtService.signAsync(
+        {
+          sub: userId,
+          email,
+        },
+        {
+          secret: this.configService.get<string>('JWT_REFRESH_SECRET'),
+          expiresIn: this.configService.get<number>(
+            'JWT_REFRESH_EXPIRATION_TIME',
+          ),
+        },
+      ),
+    ]);
+
+    return {
+      access_token: at,
+      refresh_token: rt,
+    };
+  }
 
   async login(loginDto: LoginDto) {
     const user = await this.userService.findOneByEmail(loginDto.email);
@@ -22,10 +67,19 @@ export class AuthService {
       throw new BadRequestException('Incorrect email or password');
     }
 
-    const payload = { sub: user.id, email: user.email };
-    const token = this.jwtService.sign(payload, {
-      expiresIn: this.configService.get<number>('JWT_EXPIRATION_TIME'),
+    const tokens = await this.getTokens(user.id, user.email);
+
+    const hashedToken = await bcrypt.hash(tokens.refresh_token, 10);
+
+    await this.refreshTokenRepository.delete({ id_user: user.id });
+
+    const newRefreshToken = this.refreshTokenRepository.create({
+      id_user: user.id,
+      expires_in: this.configService.get<number>('JWT_REFRESH_EXPIRATION_TIME'),
+      token: hashedToken,
     });
+
+    await this.refreshTokenRepository.save(newRefreshToken);
 
     const returnUser: ReturnUserDto = new ReturnUserDto(
       user.id,
@@ -39,9 +93,39 @@ export class AuthService {
     );
 
     return new AuthResponseDto(
-      token,
-      this.configService.get<number>('JWT_EXPIRATION_TIME')!,
+      tokens.access_token,
+      tokens.refresh_token,
+      this.configService.get<number>('JWT_REFRESH_EXPIRATION_TIME')!,
       returnUser,
     );
+  }
+
+  async refresh(userId: string, refreshToken: string) {
+    const user = await this.userService.findOneById(userId);
+
+    if (!user) {
+      throw new UnauthorizedException('Access Denied: User does not exist');
+    }
+
+    const oldToken = await this.refreshTokenRepository.findOneBy({
+      id_user: userId,
+    });
+
+    const refreshTokenMatches = await bcrypt.compare(
+      refreshToken,
+      oldToken?.token,
+    );
+
+    if (!refreshTokenMatches) {
+      throw new UnauthorizedException('Access Denied: Token Expired');
+    }
+
+    const tokens = await this.getTokens(user.id, user.email);
+    await this.refreshTokenRepository.update(
+      { id_user: user.id },
+      { token: await bcrypt.hash(tokens.refresh_token, 10) },
+    );
+
+    return new RefreshResponseDto(tokens.access_token, tokens.refresh_token);
   }
 }
