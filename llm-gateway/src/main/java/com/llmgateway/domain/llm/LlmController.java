@@ -23,7 +23,7 @@ import java.util.Map;
 public class LlmController {
     private final LlmService llmService;
 
-    @Value("${X-API-PASSWORD}")
+    @Value("${X_API_PASSWORD}")
     private String apiSecret;
 
     public LlmController(LlmService llmService){
@@ -40,7 +40,7 @@ public class LlmController {
             ),
     })
     @PostMapping("/analyze")
-    public ResponseEntity<?> analyzeComplexity(@Valid @RequestBody AnalyzeRequestDto request, @RequestHeader(value = "Authorization", required= false) String incomingToken){
+    public ResponseEntity<?> analyzeComplexity(@Valid @RequestBody AnalyzeRequestDto request, @RequestHeader(value = "X-API-PASSWORD", required = false) String incomingToken){
         if(incomingToken == null || !incomingToken.equals(this.apiSecret)){
             return ResponseEntity.status(HttpStatus.FORBIDDEN).body("Invalid API Token");
         }
@@ -64,7 +64,7 @@ public class LlmController {
             )
     })
     @PostMapping("/ask")
-    public ResponseEntity<?> askLlm(@Valid @RequestBody AskRequestDto request, @RequestHeader(value = "Authorization", required = false) String incomingToken){
+    public ResponseEntity<?> askLlm(@Valid @RequestBody AskRequestDto request, @RequestHeader(value = "X-API-PASSWORD", required = false) String incomingToken){
         if(incomingToken == null || !incomingToken.equals(this.apiSecret)){
             return ResponseEntity.status(HttpStatus.FORBIDDEN).body("Invalid API Token");
         }
