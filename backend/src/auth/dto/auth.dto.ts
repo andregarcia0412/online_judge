@@ -3,19 +3,19 @@ import { ReturnUserDto } from 'src/user/dto/return-user.dto';
 
 export class AuthResponseDto {
   constructor(
-    token: string,
+    accessToken: string,
     refreshToken: string,
     expiresIn: number,
     user: ReturnUserDto,
   ) {
-    this.token = token;
+    this.accessToken = accessToken;
     this.refreshToken = refreshToken;
     this.expiresIn = expiresIn;
     this.user = user;
   }
 
   @ApiProperty()
-  token: string;
+  accessToken: string;
 
   @ApiProperty()
   refreshToken: string;
