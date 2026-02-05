@@ -14,7 +14,7 @@ type AuthProviderProps = {
 };
 
 export const AuthContext = React.createContext<AuthContextType>(
-  {} as AuthContextType
+  {} as AuthContextType,
 );
 
 export const AuthProvider = ({ children }: AuthProviderProps) => {
@@ -35,13 +35,12 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
         const parsedStoredData: LoginResponseDto = JSON.parse(storedData);
         setUserData(parsedStoredData);
 
-        api.defaults.headers.common[
-          "Authorization"
-        ] = `Bearer ${parsedStoredData.token}`;
+        api.defaults.headers.common["Authorization"] =
+          `Bearer ${parsedStoredData.accessToken}`;
       } catch (e) {
         console.error(
           "Error loading token:",
-          e instanceof Error ? e.message : "Unknown Error"
+          e instanceof Error ? e.message : "Unknown Error",
         );
       } finally {
         setLoading(false);
@@ -59,10 +58,12 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
       }
 
       setUserData(response);
-      api.defaults.headers.common["Authorization"] = `Bearer ${response.token}`;
+      api.defaults.headers.common["Authorization"] =
+        `Bearer ${response.accessToken}`;
 
       if (rememberMe) {
         localStorage.setItem("userData", JSON.stringify(response));
+        sessionStorage.removeItem("userData")
       } else {
         sessionStorage.setItem("userData", JSON.stringify(response));
         localStorage.removeItem("userData");

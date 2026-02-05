@@ -6,7 +6,8 @@ export type LoginDto = {
 };
 
 export type LoginResponseDto = {
-  token: string;
+  accessToken: string;
+  refreshToken: string;
   expiresIn: number;
   user: User;
 };
