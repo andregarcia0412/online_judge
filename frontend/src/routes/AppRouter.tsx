@@ -3,6 +3,7 @@ import { Auth } from "../pages/auth";
 import { Home } from "../pages/home";
 import { NotFound } from "../pages/not-found/NotFound";
 import { PrivateRoute } from "./PrivateRoute";
+import { Submission } from "../pages/submission";
 
 export const AppRouter = () => {
   return (
@@ -12,6 +13,7 @@ export const AppRouter = () => {
 
         <Route element={<PrivateRoute />}>
           <Route path="/" element={<Home />} />
+          <Route path="/submission" element={<Submission />} />
         </Route>
 
         <Route path="*" element={<NotFound />} />

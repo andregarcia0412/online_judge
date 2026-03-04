@@ -9,3 +9,10 @@ export type Submission = {
   submission_date: Date;
   error?: string;
 };
+
+export type SubmissionRequestDto = {
+  id_user: string;
+  id_problem: number;
+  text: string;
+  language: string;
+};

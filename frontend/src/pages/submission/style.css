@@ -1,0 +1,11 @@
+.submission-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 100vh;
+}
+
+.submission-editor-wrapper {
+    width: 700px;
+    height: 800px;
+}
