@@ -8,6 +8,9 @@ import { Submission } from './entities/submission.entity';
 import { ProblemService } from 'src/problem/problem.service';
 import { TestCaseService } from 'src/test-case/test-case.service';
 import { TestRunnerService } from 'src/test-runner/test-runner.service';
+import { ReturnSubmissionDto } from './dto/return-submission.dto';
+import { UpdateResult } from 'typeorm/browser';
+import { DeleteResult } from 'typeorm/browser';
 
 @Injectable()
 export class SubmissionService {
@@ -21,7 +24,9 @@ export class SubmissionService {
     private testRunnerService: TestRunnerService,
   ) {}
 
-  async create(createSubmissionDto: CreateSubmissionDto) {
+  async create(
+    createSubmissionDto: CreateSubmissionDto,
+  ): Promise<ReturnSubmissionDto> {
     if (!(await this.userService.findOneById(createSubmissionDto.id_user))) {
       throw new NotFoundException('User not found');
     }
@@ -54,26 +59,37 @@ export class SubmissionService {
       error: testResult.error,
     });
 
-    return this.submissionRepository.save(newSubmission);
+    return ReturnSubmissionDto.fromEntity(
+      await this.submissionRepository.save(newSubmission),
+    );
   }
 
   findAll() {
     return this.submissionRepository.find();
   }
 
-  findOneById(id: string) {
-    return this.submissionRepository.findOneBy({ id });
+  async findOneById(id: string): Promise<ReturnSubmissionDto> {
+    const savedSubmission = await this.submissionRepository.findOneBy({ id });
+    if (!savedSubmission) {
+      throw new NotFoundException('Submission not found');
+    }
+    return ReturnSubmissionDto.fromEntity(savedSubmission);
   }
 
-  findAllByUserId(id_user: string) {
-    return this.submissionRepository.findBy({ id_user });
+  async findAllByUserId(id_user: string): Promise<ReturnSubmissionDto[]> {
+    return (await this.submissionRepository.findBy({ id_user })).map(
+      (submission) => ReturnSubmissionDto.fromEntity(submission),
+    );
   }
 
-  update(id: string, updateSubmissionDto: UpdateSubmissionDto) {
-    return this.submissionRepository.update(id, updateSubmissionDto);
+  async update(
+    id: string,
+    updateSubmissionDto: UpdateSubmissionDto,
+  ): Promise<UpdateResult> {
+    return await this.submissionRepository.update(id, updateSubmissionDto);
   }
 
-  remove(id: string) {
-    return this.submissionRepository.delete(id);
+  async remove(id: string): Promise<DeleteResult> {
+    return await this.submissionRepository.delete(id);
   }
 }
