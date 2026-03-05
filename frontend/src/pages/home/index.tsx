@@ -18,9 +18,8 @@ export const Home = () => {
     console.log("pesquisou");
   };
 
-  //TODO: tela melhor para loading
-  if(!userData){
-    return <h1>loading...</h1>
+  if (!userData) {
+    return;
   }
 
   return (

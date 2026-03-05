@@ -7,6 +7,7 @@ import AuthButton from "../../components/auth-button/AuthButton";
 import { useAuthContext } from "../../contexts/AuthContext";
 import type { Problem } from "../../data/dto/problem.dto";
 import "./style.css";
+import { HomeHeader } from "../../components/home-header/HomeHeader";
 
 export const Submission = () => {
   const { userData } = useAuthContext();
@@ -60,40 +61,89 @@ export const Submission = () => {
   };
 
   return (
-    <div className="submission-container">
-      <div className="submission-editor-wrapper">
-        <Editor
-          height="100%"
-          defaultLanguage="plaintext"
-          value={code}
-          onChange={(value) => setCode(value ?? "")}
-          theme="vs-dark"
-          options={{
-            minimap: { enabled: false },
-          }}
-        />
-      </div>
-      <AuthButton
-        onClick={handleSubmit}
-        loading={loading}
-        text="Enviar"
-        background="blue"
+    <div>
+      <HomeHeader
+        handleSearch={() => console.log("teste")}
+        setText={() => console.log("teste")}
       />
+      <div className="submission-container">
+        <div className="submission-container-sides">
+          <div className="submission-card">
+            <div className="submission-card-row">
+              <p>BEE 1000</p>
+              <h2>Hello World!</h2>
+              <p>100</p>
+            </div>
+          </div>
 
-      <ConfigProvider theme={{ algorithm: theme.darkAlgorithm }}>
-        <Select
-          style={{ width: 200 }}
-          placeholder="Choose a language"
-          value={language}
-          onChange={(value) => setLanguage(value)}
-          options={[
-            { value: "c", label: "C99" },
-            { value: "java", label: "Java 21" },
-            { value: "node", label: "Javascript" },
-            { value: "python", label: "Python 3" },
-          ]}
-        />
-      </ConfigProvider>
+          <div className="submission-card">
+            <div className="submission-card-row">
+              <h3>Description</h3>
+              <p>{problem.description}</p>
+            </div>
+            <hr color="#30363d" style={{ width: "100%" }} />
+            <div className="submission-card-row">
+              <h3>Input</h3>
+              <p>
+                {problem.input_example ||
+                  "There are no inputs for this problem."}
+              </p>
+            </div>
+            <hr color="#30363d" style={{ width: "100%" }} />
+            <div className="submission-card-row">
+              <h3>Output</h3>
+              <p>{problem.output_example}</p>
+            </div>
+            <hr color="#30363d" style={{ width: "100%" }} />
+            <div className="submission-card-row">
+              <h3>Examples</h3>
+              <div>
+                <div>
+                  <p>Input Example</p>
+                </div>
+                <div>
+                  <p>Output Example</p>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div className="submission-container-sides">
+          <ConfigProvider theme={{ algorithm: theme.darkAlgorithm }}>
+            <Select
+              style={{ width: "100%" }}
+              placeholder="Choose a language"
+              value={language}
+              onChange={(value) => setLanguage(value)}
+              options={[
+                { value: "c", label: "C99" },
+                { value: "java", label: "Java 21" },
+                { value: "node", label: "Javascript" },
+                { value: "python", label: "Python 3" },
+              ]}
+            />
+          </ConfigProvider>
+          <div className="submission-editor-wrapper">
+            <Editor
+              height="100%"
+              defaultLanguage="plaintext"
+              value={code}
+              onChange={(value) => setCode(value ?? "")}
+              theme="vs-dark"
+              options={{
+                minimap: { enabled: false },
+                fontFamily: "JetBrains Mono",
+              }}
+            />
+          </div>
+          <AuthButton
+            onClick={handleSubmit}
+            loading={loading}
+            text="Enviar"
+            background="blue"
+          />
+        </div>
+      </div>
     </div>
   );
 };
