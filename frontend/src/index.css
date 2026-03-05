@@ -2,10 +2,9 @@
   margin: 0;
   padding: 0;
   box-sizing: border-box;
-  font-family: "Noto Sans", sans-serif;
+  font-family: "JetBrains Mono", monospace;
 }
 
 body {
   background-color: #0f0f0f;
-  overflow: hidden;
 }
