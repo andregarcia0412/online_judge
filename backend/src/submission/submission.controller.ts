@@ -12,6 +12,7 @@ import { CreateSubmissionDto } from './dto/create-submission.dto';
 import { UpdateSubmissionDto } from './dto/update-submission.dto';
 import { ApiCreatedResponse } from '@nestjs/swagger';
 import { ReturnSubmissionDto } from './dto/return-submission.dto';
+import { DeleteResult, UpdateResult } from 'typeorm';
 
 @Controller('submission')
 export class SubmissionController {
@@ -19,33 +20,36 @@ export class SubmissionController {
 
   @Post()
   @ApiCreatedResponse({ type: ReturnSubmissionDto })
-  create(@Body() createSubmissionDto: CreateSubmissionDto) {
+  create(
+    @Body() createSubmissionDto: CreateSubmissionDto,
+  ): Promise<CreateSubmissionDto> {
     return this.submissionService.create(createSubmissionDto);
   }
 
   @Get()
   @ApiCreatedResponse({ type: [ReturnSubmissionDto] })
-  findAll() {
+  findAll(): Promise<ReturnSubmissionDto[]> {
     return this.submissionService.findAll();
   }
 
   @Get(':id')
-  @ApiCreatedResponse({ type: [ReturnSubmissionDto] })
-  findOne(@Param('id_user') id_user: string) {
-    return this.submissionService.findAllByUserId(id_user);
+  @ApiCreatedResponse({ type: ReturnSubmissionDto })
+  findOne(@Param('id') id: string): Promise<ReturnSubmissionDto> {
+    return this.submissionService.findOneById(id);
   }
 
   @Patch(':id')
-  @ApiCreatedResponse()
+  @ApiCreatedResponse({ type: UpdateResult })
   update(
     @Param('id') id: string,
     @Body() updateSubmissionDto: UpdateSubmissionDto,
-  ) {
+  ): Promise<UpdateResult> {
     return this.submissionService.update(id, updateSubmissionDto);
   }
 
   @Delete(':id')
-  remove(@Param('id') id: string) {
+  @ApiCreatedResponse({ type: DeleteResult })
+  remove(@Param('id') id: string): Promise<DeleteResult> {
     return this.submissionService.remove(id);
   }
 }
