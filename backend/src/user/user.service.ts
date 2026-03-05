@@ -3,13 +3,14 @@ import {
   Injectable,
   NotFoundException,
 } from '@nestjs/common';
-import { CreateUserDto } from './dto/create-user.dto';
-import { UpdateUserDto } from './dto/update-user.dto';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Repository } from 'typeorm';
-import { User } from './entities/user.entity';
 import * as bcrypt from 'bcrypt';
+import { Repository } from 'typeorm';
+import { DeleteResult, UpdateResult } from 'typeorm/browser';
+import { CreateUserDto } from './dto/create-user.dto';
 import { ReturnUserDto } from './dto/return-user.dto';
+import { UpdateUserDto } from './dto/update-user.dto';
+import { User } from './entities/user.entity';
 
 @Injectable()
 export class UserService {
@@ -18,7 +19,7 @@ export class UserService {
     private userRepository: Repository<User>,
   ) {}
 
-  async create(createUserDto: CreateUserDto) {
+  async create(createUserDto: CreateUserDto): Promise<ReturnUserDto> {
     if (await this.userRepository.findOneBy({ email: createUserDto.email })) {
       throw new ConflictException('This email is already in use');
     }
@@ -34,55 +35,42 @@ export class UserService {
     createUserDto.password = hash;
     const newUser = await this.userRepository.save(createUserDto);
 
-    return new ReturnUserDto(
-      newUser.id,
-      newUser.email,
-      newUser.username,
-      newUser.points,
-      newUser.total_submissions,
-      newUser.total_resolved,
-      newUser.streak,
-      newUser.creation_date,
+    return ReturnUserDto.fromEntity(newUser);
+  }
+
+  async findAll(): Promise<ReturnUserDto[]> {
+    return (await this.userRepository.find()).map((user: User) =>
+      ReturnUserDto.fromEntity(user),
     );
   }
 
-  findAll() {
-    return this.userRepository.find();
-  }
-
-  async findOneById(id: string) {
+  async findOneById(id: string): Promise<ReturnUserDto> {
     const user = await this.userRepository.findOneBy({ id });
     if (!user) {
       throw new NotFoundException('User not found');
     }
 
-    return new ReturnUserDto(
-      user.id,
-      user.email,
-      user.username,
-      user.points,
-      user.total_submissions,
-      user.total_resolved,
-      user.streak,
-      user.creation_date,
-    );
+    return ReturnUserDto.fromEntity(user);
   }
 
-  async findOneByEmail(email: string) {
+  async findOneByEmail(email: string): Promise<ReturnUserDto> {
     const user = await this.userRepository.findOneBy({ email });
 
     if (!user) {
       throw new NotFoundException('User not found');
     }
 
-    return user;
+    return ReturnUserDto.fromEntity(user);
   }
 
-  update(id: string, updateUserDto: UpdateUserDto) {
-    return this.userRepository.update(id, updateUserDto);
+  async update(
+    id: string,
+    updateUserDto: UpdateUserDto,
+  ): Promise<UpdateResult> {
+    return await this.userRepository.update(id, updateUserDto);
   }
 
-  remove(id: string) {
-    return this.userRepository.delete(id);
+  async remove(id: string): Promise<DeleteResult> {
+    return await this.userRepository.delete(id);
   }
 }

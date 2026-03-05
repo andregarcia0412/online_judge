@@ -1,4 +1,5 @@
 import { ApiProperty } from '@nestjs/swagger';
+import { User } from '../entities/user.entity';
 
 export class ReturnUserDto {
   constructor(
@@ -44,4 +45,17 @@ export class ReturnUserDto {
 
   @ApiProperty()
   creation_date: Date;
+
+  static fromEntity(user: User) {
+    return new ReturnUserDto(
+      user.id,
+      user.email,
+      user.username,
+      user.points,
+      user.total_submissions,
+      user.total_resolved,
+      user.streak,
+      user.creation_date,
+    );
+  }
 }

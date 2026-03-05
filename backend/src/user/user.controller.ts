@@ -12,6 +12,7 @@ import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
 import { ApiCreatedResponse } from '@nestjs/swagger';
 import { ReturnUserDto } from './dto/return-user.dto';
+import { UpdateResult } from 'typeorm';
 
 @Controller('user')
 export class UserController {
@@ -30,11 +31,13 @@ export class UserController {
   }
 
   @Patch(':id')
+  @ApiCreatedResponse({ type: UpdateResult })
   update(@Param('id') id: string, @Body() updateUserDto: UpdateUserDto) {
     return this.userService.update(id, updateUserDto);
   }
 
   @Delete(':id')
+  @ApiCreatedResponse({ type: UpdateResult })
   remove(@Param('id') id: string) {
     return this.userService.remove(id);
   }

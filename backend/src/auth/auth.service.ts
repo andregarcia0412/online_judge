@@ -1,27 +1,27 @@
 import {
   BadRequestException,
-  ForbiddenException,
   Injectable,
   UnauthorizedException,
 } from '@nestjs/common';
-import { AuthResponseDto } from './dto/auth.dto';
-import { LoginDto } from './dto/login.dto';
-import { UserService } from '../user/user.service.js';
-import { JwtService } from '@nestjs/jwt';
 import { ConfigService } from '@nestjs/config';
+import { JwtService } from '@nestjs/jwt';
+import { InjectRepository } from '@nestjs/typeorm';
 import * as bcrypt from 'bcrypt';
 import { ReturnUserDto } from 'src/user/dto/return-user.dto';
+import { User } from 'src/user/entities/user.entity';
 import { Repository } from 'typeorm';
-import { RefreshToken } from './entity/auth.entity';
-import { InjectRepository } from '@nestjs/typeorm';
+import { AuthResponseDto } from './dto/auth.dto';
+import { LoginDto } from './dto/login.dto';
 import { RefreshResponseDto } from './dto/refresh-response.dto';
+import { RefreshToken } from './entity/auth.entity';
 
 @Injectable()
 export class AuthService {
   constructor(
     @InjectRepository(RefreshToken)
     private refreshTokenRepository: Repository<RefreshToken>,
-    private userService: UserService,
+    @InjectRepository(User)
+    private userRepository: Repository<User>,
     private jwtService: JwtService,
     private configService: ConfigService,
   ) {}
@@ -61,7 +61,7 @@ export class AuthService {
   }
 
   async login(loginDto: LoginDto) {
-    const user = await this.userService.findOneByEmail(loginDto.email);
+    const user = await this.userRepository.findOneBy({ email: loginDto.email });
 
     if (!user || !(await bcrypt.compare(loginDto.password, user.password))) {
       throw new BadRequestException('Incorrect email or password');
@@ -75,7 +75,9 @@ export class AuthService {
 
     const newRefreshToken = this.refreshTokenRepository.create({
       id_user: user.id,
-      expires_in: this.configService.get<string>('JWT_REFRESH_EXPIRATION_TIME') as any,
+      expires_in: this.configService.get<string>(
+        'JWT_REFRESH_EXPIRATION_TIME',
+      ) as any,
       token: hashedToken,
     });
 
@@ -101,7 +103,7 @@ export class AuthService {
   }
 
   async refresh(userId: string, refreshToken: string) {
-    const user = await this.userService.findOneById(userId);
+    const user = await this.userRepository.findOneBy({ id: userId });
 
     if (!user) {
       throw new UnauthorizedException('Access Denied: User does not exist');
