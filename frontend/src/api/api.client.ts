@@ -3,7 +3,7 @@ import type { LoginResponseDto } from "../data/dto/auth.dto";
 
 export const api = axios.create({
   baseURL: import.meta.env.VITE_API_URL,
-  timeout: 10000,
+  timeout: 30000,
 });
 
 let isRefreshing = false;
@@ -49,7 +49,7 @@ api.interceptors.response.use(
       })
         .then((accessToken) => {
           originalRequest.headers["Authorization"] = `Bearer ${accessToken}`;
-          return api(originalRequest)
+          return api(originalRequest);
         })
         .catch((e) => Promise.reject(e));
     }
