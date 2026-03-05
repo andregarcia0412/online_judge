@@ -9,17 +9,25 @@ import { LANGUAGES } from 'src/code-runner/languages';
 export class TestRunnerService {
   constructor(private codeRunnerService: CodeRunnerService) {}
 
-  async runTests(testCases: TestCase[], userCode: string, selectedLanguage: string): Promise<TestResult> {
+  async runTests(
+    testCases: TestCase[],
+    userCode: string,
+    selectedLanguage: string,
+  ): Promise<TestResult> {
     const docker = new Docker();
     const language = LANGUAGES[selectedLanguage];
-    
-    if(!language){
-      throw new BadRequestException("Invalid language name")
+
+    if (!language) {
+      throw new BadRequestException('Invalid language name');
     }
 
     let result: any;
 
     await this.codeRunnerService.downloadImage(language.imageName, docker);
+
+    if (!testCases || testCases.length === 0) {
+      throw new BadRequestException('No test cases found for this problem');
+    }
 
     for (let i = 0; i < testCases.length; i++) {
       const testCase = testCases[i];
@@ -30,6 +38,10 @@ export class TestRunnerService {
         language,
         testCase.input,
       );
+
+      if (!result || result.timeMs === undefined) {
+        return new TestResult('runtime_error', 0, 'Execution failed');
+      }
 
       if (testCase.output != result.output) {
         return new TestResult(

@@ -20,7 +20,11 @@ export class ProblemService {
   ) {}
 
   async create(createProblemDto: CreateProblemDto): Promise<ReturnProblemDto> {
-    if (await this.findOneByNumber(createProblemDto.number)) {
+    if (
+      await this.problemRepository.findOneBy({
+        number: createProblemDto.number,
+      })
+    ) {
       throw new ConflictException('This number is already in use');
     }
 
