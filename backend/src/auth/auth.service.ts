@@ -14,14 +14,11 @@ import { Repository } from 'typeorm';
 import { AuthResponseDto } from './dto/auth.dto';
 import { LoginDto } from './dto/login.dto';
 import { RefreshResponseDto } from './dto/refresh-response.dto';
-import { RefreshToken } from './entity/auth.entity';
 import { UserService } from 'src/user/user.service';
 
 @Injectable()
 export class AuthService {
   constructor(
-    @InjectRepository(RefreshToken)
-    private refreshTokenRepository: Repository<RefreshToken>,
     @InjectRepository(User)
     private userRepository: Repository<User>,
     private userService: UserService,
@@ -29,7 +26,13 @@ export class AuthService {
     private configService: ConfigService,
   ) {}
 
-  private async getTokens(userId: string, email: string) {
+  private async getTokens(
+    userId: string,
+    email: string,
+  ): Promise<{
+    access_token: string;
+    refresh_token: string;
+  }> {
     const [at, rt] = await Promise.all([
       this.jwtService.signAsync(
         {
@@ -63,7 +66,7 @@ export class AuthService {
     };
   }
 
-  async login(loginDto: LoginDto) {
+  async login(loginDto: LoginDto): Promise<AuthResponseDto> {
     const user = await this.userRepository.findOneBy({ email: loginDto.email });
 
     if (!user || !(await bcrypt.compare(loginDto.password, user.password))) {
@@ -72,30 +75,7 @@ export class AuthService {
 
     const tokens = await this.getTokens(user.id, user.email);
 
-    const hashedToken = await bcrypt.hash(tokens.refresh_token, 10);
-
-    await this.refreshTokenRepository.delete({ id_user: user.id });
-
-    const newRefreshToken = this.refreshTokenRepository.create({
-      id_user: user.id,
-      expires_in: this.configService.get<string>(
-        'JWT_REFRESH_EXPIRATION_TIME',
-      ) as any,
-      token: hashedToken,
-    });
-
-    await this.refreshTokenRepository.save(newRefreshToken);
-
-    const returnUser: ReturnUserDto = new ReturnUserDto(
-      user.id,
-      user.email,
-      user.username,
-      user.points,
-      user.total_submissions,
-      user.total_resolved,
-      user.streak,
-      user.creation_date,
-    );
+    const returnUser: ReturnUserDto = ReturnUserDto.fromEntity(user);
 
     return new AuthResponseDto(
       tokens.access_token,
@@ -105,33 +85,24 @@ export class AuthService {
     );
   }
 
-  async refresh(userId: string, refreshToken: string) {
-    const user = await this.userRepository.findOneBy({ id: userId });
+  async refresh(refreshToken: string): Promise<RefreshResponseDto> {
+    try {
+      const payload = await this.jwtService.verifyAsync(refreshToken, {
+        secret: this.configService.get<string>('JWT_REFRESH_SECRET'),
+      });
+      console.log(payload.sub);
+      const user = await this.userRepository.findOneBy({ id: payload.sub });
 
-    if (!user) {
-      throw new UnauthorizedException('Access Denied: User does not exist');
+      if (!user) {
+        throw new UnauthorizedException('User does not exist');
+      }
+
+      const tokens = await this.getTokens(user.id, user.email);
+
+      return new RefreshResponseDto(tokens.access_token, tokens.refresh_token);
+    } catch (e) {
+      throw new UnauthorizedException('Invalid refresh token');
     }
-
-    const oldToken = await this.refreshTokenRepository.findOneBy({
-      id_user: userId,
-    });
-
-    const refreshTokenMatches = await bcrypt.compare(
-      refreshToken,
-      oldToken?.token,
-    );
-
-    if (!refreshTokenMatches) {
-      throw new UnauthorizedException('Access Denied: Token Expired');
-    }
-
-    const tokens = await this.getTokens(user.id, user.email);
-    await this.refreshTokenRepository.update(
-      { id_user: user.id },
-      { token: await bcrypt.hash(tokens.refresh_token, 10) },
-    );
-
-    return new RefreshResponseDto(tokens.access_token, tokens.refresh_token);
   }
 
   register(createUserDto: CreateUserDto): Promise<ReturnUserDto> {

@@ -5,17 +5,15 @@ import { User } from 'src/user/entities/user.entity';
 import { UserModule } from 'src/user/user.module';
 import { AuthController } from './auth.controller';
 import { AuthService } from './auth.service';
-import { RefreshToken } from './entity/auth.entity';
 import { JwtStrategy } from './jwt.strategy';
-import { RefreshTokenStrategy } from './refresh-token.strategy';
 
 @Module({
   imports: [
-    TypeOrmModule.forFeature([RefreshToken, User]),
+    TypeOrmModule.forFeature([User]),
     JwtModule.register({}),
     UserModule,
   ],
   controllers: [AuthController],
-  providers: [AuthService, JwtStrategy, RefreshTokenStrategy],
+  providers: [AuthService, JwtStrategy],
 })
 export class AuthModule {}
