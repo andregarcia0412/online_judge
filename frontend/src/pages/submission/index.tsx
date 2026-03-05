@@ -44,7 +44,6 @@ export const Submission = () => {
     }
 
     setLoading(true);
-    console.log(userData);
     try {
       const response = await submissionService.createSubmission({
         id_problem: idProblem,
@@ -65,10 +64,13 @@ export const Submission = () => {
       <div className="submission-editor-wrapper">
         <Editor
           height="100%"
-          defaultLanguage="java"
+          defaultLanguage="plaintext"
           value={code}
           onChange={(value) => setCode(value ?? "")}
           theme="vs-dark"
+          options={{
+            minimap: { enabled: false },
+          }}
         />
       </div>
       <AuthButton
