@@ -3,8 +3,10 @@ import { CreateTestCaseDto } from './dto/create-test-case.dto';
 import { UpdateTestCaseDto } from './dto/update-test-case.dto';
 import { InjectRepository } from '@nestjs/typeorm';
 import { TestCase } from './entities/test-case.entity';
-import { Repository } from 'typeorm';
+import { DeleteResult, Repository } from 'typeorm';
 import { ProblemService } from 'src/problem/problem.service';
+import { ReturnTestCaseDto } from './dto/return-test-case.dto';
+import { UpdateResult } from 'typeorm/browser';
 
 @Injectable()
 export class TestCaseService {
@@ -14,34 +16,48 @@ export class TestCaseService {
     private problemService: ProblemService,
   ) {}
 
-  async create(createTestCaseDto: CreateTestCaseDto) {
+  async create(
+    createTestCaseDto: CreateTestCaseDto,
+  ): Promise<ReturnTestCaseDto> {
     if (
       !(await this.problemService.findOneById(createTestCaseDto.id_problem))
     ) {
-      return new NotFoundException('Problem not found');
+      throw new NotFoundException('Problem not found');
     }
 
     const newTestCase = this.testCaseRepository.create(createTestCaseDto);
-    return this.testCaseRepository.save(newTestCase);
+    return ReturnTestCaseDto.fromEntity(
+      await this.testCaseRepository.save(newTestCase),
+    );
   }
 
-  findAll() {
-    return this.testCaseRepository.find();
+  async findAll(): Promise<ReturnTestCaseDto[]> {
+    return await this.testCaseRepository.find();
   }
 
-  findOneById(id: string) {
-    return this.testCaseRepository.findOneBy({ id });
+  async findOneById(id: string): Promise<ReturnTestCaseDto> {
+    const testCase = await this.testCaseRepository.findOneBy({ id });
+    if (!testCase) {
+      throw new NotFoundException('Test case not found');
+    }
+
+    return ReturnTestCaseDto.fromEntity(testCase);
   }
 
-  findAllByProblemId(id_problem: number) {
-    return this.testCaseRepository.findBy({ id_problem });
+  async findAllByProblemId(id_problem: number): Promise<ReturnTestCaseDto[]> {
+    return (await this.testCaseRepository.findBy({ id_problem })).map(
+      (testCase: TestCase) => ReturnTestCaseDto.fromEntity(testCase),
+    );
   }
 
-  update(id: string, updateTestCaseDto: UpdateTestCaseDto) {
-    return this.testCaseRepository.update(id, updateTestCaseDto);
+  async update(
+    id: string,
+    updateTestCaseDto: UpdateTestCaseDto,
+  ): Promise<UpdateResult> {
+    return await this.testCaseRepository.update(id, updateTestCaseDto);
   }
 
-  remove(id: string) {
-    return this.testCaseRepository.delete(id);
+  async remove(id: string): Promise<DeleteResult> {
+    return await this.testCaseRepository.delete(id);
   }
 }
