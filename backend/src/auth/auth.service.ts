@@ -7,6 +7,7 @@ import { ConfigService } from '@nestjs/config';
 import { JwtService } from '@nestjs/jwt';
 import { InjectRepository } from '@nestjs/typeorm';
 import * as bcrypt from 'bcrypt';
+import { CreateUserDto } from 'src/user/dto/create-user.dto';
 import { ReturnUserDto } from 'src/user/dto/return-user.dto';
 import { User } from 'src/user/entities/user.entity';
 import { Repository } from 'typeorm';
@@ -14,6 +15,7 @@ import { AuthResponseDto } from './dto/auth.dto';
 import { LoginDto } from './dto/login.dto';
 import { RefreshResponseDto } from './dto/refresh-response.dto';
 import { RefreshToken } from './entity/auth.entity';
+import { UserService } from 'src/user/user.service';
 
 @Injectable()
 export class AuthService {
@@ -22,6 +24,7 @@ export class AuthService {
     private refreshTokenRepository: Repository<RefreshToken>,
     @InjectRepository(User)
     private userRepository: Repository<User>,
+    private userService: UserService,
     private jwtService: JwtService,
     private configService: ConfigService,
   ) {}
@@ -129,5 +132,9 @@ export class AuthService {
     );
 
     return new RefreshResponseDto(tokens.access_token, tokens.refresh_token);
+  }
+
+  register(createUserDto: CreateUserDto): Promise<ReturnUserDto> {
+    return this.userService.create(createUserDto);
   }
 }

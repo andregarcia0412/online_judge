@@ -14,6 +14,8 @@ import { AuthResponseDto } from './dto/auth.dto';
 import { AuthGuard } from '@nestjs/passport';
 import type { Request } from 'express';
 import { RefreshResponseDto } from './dto/refresh-response.dto';
+import { ReturnUserDto } from 'src/user/dto/return-user.dto';
+import { CreateUserDto } from 'src/user/dto/create-user.dto';
 
 @Controller('auth')
 export class AuthController {
@@ -34,5 +36,11 @@ export class AuthController {
   refresh(@Req() req: Request & { user: any }) {
     const user = req.user;
     return this.authService.refresh(user['sub'], user['refreshToken']);
+  }
+
+  @Post('/register')
+  @ApiCreatedResponse({ type: ReturnUserDto })
+  register(@Body() createUserDto: CreateUserDto): Promise<ReturnUserDto> {
+    return this.authService.register(createUserDto);
   }
 }
