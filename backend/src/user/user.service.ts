@@ -11,12 +11,16 @@ import { CreateUserDto } from './dto/create-user.dto';
 import { ReturnUserDto } from './dto/return-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
 import { User } from './entities/user.entity';
+import { Submission } from 'src/submission/entities/submission.entity';
+import { ReturnSubmissionDto } from 'src/submission/dto/return-submission.dto';
 
 @Injectable()
 export class UserService {
   constructor(
     @InjectRepository(User)
     private userRepository: Repository<User>,
+    @InjectRepository(Submission)
+    private submissionRepository: Repository<Submission>,
   ) {}
 
   async create(createUserDto: CreateUserDto): Promise<ReturnUserDto> {
@@ -61,6 +65,12 @@ export class UserService {
     }
 
     return ReturnUserDto.fromEntity(user);
+  }
+
+  async findAllSubmissionsById(id: string): Promise<ReturnSubmissionDto[]> {
+    return (await this.submissionRepository.findBy({ id_user: id })).map(
+      (submission: Submission) => ReturnSubmissionDto.fromEntity(submission),
+    );
   }
 
   async update(
