@@ -120,6 +120,7 @@ export const Submission = () => {
                 { value: "java", label: "Java 21" },
                 { value: "node", label: "Javascript" },
                 { value: "python", label: "Python 3" },
+                { value: "ruby", label: "Ruby" },
               ]}
             />
           </ConfigProvider>
