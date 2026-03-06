@@ -11,8 +11,8 @@ import { CreateUserDto } from './dto/create-user.dto';
 import { ReturnUserDto } from './dto/return-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
 import { User } from './entities/user.entity';
-import { Submission } from 'src/submission/entities/submission.entity';
-import { ReturnSubmissionDto } from 'src/submission/dto/return-submission.dto';
+import { Submission } from 'src/modules/submission/entities/submission.entity';
+import { ReturnSubmissionDto } from 'src/modules/submission/dto/return-submission.dto';
 
 @Injectable()
 export class UserService {

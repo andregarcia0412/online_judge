@@ -14,7 +14,7 @@ import { AskRequestDto } from './dto/ask-request.dto';
 import { ApiCreatedResponse } from '@nestjs/swagger';
 import { AnalyzeResponseDto } from './dto/analyze-response.dto';
 import { AskResponseDto } from './dto/ask-response.dto';
-import { JwtAuthGuard } from 'src/auth/jwt-auth.guard';
+import { JwtAuthGuard } from 'src/modules/auth/jwt-auth.guard';
 
 @Controller('llm')
 export class LlmController {

@@ -7,14 +7,14 @@ import { ConfigService } from '@nestjs/config';
 import { JwtService } from '@nestjs/jwt';
 import { InjectRepository } from '@nestjs/typeorm';
 import * as bcrypt from 'bcrypt';
-import { CreateUserDto } from 'src/user/dto/create-user.dto';
-import { ReturnUserDto } from 'src/user/dto/return-user.dto';
-import { User } from 'src/user/entities/user.entity';
+import { CreateUserDto } from 'src/modules/user/dto/create-user.dto';
+import { ReturnUserDto } from 'src/modules/user/dto/return-user.dto';
+import { User } from 'src/modules/user/entities/user.entity';
 import { Repository } from 'typeorm';
 import { AuthResponseDto } from './dto/auth.dto';
 import { LoginDto } from './dto/login.dto';
 import { RefreshResponseDto } from './dto/refresh-response.dto';
-import { UserService } from 'src/user/user.service';
+import { UserService } from 'src/modules/user/user.service';
 
 @Injectable()
 export class AuthService {

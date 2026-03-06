@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import Docker from 'dockerode';
-import { LanguageConfig } from 'src/test-runner/language-config.interface';
+import { LanguageConfig } from 'src/modules/test-runner/language-config.interface';
 import tar from 'tar-stream';
 
 const MAX_OUTPUT = 10000;

@@ -1,24 +1,24 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
-import { CreateSubmissionDto } from './dto/create-submission.dto';
-import { UpdateSubmissionDto } from './dto/update-submission.dto';
-import { UserService } from 'src/user/user.service';
 import { InjectRepository } from '@nestjs/typeorm';
+import { ProblemService } from 'src/modules/problem/problem.service';
+import { TestCaseService } from 'src/modules/test-case/test-case.service';
+import { TestRunnerService } from 'src/modules/test-runner/test-runner.service';
+import { User } from 'src/modules/user/entities/user.entity';
 import { Repository } from 'typeorm';
-import { Submission } from './entities/submission.entity';
-import { ProblemService } from 'src/problem/problem.service';
-import { TestCaseService } from 'src/test-case/test-case.service';
-import { TestRunnerService } from 'src/test-runner/test-runner.service';
+import { DeleteResult, UpdateResult } from 'typeorm/browser';
+import { CreateSubmissionDto } from './dto/create-submission.dto';
 import { ReturnSubmissionDto } from './dto/return-submission.dto';
-import { UpdateResult } from 'typeorm/browser';
-import { DeleteResult } from 'typeorm/browser';
+import { UpdateSubmissionDto } from './dto/update-submission.dto';
+import { Submission } from './entities/submission.entity';
+import { StatusEnum } from './enum/submission-status';
 
 @Injectable()
 export class SubmissionService {
   constructor(
     @InjectRepository(Submission)
     private submissionRepository: Repository<Submission>,
-
-    private userService: UserService,
+    @InjectRepository(User)
+    private userRepository: Repository<User>,
     private problemService: ProblemService,
     private testCaseService: TestCaseService,
     private testRunnerService: TestRunnerService,
@@ -27,9 +27,20 @@ export class SubmissionService {
   async create(
     createSubmissionDto: CreateSubmissionDto,
   ): Promise<ReturnSubmissionDto> {
-    if (!(await this.userService.findOneById(createSubmissionDto.id_user))) {
+    const user = await this.userRepository.findOneBy({
+      id: createSubmissionDto.id_user,
+    });
+
+    if (!user) {
       throw new NotFoundException('User not found');
     }
+
+    const submission = await this.submissionRepository.findOne({
+      where: {
+        id_user: user.id,
+        status: StatusEnum.ACCEPTED,
+      },
+    });
 
     const problem = await this.problemService.findOneById(
       createSubmissionDto.id_problem,

@@ -1,9 +1,10 @@
 import { BadRequestException, Injectable } from '@nestjs/common';
-import { CodeRunnerService } from 'src/code-runner/code-runner.service';
-import { TestCase } from 'src/test-case/entities/test-case.entity';
+import { CodeRunnerService } from 'src/modules/code-runner/code-runner.service';
+import { TestCase } from 'src/modules/test-case/entities/test-case.entity';
 import Docker from 'dockerode';
 import { TestResult } from './dto/test-result.dto';
-import { LANGUAGES } from 'src/code-runner/languages';
+import { LANGUAGES } from 'src/modules/code-runner/languages';
+import { StatusEnum } from '../submission/enum/submission-status';
 
 @Injectable()
 export class TestRunnerService {
@@ -40,18 +41,18 @@ export class TestRunnerService {
       );
 
       if (!result || result.timeMs === undefined) {
-        return new TestResult('runtime_error', 0, 'Execution failed');
+        return new TestResult(StatusEnum.REJECTED, 0, 'Execution failed');
       }
 
       if (testCase.output != result.output) {
         return new TestResult(
-          'rejected',
+          StatusEnum.REJECTED,
           Math.trunc(result.timeMs),
           result.errorOcurred ? result.errOutput : null,
         );
       }
     }
 
-    return new TestResult('accepted', Math.trunc(result.timeMs), null);
+    return new TestResult(StatusEnum.ACCEPTED, Math.trunc(result.timeMs), null);
   }
 }

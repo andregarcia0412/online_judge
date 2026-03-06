@@ -4,7 +4,7 @@ import { UpdateTestCaseDto } from './dto/update-test-case.dto';
 import { InjectRepository } from '@nestjs/typeorm';
 import { TestCase } from './entities/test-case.entity';
 import { DeleteResult, Repository } from 'typeorm';
-import { ProblemService } from 'src/problem/problem.service';
+import { ProblemService } from 'src/modules/problem/problem.service';
 import { ReturnTestCaseDto } from './dto/return-test-case.dto';
 import { UpdateResult } from 'typeorm/browser';
 

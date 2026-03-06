@@ -3,7 +3,7 @@ import { TestCaseService } from './test-case.service';
 import { TestCaseController } from './test-case.controller';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { TestCase } from './entities/test-case.entity';
-import { ProblemModule } from 'src/problem/problem.module';
+import { ProblemModule } from 'src/modules/problem/problem.module';
 
 @Module({
   imports: [TypeOrmModule.forFeature([TestCase]), ProblemModule],

@@ -13,7 +13,7 @@ import { UpdateUserDto } from './dto/update-user.dto';
 import { ApiCreatedResponse } from '@nestjs/swagger';
 import { ReturnUserDto } from './dto/return-user.dto';
 import { DeleteResult, UpdateResult } from 'typeorm';
-import { ReturnSubmissionDto } from 'src/submission/dto/return-submission.dto';
+import { ReturnSubmissionDto } from 'src/modules/submission/dto/return-submission.dto';
 
 @Controller('user')
 export class UserController {

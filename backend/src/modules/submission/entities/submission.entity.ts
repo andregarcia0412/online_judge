@@ -1,4 +1,5 @@
 import { Entity, PrimaryGeneratedColumn, Column } from 'typeorm';
+import { StatusEnum } from '../enum/submission-status';
 
 @Entity('Submission')
 export class Submission {
@@ -17,8 +18,8 @@ export class Submission {
   @Column({ type: 'text' })
   language: string;
 
-  @Column({ type: 'text', default: 'pending' })
-  status: string;
+  @Column({ type: 'enum', default: StatusEnum.PENDING })
+  status: StatusEnum;
 
   @Column({ type: 'integer' })
   execution_time: number;
