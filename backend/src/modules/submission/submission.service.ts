@@ -35,13 +35,6 @@ export class SubmissionService {
       throw new NotFoundException('User not found');
     }
 
-    const submission = await this.submissionRepository.findOne({
-      where: {
-        id_user: user.id,
-        status: StatusEnum.ACCEPTED,
-      },
-    });
-
     const problem = await this.problemService.findOneById(
       createSubmissionDto.id_problem,
     );
@@ -63,6 +56,21 @@ export class SubmissionService {
       createSubmissionDto.text,
       createSubmissionDto.language,
     );
+
+    const submission = await this.submissionRepository.findOne({
+      where: {
+        id_user: user.id,
+        status: StatusEnum.ACCEPTED,
+        language: createSubmissionDto.language,
+      },
+    });
+
+    if (!submission && testResult.status == StatusEnum.ACCEPTED) {
+      user.points = Number(user.points) + Number(problem.points);
+    }
+
+    this.userRepository.save(user);
+
     const newSubmission = this.submissionRepository.create({
       ...createSubmissionDto,
       status: testResult.status,
