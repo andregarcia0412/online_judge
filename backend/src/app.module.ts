@@ -1,6 +1,4 @@
 import { Module } from '@nestjs/common';
-import { AppController } from './app.controller';
-import { AppService } from './app.service';
 import { SubmissionModule } from './modules/submission/submission.module';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { TypeOrmModule } from '@nestjs/typeorm';
@@ -9,6 +7,7 @@ import { ProblemModule } from './modules/problem/problem.module';
 import { TestCaseModule } from './modules/test-case/test-case.module';
 import { AuthModule } from './modules/auth/auth.module';
 import { LlmModule } from './modules/llm/llm.module';
+import { SystemModule } from './modules/system/system.module';
 
 @Module({
   imports: [
@@ -36,8 +35,7 @@ import { LlmModule } from './modules/llm/llm.module';
     TestCaseModule,
     AuthModule,
     LlmModule,
+    SystemModule,
   ],
-  controllers: [AppController],
-  providers: [AppService],
 })
 export class AppModule {}
