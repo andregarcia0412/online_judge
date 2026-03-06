@@ -8,11 +8,14 @@ import { useAuthContext } from "../../contexts/AuthContext";
 import type { Problem } from "../../data/dto/problem.dto";
 import "./style.css";
 import { HomeHeader } from "../../components/home-header/HomeHeader";
+import { LanguageConstants } from "../../data/constants/language.constants";
 
 export const Submission = () => {
   const { userData } = useAuthContext();
-  const [code, setCode] = React.useState<string>("//code here...");
-  const [language, setLanguage] = React.useState<string | null>(null);
+  const [language, setLanguage] = React.useState<string>("java");
+  const [code, setCode] = React.useState<string>(
+    LanguageConstants[language].text,
+  );
   const [loading, setLoading] = React.useState<boolean>(false);
   const idProblem = 1;
   const [problem, setProblem] = React.useState<Problem>();
@@ -58,6 +61,13 @@ export const Submission = () => {
     } finally {
       setLoading(false);
     }
+  };
+
+  const handleLanguageChange = (value: string) => {
+    if (code === LanguageConstants[language].text) {
+      setCode(LanguageConstants[value].text);
+    }
+    setLanguage(value);
   };
 
   return (
@@ -109,25 +119,28 @@ export const Submission = () => {
           </div>
         </div>
         <div className="submission-container-sides">
-          <ConfigProvider theme={{ algorithm: theme.darkAlgorithm }}>
-            <Select
-              style={{ width: "100%" }}
-              placeholder="Choose a language"
-              value={language}
-              onChange={(value) => setLanguage(value)}
-              options={[
-                { value: "c", label: "C99" },
-                { value: "java", label: "Java 21" },
-                { value: "node", label: "Javascript" },
-                { value: "python", label: "Python 3" },
-                { value: "ruby", label: "Ruby" },
-              ]}
-            />
-          </ConfigProvider>
+          <div className="submission-card" style={{ height: "auto" }}>
+            <p>Language</p>
+            <ConfigProvider theme={{ algorithm: theme.darkAlgorithm }}>
+              <Select
+                style={{ width: "100%" }}
+                placeholder="Choose a language"
+                value={language}
+                onChange={(value) => handleLanguageChange(value)}
+                options={[
+                  { value: "c", label: "C99" },
+                  { value: "java", label: "Java 21" },
+                  { value: "node", label: "Javascript" },
+                  { value: "python", label: "Python 3" },
+                  { value: "ruby", label: "Ruby" },
+                ]}
+              />
+            </ConfigProvider>
+          </div>
           <div className="submission-editor-wrapper">
             <Editor
               height="100%"
-              defaultLanguage="plaintext"
+              language={LanguageConstants[language].languageName}
               value={code}
               onChange={(value) => setCode(value ?? "")}
               theme="vs-dark"
