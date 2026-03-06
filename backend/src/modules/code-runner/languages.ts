@@ -32,4 +32,12 @@ export const LANGUAGES: Record<string, LanguageConfig> = {
     runCommand: 'javac Main.java && java Main',
     timeoutMs: 4000,
   },
+
+  ruby: {
+    name: 'ruby',
+    imageName: 'ruby:3.3-alpine',
+    fileName: 'main.ruby',
+    runCommand: 'ruby main.ruby',
+    timeoutMs: 2000,
+  },
 };
