@@ -7,8 +7,6 @@ import Docker from 'dockerode';
 export class LanguageImageBootstrapService implements OnModuleInit {
   constructor(private readonly codeRunnerService: CodeRunnerService) {}
 
-  private readonly logger = new Logger(LanguageImageBootstrapService.name);
-
   onModuleInit() {
     Object.entries(LANGUAGES).forEach(async ([key, lang]) => {
       const docker = new Docker();
