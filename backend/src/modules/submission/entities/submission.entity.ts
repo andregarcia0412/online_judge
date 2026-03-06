@@ -18,7 +18,7 @@ export class Submission {
   @Column({ type: 'text' })
   language: string;
 
-  @Column({ type: 'enum', default: StatusEnum.PENDING })
+  @Column({ type: 'enum', enum: StatusEnum, default: StatusEnum.PENDING })
   status: StatusEnum;
 
   @Column({ type: 'integer' })

@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, Logger } from '@nestjs/common';
 import Docker from 'dockerode';
 import { LanguageConfig } from 'src/modules/test-runner/language-config.interface';
 import tar from 'tar-stream';
@@ -15,8 +15,10 @@ export class CodeRunnerService {
     return pack;
   }
 
+  private readonly logger = new Logger(CodeRunnerService.name);
+
   async downloadImage(imageName: string, docker: Docker) {
-    console.log(`Verificando/Baixando a imagem ${imageName}`);
+    this.logger.log(`Verifying/Downloading docker image ${imageName}`);
 
     try {
       await new Promise((resolve, reject) => {
@@ -36,11 +38,11 @@ export class CodeRunnerService {
         });
       });
     } catch (e) {
-      console.log(`Erro ao baixar imagem: ${e}`);
+      this.logger.log(`Error while downloading docker image: ${e}`);
       return;
     }
 
-    console.log('Imagem baixada');
+    this.logger.log('Docker image is downloaded');
   }
 
   async executeCode(
@@ -88,7 +90,7 @@ export class CodeRunnerService {
       try {
         await container.kill();
       } catch (e) {
-        console.error(
+        this.logger.error(
           'Error killing container',
           e instanceof Error ? e.message : 'Unknown Error',
         );
@@ -118,7 +120,7 @@ export class CodeRunnerService {
             try {
               await container.kill();
             } catch (e) {
-              console.error(
+              this.logger.error(
                 'Error killing container',
                 e instanceof Error ? e.message : 'Unknown Error',
               );
@@ -132,7 +134,7 @@ export class CodeRunnerService {
             try {
               await container.kill();
             } catch (e) {
-              console.error(
+              this.logger.error(
                 'Error killing container',
                 e instanceof Error ? e.message : 'Unknown Error',
               );
