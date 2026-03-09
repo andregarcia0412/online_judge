@@ -26,6 +26,15 @@ export const LANGUAGES: Record<string, LanguageConfig> = {
     timeoutMs: 2000,
   },
 
+  cpp: {
+    name: 'cpp',
+    imageName: 'gcc:13',
+    fileName: 'main.cpp',
+    compileCommand: 'g++ main.cpp -O2 -std=c++17 -o main',
+    runCommand: './main',
+    timeoutMs: 2000,
+  },
+
   java: {
     name: 'java',
     imageName: 'eclipse-temurin:21',
@@ -57,6 +66,45 @@ export const LANGUAGES: Record<string, LanguageConfig> = {
     imageName: 'nickblah/lua',
     fileName: 'main.lua',
     runCommand: 'lua main.lua',
+    timeoutMs: 2000,
+  },
+  clojure: {
+    name: 'clojure',
+    imageName: 'babashka/babashka',
+    fileName: 'main.clj',
+    runCommand: 'bb main.clj',
+    timeoutMs: 2000,
+  },
+  go: {
+    name: 'go',
+    imageName: 'golang:1.22-alpine',
+    fileName: 'main.go',
+    compileCommand: 'go build -o main main.go',
+    runCommand: './main',
+    timeoutMs: 2000,
+  },
+  rust: {
+    name: 'rust',
+    imageName: 'rust:1.76',
+    fileName: 'main.rs',
+    compileCommand: 'rustc main.rs -O -o main',
+    runCommand: './main',
+    timeoutMs: 2000,
+  },
+  csharp: {
+    name: 'csharp',
+    imageName: 'mcr.microsoft.com/dotnet/sdk:8.0',
+    fileName: 'Program.cs',
+    compileCommand:
+      'dotnet new console -n app && mv Program.cs app/Program.cs && cd app && dotnet build -c Release',
+    runCommand: 'cd app/bin/Release/net8.0 && dotnet app.dll',
+    timeoutMs: 2000,
+  },
+  php: {
+    name: 'php',
+    imageName: 'php:8.3-cli',
+    fileName: 'main.php',
+    runCommand: 'php main.php',
     timeoutMs: 2000,
   },
 };
