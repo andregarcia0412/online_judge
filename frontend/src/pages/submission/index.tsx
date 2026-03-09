@@ -4,11 +4,11 @@ import React from "react";
 import { problemService } from "../../api/services/problem.service";
 import { submissionService } from "../../api/services/submission.service";
 import AuthButton from "../../components/auth-button/AuthButton";
+import { HomeHeader } from "../../components/home-header/HomeHeader";
 import { useAuthContext } from "../../contexts/AuthContext";
+import { LanguageConstants } from "../../data/constants/language.constants";
 import type { Problem } from "../../data/dto/problem.dto";
 import "./style.css";
-import { HomeHeader } from "../../components/home-header/HomeHeader";
-import { LanguageConstants } from "../../data/constants/language.constants";
 
 export const Submission = () => {
   const { userData } = useAuthContext();
@@ -17,7 +17,7 @@ export const Submission = () => {
     LanguageConstants[language].text,
   );
   const [loading, setLoading] = React.useState<boolean>(false);
-  const idProblem = 1;
+  const idProblem = 2;
   const [problem, setProblem] = React.useState<Problem>();
 
   if (!userData) {
@@ -128,11 +128,34 @@ export const Submission = () => {
                 value={language}
                 onChange={(value) => handleLanguageChange(value)}
                 options={[
-                  { value: "c", label: "C99" },
-                  { value: "java", label: "Java 21" },
-                  { value: "node", label: "Javascript" },
-                  { value: "python", label: "Python 3" },
-                  { value: "ruby", label: "Ruby" },
+                  {
+                    value: LanguageConstants["c"].languageName,
+                    label: LanguageConstants["c"].label,
+                  },
+                  {
+                    value: LanguageConstants["java"].languageName,
+                    label: LanguageConstants["java"].label,
+                  },
+                  {
+                    value: LanguageConstants["javascript"].languageName,
+                    label: LanguageConstants["javascript"].label,
+                  },
+                  {
+                    value: LanguageConstants["ruby"].languageName,
+                    label: LanguageConstants["ruby"].label,
+                  },
+                  {
+                    value: LanguageConstants["python"].languageName,
+                    label: LanguageConstants["python"].label,
+                  },
+                  {
+                    value: LanguageConstants["kotlin"].languageName,
+                    label: LanguageConstants["kotlin"].label,
+                  },
+                  {
+                    value: LanguageConstants["lua"].languageName,
+                    label: LanguageConstants["lua"].label,
+                  },
                 ]}
               />
             </ConfigProvider>
