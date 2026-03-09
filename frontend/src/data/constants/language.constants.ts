@@ -40,4 +40,24 @@ export const LanguageConstants: Record<string, LanguageConstantsType> = {
     languageName: "lua",
     label: "Lua",
   },
+  cpp: {
+    text: "// Code your solution here",
+    languageName: "cpp",
+    label: "C++",
+  },
+  clojure: {
+    text: ";; Code your solution here",
+    languageName: "clojure",
+    label: "Clojure",
+  },
+  rust: {
+    text: "// Code your solution here",
+    languageName: "rust",
+    label: "Rust",
+  },
+  php: {
+    text: "// Code your solution here",
+    languageName: "php",
+    label: "PHP",
+  },
 };

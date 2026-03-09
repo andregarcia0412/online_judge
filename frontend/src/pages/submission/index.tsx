@@ -64,7 +64,7 @@ export const Submission = () => {
   };
 
   const handleLanguageChange = (value: string) => {
-    if (code === LanguageConstants[language].text) {
+    if (code === LanguageConstants[language].text || code === "") {
       setCode(LanguageConstants[value].text);
     }
     setLanguage(value);
@@ -133,6 +133,10 @@ export const Submission = () => {
                     label: LanguageConstants["c"].label,
                   },
                   {
+                    value: LanguageConstants["cpp"].languageName,
+                    label: LanguageConstants["cpp"].label,
+                  },
+                  {
                     value: LanguageConstants["java"].languageName,
                     label: LanguageConstants["java"].label,
                   },
@@ -155,6 +159,14 @@ export const Submission = () => {
                   {
                     value: LanguageConstants["lua"].languageName,
                     label: LanguageConstants["lua"].label,
+                  },
+                  {
+                    value: LanguageConstants["rust"].languageName,
+                    label: LanguageConstants["rust"].label,
+                  },
+                  {
+                    value: LanguageConstants["php"].languageName,
+                    label: LanguageConstants["php"].label,
                   },
                 ]}
               />
