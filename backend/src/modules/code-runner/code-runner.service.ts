@@ -45,6 +45,99 @@ export class CodeRunnerService {
     this.logger.log('Docker image is downloaded');
   }
 
+  private async runDockerExec(
+    container: Docker.Container,
+    cmd: string,
+    timeoutMs: number,
+    input?: string,
+  ) {
+    const exec = await container.exec({
+      Cmd: ['sh', '-c', cmd],
+      AttachStdin: true,
+      AttachStdout: true,
+      AttachStderr: true,
+      Tty: false,
+    });
+
+    const stream = (await exec.start({
+      detach: false,
+      hijack: true,
+      Tty: false,
+      stdin: true,
+    })) as any;
+
+    let stdout = '';
+    let stderr = '';
+    let timedOut = false;
+
+    return new Promise<{
+      stdout: string;
+      stderr: string;
+      exitCode: number;
+      timedOut: boolean;
+    }>((resolve, reject) => {
+      let finished = false;
+
+      const timeout = setTimeout(() => {
+        if (finished) {
+          return;
+        }
+
+        finished = true;
+        timedOut = true;
+
+        resolve({ stdout, stderr, exitCode: -1, timedOut: true });
+      }, timeoutMs);
+
+      stream.on('data', (chunk: Buffer) => {
+        const streamType = chunk[0];
+        const cleaned = chunk.slice(8).toString('utf8');
+
+        if (streamType == 2) {
+          stderr += cleaned;
+          if (stderr.length > MAX_OUTPUT) {
+            stderr = stderr.slice(0, MAX_OUTPUT);
+          }
+        } else {
+          stdout += cleaned;
+          if (stdout.length > MAX_OUTPUT) {
+            stdout = stdout.slice(0, MAX_OUTPUT);
+          }
+        }
+      });
+
+      stream.on('end', async () => {
+        if (finished) {
+          return;
+        }
+
+        finished = true;
+        clearTimeout(timeout);
+        const inspectData = await exec.inspect();
+        resolve({
+          stdout,
+          stderr,
+          exitCode: inspectData.ExitCode || 0,
+          timedOut: false,
+        });
+      });
+
+      stream.on('error', (err: any) => {
+        if (finished) {
+          return;
+        }
+        finished = true;
+        clearTimeout(timeout);
+        reject(err);
+      });
+
+      if (input) {
+        stream.write(input);
+        stream.end();
+      }
+    });
+  }
+
   async executeCode(
     userCode: string,
     docker: Docker,
@@ -53,10 +146,9 @@ export class CodeRunnerService {
   ) {
     const container = await docker.createContainer({
       Image: language.imageName,
-      Cmd: ['sh', '-c', language.runCommand],
+      Cmd: ['tail', '-f', '/dev/null'],
       Tty: false,
       WorkingDir: '/app',
-
       HostConfig: {
         Memory: 128 * 1024 * 1024,
         NanoCpus: 1000000000,
@@ -66,27 +158,65 @@ export class CodeRunnerService {
       },
     });
 
-    const codeTarStream = this.createSourceCodePack(
-      language.fileName,
-      userCode,
-    );
+    try {
+      const codeTarStream = this.createSourceCodePack(
+        language.fileName,
+        userCode,
+      );
 
-    await container.putArchive(codeTarStream, {
-      path: '/app',
-    });
+      await container.putArchive(codeTarStream, {
+        path: '/app',
+      });
 
-    await container.start();
-    const start = performance.now();
+      await container.start();
 
-    let finished = false;
-    let timedOut = false;
+      if (language.compileCommand) {
+        const compileResult = await this.runDockerExec(
+          container,
+          language.compileCommand,
+          15000,
+        );
 
-    const timeout = setTimeout(async () => {
-      if (finished) {
-        return;
+        if (compileResult.exitCode != 0 || compileResult.timedOut) {
+          return {
+            output: '',
+            errOutput:
+              compileResult.stderr || 'Compilation time limit exceeded',
+            timeMs: 0,
+            errorOcurred: true,
+          };
+        }
       }
 
-      timedOut = true;
+      const start = performance.now();
+
+      const execResult = await this.runDockerExec(
+        container,
+        language.runCommand,
+        language.timeoutMs,
+        input,
+      );
+
+      const end = performance.now();
+
+      const executionTime = end - start;
+
+      if (execResult.timedOut) {
+        return {
+          output: execResult.stdout,
+          errOutput: 'Time limit exceeded',
+          timeMs: executionTime,
+          errorOcurred: true,
+        };
+      }
+
+      return {
+        output: execResult.stdout,
+        errOutput: execResult.stderr,
+        timeMs: executionTime,
+        errorOcurred: execResult.exitCode !== 0,
+      };
+    } finally {
       try {
         await container.kill();
       } catch (e) {
@@ -95,82 +225,6 @@ export class CodeRunnerService {
           e instanceof Error ? e.message : 'Unknown Error',
         );
       }
-    }, language.timeoutMs);
-
-    const stream = await container.logs({
-      follow: true,
-      stdout: true,
-      stderr: true,
-    });
-
-    let stdout = '';
-    let stderr = '';
-    let errorOcurred = false;
-    await new Promise((resolve, reject) => {
-      stream.on('data', async (chunk) => {
-        const streamType = chunk[0];
-        const cleaned = chunk.slice(8).toString('utf8');
-
-        if (streamType == 2) {
-          stderr += cleaned;
-          errorOcurred = true;
-
-          if (stderr.length > MAX_OUTPUT) {
-            stderr = stderr.slice(0, MAX_OUTPUT);
-            try {
-              await container.kill();
-            } catch (e) {
-              this.logger.error(
-                'Error killing container',
-                e instanceof Error ? e.message : 'Unknown Error',
-              );
-            }
-          }
-        } else {
-          stdout += cleaned;
-
-          if (stdout.length > MAX_OUTPUT) {
-            stdout = stdout.slice(0, MAX_OUTPUT);
-            try {
-              await container.kill();
-            } catch (e) {
-              this.logger.error(
-                'Error killing container',
-                e instanceof Error ? e.message : 'Unknown Error',
-              );
-            }
-          }
-        }
-      });
-
-      stream.on('end', () => {
-        finished = true;
-        clearTimeout(timeout);
-        resolve(stdout);
-      });
-
-      stream.on('err', (err) => {
-        reject(err);
-      });
-    });
-
-    const end = performance.now();
-    const executionTime = end - start;
-
-    if (timedOut) {
-      return {
-        output: stdout,
-        errOutput: 'Exceeded time limit',
-        timeMs: language.timeoutMs,
-        errorOcurred: true,
-      };
     }
-
-    return {
-      output: stdout,
-      errOutput: stderr,
-      timeMs: executionTime,
-      errorOcurred: errorOcurred,
-    };
   }
 }

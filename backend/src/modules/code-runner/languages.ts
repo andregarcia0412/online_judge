@@ -9,8 +9,8 @@ export const LANGUAGES: Record<string, LanguageConfig> = {
     timeoutMs: 2000,
   },
 
-  node: {
-    name: 'node',
+  javascript: {
+    name: 'javascript',
     imageName: 'node:20-alpine',
     fileName: 'main.js',
     runCommand: 'node main.js',
@@ -21,16 +21,18 @@ export const LANGUAGES: Record<string, LanguageConfig> = {
     name: 'c',
     imageName: 'gcc:13',
     fileName: 'main.c',
-    runCommand: 'gcc main.c -O2 -o main && ./main',
-    timeoutMs: 4000,
+    compileCommand: 'gcc main.c -O2 -o main',
+    runCommand: './main',
+    timeoutMs: 2000,
   },
 
   java: {
     name: 'java',
     imageName: 'eclipse-temurin:21',
     fileName: 'Main.java',
-    runCommand: 'javac Main.java && java Main',
-    timeoutMs: 4000,
+    compileCommand: 'javac Main.java',
+    runCommand: 'java Main',
+    timeoutMs: 2000,
   },
 
   ruby: {
@@ -38,6 +40,23 @@ export const LANGUAGES: Record<string, LanguageConfig> = {
     imageName: 'ruby:3.3-alpine',
     fileName: 'main.ruby',
     runCommand: 'ruby main.ruby',
+    timeoutMs: 2000,
+  },
+
+  kotlin: {
+    name: 'kotlin',
+    imageName: 'zenika/kotlin',
+    fileName: 'Main.kt',
+    compileCommand: 'kotlinc Main.kt -include-runtime -d Main.jar',
+    runCommand: 'java -jar Main.jar',
+    timeoutMs: 2000,
+  },
+
+  lua: {
+    name: 'lua',
+    imageName: 'nickblah/lua',
+    fileName: 'main.lua',
+    runCommand: 'lua main.lua',
     timeoutMs: 2000,
   },
 };
