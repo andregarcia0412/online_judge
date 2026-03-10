@@ -8,6 +8,7 @@ import { HomeHeader } from "../../components/home-header/HomeHeader";
 import { useAuthContext } from "../../contexts/AuthContext";
 import { LanguageConstants } from "../../data/constants/language.constants";
 import type { Problem } from "../../data/dto/problem.dto";
+import { celebrate } from "../../utils/celebrate";
 import "./style.css";
 
 export const Submission = () => {
@@ -55,6 +56,9 @@ export const Submission = () => {
         language: language,
         text: code,
       });
+      if (response.status == "accepted") {
+        celebrate();
+      }
       console.log(response);
     } catch (e) {
       throw e;
@@ -127,14 +131,12 @@ export const Submission = () => {
                 placeholder="Choose a language"
                 value={language}
                 onChange={(value) => handleLanguageChange(value)}
-                options={Object.entries(LanguageConstants).map(
-                  ([key, lang]) => {
-                    return {
-                      value: lang.languageName,
-                      label: lang.label,
-                    };
-                  },
-                )}
+                options={Object.entries(LanguageConstants).map(([_, lang]) => {
+                  return {
+                    value: lang.languageName,
+                    label: lang.label,
+                  };
+                })}
               />
             </ConfigProvider>
           </div>
