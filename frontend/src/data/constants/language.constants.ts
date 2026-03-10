@@ -11,17 +11,22 @@ export const LanguageConstants: Record<string, LanguageConstantsType> = {
     label: "Python 3",
   },
   javascript: {
-    text: "// Code your solution here",
+    text: "const input = require('fs').readFileSync('/dev/stdin', 'utf-8');\nconst lines = input.split(' ');\n\n// Code your solution here\n",
     languageName: "javascript",
     label: "JavaScript",
   },
+  typescript: {
+    text: "import * as fs from 'fs';\nconst input: string = fs.readFileSync('/dev/stdin', 'utf-8');\nconst lines: string[] = input.split(' ');\n\n// Code your solution here\n",
+    languageName: "typescript",
+    label: "TypeScript",
+  },
   java: {
-    text: "// Code your solution here",
+    text: "class Main{\n  public static void main(String[] args){\n\n    //Code your solution here\n\n  }\n}",
     languageName: "java",
     label: "Java 21",
   },
   c: {
-    text: "// Code your solution here",
+    text: "#include <stdio.h>\n\nint main(){\n\n  // Code your solution here\n\n return 0;\n}",
     languageName: "c",
     label: "C99",
   },
@@ -31,7 +36,7 @@ export const LanguageConstants: Record<string, LanguageConstantsType> = {
     label: "Ruby",
   },
   kotlin: {
-    text: "// Code your solution here",
+    text: "import java.util.*\n\nfun main(args: Array<String>) {\n\n  // Code your solution here\n\n}",
     languageName: "kotlin",
     label: "Kotlin",
   },
@@ -41,7 +46,7 @@ export const LanguageConstants: Record<string, LanguageConstantsType> = {
     label: "Lua",
   },
   cpp: {
-    text: "// Code your solution here",
+    text: "#include <iostream>\n\nint main(){\n\n  // Code your solution here\n\n  return 0;\n}",
     languageName: "cpp",
     label: "C++",
   },
