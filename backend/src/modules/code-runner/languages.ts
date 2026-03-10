@@ -11,7 +11,7 @@ export const LANGUAGES: Record<string, LanguageConfig> = {
 
   javascript: {
     name: 'javascript',
-    imageName: 'node:20-alpine',
+    imageName: 'node:24-alpine',
     fileName: 'main.js',
     runCommand: 'node main.js',
     timeoutMs: 2000,
@@ -105,6 +105,13 @@ export const LANGUAGES: Record<string, LanguageConfig> = {
     imageName: 'php:8.3-cli',
     fileName: 'main.php',
     runCommand: 'php main.php',
+    timeoutMs: 2000,
+  },
+  typescript: {
+    name: 'typescript',
+    imageName: 'node:24-alpine',
+    fileName: 'main.ts',
+    runCommand: 'node main.ts',
     timeoutMs: 2000,
   },
 };
