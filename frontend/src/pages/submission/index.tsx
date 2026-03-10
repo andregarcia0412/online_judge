@@ -18,7 +18,7 @@ export const Submission = () => {
     LanguageConstants[language].text,
   );
   const [loading, setLoading] = React.useState<boolean>(false);
-  const idProblem = 1;
+  const idProblem = 2;
   const [problem, setProblem] = React.useState<Problem>();
 
   if (!userData) {
@@ -99,24 +99,30 @@ export const Submission = () => {
             <div className="submission-card-row">
               <h3>Input</h3>
               <p>
-                {problem.input_example ||
+                {problem.input_description ||
                   "There are no inputs for this problem."}
               </p>
             </div>
             <hr color="#30363d" style={{ width: "100%" }} />
             <div className="submission-card-row">
               <h3>Output</h3>
-              <p>{problem.output_example}</p>
+              <p>{problem.output_description}</p>
             </div>
             <hr color="#30363d" style={{ width: "100%" }} />
             <div className="submission-card-row">
               <h3>Examples</h3>
-              <div>
-                <div>
+              <div className="submission-examples">
+                <div className="submission-example">
                   <p>Input Example</p>
+                  <div className="submission-example-box">
+                    <p>{problem.input_example}</p>
+                  </div>
                 </div>
-                <div>
+                <div className="submission-example">
                   <p>Output Example</p>
+                  <div className="submission-example-box">
+                    <p>{problem.output_example}</p>
+                  </div>
                 </div>
               </div>
             </div>
@@ -150,6 +156,7 @@ export const Submission = () => {
               options={{
                 minimap: { enabled: false },
                 fontFamily: "JetBrains Mono",
+                automaticLayout: true,
               }}
             />
           </div>
