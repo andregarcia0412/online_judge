@@ -17,7 +17,7 @@ export const Submission = () => {
     LanguageConstants[language].text,
   );
   const [loading, setLoading] = React.useState<boolean>(false);
-  const idProblem = 2;
+  const idProblem = 1;
   const [problem, setProblem] = React.useState<Problem>();
 
   if (!userData) {
@@ -127,48 +127,14 @@ export const Submission = () => {
                 placeholder="Choose a language"
                 value={language}
                 onChange={(value) => handleLanguageChange(value)}
-                options={[
-                  {
-                    value: LanguageConstants["c"].languageName,
-                    label: LanguageConstants["c"].label,
+                options={Object.entries(LanguageConstants).map(
+                  ([key, lang]) => {
+                    return {
+                      value: lang.languageName,
+                      label: lang.label,
+                    };
                   },
-                  {
-                    value: LanguageConstants["cpp"].languageName,
-                    label: LanguageConstants["cpp"].label,
-                  },
-                  {
-                    value: LanguageConstants["java"].languageName,
-                    label: LanguageConstants["java"].label,
-                  },
-                  {
-                    value: LanguageConstants["javascript"].languageName,
-                    label: LanguageConstants["javascript"].label,
-                  },
-                  {
-                    value: LanguageConstants["ruby"].languageName,
-                    label: LanguageConstants["ruby"].label,
-                  },
-                  {
-                    value: LanguageConstants["python"].languageName,
-                    label: LanguageConstants["python"].label,
-                  },
-                  {
-                    value: LanguageConstants["kotlin"].languageName,
-                    label: LanguageConstants["kotlin"].label,
-                  },
-                  {
-                    value: LanguageConstants["lua"].languageName,
-                    label: LanguageConstants["lua"].label,
-                  },
-                  {
-                    value: LanguageConstants["rust"].languageName,
-                    label: LanguageConstants["rust"].label,
-                  },
-                  {
-                    value: LanguageConstants["php"].languageName,
-                    label: LanguageConstants["php"].label,
-                  },
-                ]}
+                )}
               />
             </ConfigProvider>
           </div>
