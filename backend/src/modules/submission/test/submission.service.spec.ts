@@ -1,12 +1,11 @@
 import request from 'supertest';
 
 const API_URL = 'http://localhost:3000';
-const N_EXECUTIONS = 30;
+const N_EXECUTIONS = 100;
 const CODE =
-  'import java.util.*;class Main{public static void main(String[] args){Scanner sc = new Scanner(System.in);int a = sc.nextInt();int b = sc.nextInt();System.out.println(a+b);}}';
-const LANGUAGE = 'java';
-const TIMEOUT = 30000;
-
+  "const input = require('fs').readFileSync('/dev/stdin', 'utf-8');const lines = input.split(' ');var a = parseInt(lines[0]);var b = parseInt(lines[1]);console.log(a+b);";
+const LANGUAGE = 'javascript';
+const TIMEOUT = 3000000;
 describe('Load and Concurrency Testing: POST /submission', () => {
   jest.setTimeout(TIMEOUT);
 
@@ -34,8 +33,11 @@ describe('Load and Concurrency Testing: POST /submission', () => {
 
     const duration = Date.now() - startTime;
     console.log(`✅ All ${N_EXECUTIONS} executions finished in ${duration}ms`);
-
     responses.forEach((response, index) => {
+      console.log(response.body.status);
+      if (response.body.status !== 'accepted') {
+        console.log(`❌ Rejected #${index}. Error: ${response.body.error}`);
+      }
       expect(response.status).toBeGreaterThanOrEqual(200);
       expect(response.status).toBeLessThan(300);
 
