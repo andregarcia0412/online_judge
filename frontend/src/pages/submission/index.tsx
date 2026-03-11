@@ -82,11 +82,16 @@ export const Submission = () => {
       />
       <div className="submission-container">
         <div className="submission-container-sides">
-          <div className="submission-card">
+          <div className="submission-card title">
             <div className="submission-card-row">
-              <p>BEE 1000</p>
-              <h2>Hello World!</h2>
-              <p>100</p>
+              <h2>
+                {problem.number}. {problem.title}
+              </h2>
+            </div>
+
+            <div className="submission-card-points">
+              <p>Points</p>
+              <p className="submission-card-points-label">{problem.points}</p>
             </div>
           </div>
 

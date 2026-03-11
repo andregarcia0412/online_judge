@@ -43,16 +43,22 @@
 }
 
 .submission-card {
+  position: relative;
   display: flex;
   flex-direction: column;
   width: 100%;
-  height: 100%;
   background: #161b22;
   border: 1px solid #30363d;
   color: #fff;
   padding: 16px 32px;
   border-radius: 12px;
   gap: 16px;
+}
+
+.submission-card.title {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
 }
 
 .submission-card-row {
@@ -109,4 +115,24 @@
   & p {
     color: #4ade80;
   }
+}
+
+.submission-card-points {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  gap: 4px;
+
+  & p {
+    font-size: 20px;
+    color: #fff;
+  }
+}
+
+.submission-card-points-label {
+  background: linear-gradient(to right, #7d8bff, #3b82f6);
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
 }
