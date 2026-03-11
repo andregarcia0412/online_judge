@@ -8,14 +8,16 @@ import { StatusEnum } from '../submission/enum/submission-status';
 
 @Injectable()
 export class TestRunnerService {
-  constructor(private codeRunnerService: CodeRunnerService) {}
+  private docker: Docker;
+  constructor(private codeRunnerService: CodeRunnerService) {
+    this.docker = new Docker();
+  }
 
   async runTests(
     testCases: TestCase[],
     userCode: string,
     selectedLanguage: string,
   ): Promise<TestResult> {
-    const docker = new Docker();
     const language = LANGUAGES[selectedLanguage];
 
     if (!language) {
@@ -24,7 +26,10 @@ export class TestRunnerService {
 
     let result: any;
 
-    await this.codeRunnerService.downloadImage(language.imageName, docker);
+    await this.codeRunnerService.ensureImageExists(
+      language.imageName,
+      this.docker,
+    );
 
     if (!testCases || testCases.length === 0) {
       throw new BadRequestException('No test cases found for this problem');
@@ -35,7 +40,7 @@ export class TestRunnerService {
 
       result = await this.codeRunnerService.executeCode(
         userCode,
-        docker,
+        this.docker,
         language,
         testCase.input,
       );

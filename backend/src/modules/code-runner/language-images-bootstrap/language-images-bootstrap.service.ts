@@ -10,7 +10,7 @@ export class LanguageImageBootstrapService implements OnModuleInit {
   onModuleInit() {
     Object.entries(LANGUAGES).forEach(async ([key, lang]) => {
       const docker = new Docker();
-      await this.codeRunnerService.downloadImage(lang.imageName, docker);
+      await this.codeRunnerService.ensureImageExists(lang.imageName, docker);
     });
   }
 }

@@ -1,4 +1,4 @@
-import { Injectable, Logger } from '@nestjs/common';
+import { BadRequestException, Injectable, Logger } from '@nestjs/common';
 import Docker from 'dockerode';
 import { LanguageConfig } from 'src/modules/test-runner/language-config.interface';
 import tar from 'tar-stream';
@@ -16,9 +16,21 @@ export class CodeRunnerService {
   }
 
   private readonly logger = new Logger(CodeRunnerService.name);
+  private verifiedImages = new Set<string>();
 
-  async downloadImage(imageName: string, docker: Docker) {
-    this.logger.log(`Verifying/Downloading docker image ${imageName}`);
+  async ensureImageExists(imageName: string, docker: Docker) {
+    if (this.verifiedImages.has(imageName)) {
+      return;
+    }
+
+    try {
+      await docker.getImage(imageName).inspect();
+      this.verifiedImages.add(imageName);
+      this.logger.log(`Image ${imageName} is already available locally`);
+      return;
+    } catch (e) {
+      this.logger.log(`Image ${imageName} not found. Starting download`);
+    }
 
     try {
       await new Promise((resolve, reject) => {
@@ -27,22 +39,25 @@ export class CodeRunnerService {
             return reject(err);
           }
 
-          docker.modem.followProgress(stream, onFinished);
-
-          function onFinished(err, output) {
+          const onFinished = (err, output) => {
             if (err) {
               return reject(err);
             }
             resolve(output);
-          }
+          };
+
+          docker.modem.followProgress(stream, onFinished);
         });
       });
-    } catch (e) {
-      this.logger.log(`Error while downloading docker image: ${e}`);
-      return;
-    }
 
-    this.logger.log('Docker image is downloaded');
+      this.verifiedImages.add(imageName);
+      this.logger.log(`Docker image ${imageName} downloaded successfully`);
+    } catch (e) {
+      this.logger.error(`Error downloading image ${imageName}: ${e}`);
+      throw new BadRequestException(
+        'It was not possible to prepare ambient for this language',
+      );
+    }
   }
 
   private async runDockerExec(
