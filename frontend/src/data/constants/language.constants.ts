@@ -11,12 +11,12 @@ export const LanguageConstants: Record<string, LanguageConstantsType> = {
     label: "Python 3",
   },
   javascript: {
-    text: "const input = require('fs').readFileSync('/dev/stdin', 'utf-8');\nconst lines = input.split(' ');\n\n// Code your solution here\n",
+    text: "const input = require('fs').readFileSync('/dev/stdin', 'utf-8');\nconst lines = input.split('\\n');\n\n// Code your solution here\n",
     languageName: "javascript",
     label: "JavaScript",
   },
   typescript: {
-    text: "import * as fs from 'fs';\nconst input: string = fs.readFileSync('/dev/stdin', 'utf-8');\nconst lines: string[] = input.split(' ');\n\n// Code your solution here\n",
+    text: "import * as fs from 'fs';\nconst input: string = fs.readFileSync('/dev/stdin', 'utf-8');\nconst lines: string[] = input.split('\\n');\n\n// Code your solution here\n",
     languageName: "typescript",
     label: "TypeScript",
   },

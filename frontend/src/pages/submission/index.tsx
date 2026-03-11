@@ -18,7 +18,7 @@ export const Submission = () => {
     LanguageConstants[language].text,
   );
   const [loading, setLoading] = React.useState<boolean>(false);
-  const idProblem = 2;
+  const idProblem = 1;
   const [problem, setProblem] = React.useState<Problem>();
 
   if (!userData) {
@@ -163,8 +163,8 @@ export const Submission = () => {
           <AuthButton
             onClick={handleSubmit}
             loading={loading}
-            text="Enviar"
-            background="blue"
+            text="Submit"
+            background="#8B5CF6"
           />
         </div>
       </div>
