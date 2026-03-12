@@ -12,8 +12,10 @@ import { LanguageConstants } from "../../data/constants/language.constants";
 import type { Problem } from "../../data/dto/problem.dto";
 import { celebrate } from "../../utils/celebrate";
 import "./style.css";
+import { ResultCard } from "../../components/result-card/ResultCard";
+import type { Submission } from "../../data/dto/submission.dto";
 
-export const Submission = () => {
+export const SubmissionScreen = () => {
   const { userData } = useAuthContext();
   const [language, setLanguage] = React.useState<string>("java");
   const [code, setCode] = React.useState<string>(
@@ -23,6 +25,10 @@ export const Submission = () => {
   const [loadingRun, setLoadingRun] = React.useState<boolean>(false);
   const idProblem = 2;
   const [problem, setProblem] = React.useState<Problem>();
+  const [showPopup, setShowPopup] = React.useState<boolean>();
+  const [submissionInfo, setSubmissionInfo] = React.useState<Submission | null>(
+    null,
+  );
 
   if (!userData) {
     return null;
@@ -59,6 +65,7 @@ export const Submission = () => {
         language: language,
         text: code,
       });
+      setSubmissionInfo(response);
       if (response.status == "accepted") {
         celebrate();
       }
@@ -67,6 +74,7 @@ export const Submission = () => {
       throw e;
     } finally {
       setLoadingSubmit(false);
+      setShowPopup(true);
     }
   };
 
@@ -225,6 +233,21 @@ export const Submission = () => {
           </div>
         </div>
       </div>
+      {showPopup && submissionInfo && (
+        <ResultCard
+          language={language}
+          memory={15.2}
+          points={problem.points}
+          runtime={submissionInfo.execution_time}
+          testCasesPassed={48}
+          totalTestCases={48}
+          accepted={submissionInfo.status === "accepted"}
+          submissionDate={submissionInfo.submission_date}
+          onClose={() => setShowPopup(false)}
+          onClickLeft={() => console.log("")}
+          onClickRight={() => console.log("A")}
+        />
+      )}
     </div>
   );
 };

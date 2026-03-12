@@ -9,6 +9,7 @@ interface ButtonProps {
   height?: string | number;
   icon?: string;
   border?: string;
+  fontSize?: number;
 }
 
 const Button = ({
@@ -19,13 +20,14 @@ const Button = ({
   height,
   icon,
   border,
+  fontSize,
 }: ButtonProps) => {
   return (
     <button
       type="button"
       className="button"
       onClick={onClick}
-      style={{ background, height, border }}
+      style={{ background, height, border, fontSize }}
     >
       <div className="button-icon">
         {!loading && icon && <img src={icon} />}
