@@ -13,6 +13,7 @@ import { UpdateSubmissionDto } from './dto/update-submission.dto';
 import { ApiCreatedResponse } from '@nestjs/swagger';
 import { ReturnSubmissionDto } from './dto/return-submission.dto';
 import { DeleteResult, UpdateResult } from 'typeorm';
+import { ExecuteCodeDto } from '../code-runner/dto/execute-code.dto';
 
 @Controller('submission')
 export class SubmissionController {
@@ -24,6 +25,16 @@ export class SubmissionController {
     @Body() createSubmissionDto: CreateSubmissionDto,
   ): Promise<CreateSubmissionDto> {
     return this.submissionService.create(createSubmissionDto);
+  }
+
+  @Post('/playground')
+  @ApiCreatedResponse({ type: ExecuteCodeDto })
+  async createPlaygroundSubmission(
+    @Body() createSubmissionDto: CreateSubmissionDto,
+  ): Promise<ExecuteCodeDto> {
+    return this.submissionService.createPlaygroundSubmission(
+      createSubmissionDto,
+    );
   }
 
   @Get()

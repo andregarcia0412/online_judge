@@ -1,19 +1,20 @@
 import {
-  Controller,
-  Get,
-  Post,
   Body,
-  Patch,
-  Param,
+  Controller,
   Delete,
+  Get,
+  Param,
+  Patch,
+  Post,
 } from '@nestjs/common';
-import { ProblemService } from './problem.service';
-import { CreateProblemDto } from './dto/create-problem.dto';
-import { UpdateProblemDto } from './dto/update-problem.dto';
 import { ApiCreatedResponse } from '@nestjs/swagger';
-import { ReturnProblemDto } from './dto/return-problem.dto';
 import { UpdateResult } from 'typeorm';
 import { DeleteResult } from 'typeorm/browser';
+import { ReturnTestCaseDto } from '../test-case/dto/return-test-case.dto';
+import { CreateProblemDto } from './dto/create-problem.dto';
+import { ReturnProblemDto } from './dto/return-problem.dto';
+import { UpdateProblemDto } from './dto/update-problem.dto';
+import { ProblemService } from './problem.service';
 
 @Controller('problem')
 export class ProblemController {
@@ -37,6 +38,14 @@ export class ProblemController {
   @ApiCreatedResponse({ type: ReturnProblemDto })
   findOne(@Param('id') id: string): Promise<ReturnProblemDto> {
     return this.problemService.findOneById(+id);
+  }
+
+  @Get(':id/test-case')
+  @ApiCreatedResponse({ type: [ReturnTestCaseDto] })
+  async findAllTestCaseById(
+    @Param('id') id: string,
+  ): Promise<ReturnTestCaseDto[]> {
+    return this.problemService.findAllTestCasesById(+id);
   }
 
   @Patch(':id')

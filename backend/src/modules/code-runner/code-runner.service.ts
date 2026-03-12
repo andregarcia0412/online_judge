@@ -2,6 +2,7 @@ import { BadRequestException, Injectable, Logger } from '@nestjs/common';
 import Docker from 'dockerode';
 import { LanguageConfig } from 'src/modules/test-runner/language-config.interface';
 import tar from 'tar-stream';
+import { ExecuteCodeDto } from './dto/execute-code.dto';
 
 const MAX_OUTPUT = 10000;
 
@@ -158,7 +159,7 @@ export class CodeRunnerService {
     docker: Docker,
     language: LanguageConfig,
     input: string,
-  ) {
+  ): Promise<ExecuteCodeDto> {
     const container = await docker.createContainer({
       Image: language.imageName,
       Cmd: ['tail', '-f', '/dev/null'],
@@ -193,13 +194,12 @@ export class CodeRunnerService {
         );
 
         if (compileResult.exitCode != 0 || compileResult.timedOut) {
-          return {
-            output: '',
-            errOutput:
-              compileResult.stderr || 'Compilation time limit exceeded',
-            timeMs: 0,
-            errorOcurred: true,
-          };
+          return new ExecuteCodeDto(
+            '',
+            compileResult.stderr || 'Compilation time limit exceeded',
+            0,
+            true,
+          );
         }
       }
 
@@ -217,20 +217,20 @@ export class CodeRunnerService {
       const executionTime = end - start;
 
       if (execResult.timedOut) {
-        return {
-          output: execResult.stdout,
-          errOutput: 'Time limit exceeded',
-          timeMs: executionTime,
-          errorOcurred: true,
-        };
+        return new ExecuteCodeDto(
+          execResult.stdout,
+          'Time limit exceeded',
+          executionTime,
+          true,
+        );
       }
 
-      return {
-        output: execResult.stdout,
-        errOutput: execResult.stderr,
-        timeMs: executionTime,
-        errorOcurred: execResult.exitCode !== 0,
-      };
+      return new ExecuteCodeDto(
+        execResult.stdout,
+        execResult.stderr,
+        executionTime,
+        execResult.exitCode !== 0,
+      );
     } finally {
       try {
         await container.kill();

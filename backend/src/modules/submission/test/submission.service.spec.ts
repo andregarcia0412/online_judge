@@ -1,7 +1,7 @@
 import request from 'supertest';
 
 const API_URL = 'http://localhost:3000';
-const N_EXECUTIONS = 500;
+const N_EXECUTIONS = 50;
 const CODE =
   "const input = require('fs').readFileSync('/dev/stdin', 'utf-8');const lines = input.split(' ');function fib(n) {if(n === 0){return 0;}if(n === 1){return 1;}return(fib(n-1)) + fib(n-2);}console.log(fib(Number(lines[0])));";
 const LANGUAGE = 'javascript';

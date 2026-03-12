@@ -1,11 +1,15 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { ProblemService } from 'src/modules/problem/problem.service';
-import { TestCaseService } from 'src/modules/test-case/test-case.service';
+import Docker from 'dockerode';
 import { TestRunnerService } from 'src/modules/test-runner/test-runner.service';
 import { User } from 'src/modules/user/entities/user.entity';
 import { Repository } from 'typeorm';
 import { DeleteResult, UpdateResult } from 'typeorm/browser';
+import { CodeRunnerService } from '../code-runner/code-runner.service';
+import { ExecuteCodeDto } from '../code-runner/dto/execute-code.dto';
+import { LANGUAGES } from '../code-runner/languages';
+import { Problem } from '../problem/entities/problem.entity';
+import { TestCase } from '../test-case/entities/test-case.entity';
 import { CreateSubmissionDto } from './dto/create-submission.dto';
 import { ReturnSubmissionDto } from './dto/return-submission.dto';
 import { UpdateSubmissionDto } from './dto/update-submission.dto';
@@ -19,9 +23,12 @@ export class SubmissionService {
     private submissionRepository: Repository<Submission>,
     @InjectRepository(User)
     private userRepository: Repository<User>,
-    private problemService: ProblemService,
-    private testCaseService: TestCaseService,
+    @InjectRepository(Problem)
+    private problemRepository: Repository<Problem>,
+    @InjectRepository(TestCase)
+    private testCaseRepository: Repository<TestCase>,
     private testRunnerService: TestRunnerService,
+    private codeRunnerService: CodeRunnerService,
   ) {}
 
   async create(
@@ -35,19 +42,19 @@ export class SubmissionService {
       throw new NotFoundException('User not found');
     }
 
-    const problem = await this.problemService.findOneById(
-      createSubmissionDto.id_problem,
-    );
+    const problem = await this.problemRepository.findOneBy({
+      id: createSubmissionDto.id_problem,
+    });
 
     if (!problem) {
       throw new NotFoundException('Problem not found');
     }
 
-    const testCases = await this.testCaseService.findAllByProblemId(
-      createSubmissionDto.id_problem,
-    );
+    const testCases = await this.testCaseRepository.findBy({
+      id_problem: createSubmissionDto.id_problem,
+    });
 
-    if (!testCases) {
+    if (!testCases || testCases.length === 0) {
       throw new NotFoundException('There are no test cases for this problem');
     }
 
@@ -86,6 +93,18 @@ export class SubmissionService {
     returnSubmissionDto.last_stdout = testResult.stdout;
 
     return returnSubmissionDto;
+  }
+
+  async createPlaygroundSubmission(
+    createSubmissionDto: CreateSubmissionDto,
+  ): Promise<ExecuteCodeDto> {
+    const selectedLanguage = LANGUAGES[createSubmissionDto.language];
+    return this.codeRunnerService.executeCode(
+      createSubmissionDto.text,
+      new Docker(),
+      selectedLanguage,
+      '',
+    );
   }
 
   async findAll() {
