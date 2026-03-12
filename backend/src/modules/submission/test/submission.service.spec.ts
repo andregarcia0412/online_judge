@@ -1,18 +1,19 @@
 import request from 'supertest';
 
 const API_URL = 'http://localhost:3000';
-const N_EXECUTIONS = 100;
+const N_EXECUTIONS = 500;
 const CODE =
-  "const input = require('fs').readFileSync('/dev/stdin', 'utf-8');const lines = input.split(' ');var a = parseInt(lines[0]);var b = parseInt(lines[1]);console.log(a+b);";
+  "const input = require('fs').readFileSync('/dev/stdin', 'utf-8');const lines = input.split(' ');function fib(n) {if(n === 0){return 0;}if(n === 1){return 1;}return(fib(n-1)) + fib(n-2);}console.log(fib(Number(lines[0])));";
 const LANGUAGE = 'javascript';
 const TIMEOUT = 3000000;
+const ID_PROBLEM = 2;
 describe('Load and Concurrency Testing: POST /submission', () => {
   jest.setTimeout(TIMEOUT);
 
   it(`should process ${N_EXECUTIONS} submission in parallel and return "accepted" to all`, async () => {
     const payload = {
       id_user: '1035508b-734f-49f7-8330-1555104fb0cb',
-      id_problem: 1,
+      id_problem: ID_PROBLEM,
       text: CODE,
       language: LANGUAGE,
     };
@@ -25,7 +26,7 @@ describe('Load and Concurrency Testing: POST /submission', () => {
     );
 
     console.log(
-      `🚀 Sending ${N_EXECUTIONS} simultaneous requisition to the judge...`,
+      `🚀 Sending ${N_EXECUTIONS} simultaneous requisitions to the judge...`,
     );
     const startTime = Date.now();
 
@@ -34,7 +35,6 @@ describe('Load and Concurrency Testing: POST /submission', () => {
     const duration = Date.now() - startTime;
     console.log(`✅ All ${N_EXECUTIONS} executions finished in ${duration}ms`);
     responses.forEach((response, index) => {
-      console.log(response.body.status);
       if (response.body.status !== 'accepted') {
         console.log(`❌ Rejected #${index}. Error: ${response.body.error}`);
       }
