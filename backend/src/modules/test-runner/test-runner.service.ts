@@ -46,18 +46,24 @@ export class TestRunnerService {
       );
 
       if (!result || result.timeMs === undefined) {
-        return new TestResult(StatusEnum.REJECTED, 0, 'Execution failed');
+        return new TestResult(StatusEnum.REJECTED, 0, null, 'Execution failed');
       }
 
       if (testCase.output != result.output) {
         return new TestResult(
           StatusEnum.REJECTED,
           Math.trunc(result.timeMs),
+          result.output,
           result.errorOcurred ? result.errOutput : null,
         );
       }
     }
 
-    return new TestResult(StatusEnum.ACCEPTED, Math.trunc(result.timeMs), null);
+    return new TestResult(
+      StatusEnum.ACCEPTED,
+      Math.trunc(result.timeMs),
+      result.output,
+      null,
+    );
   }
 }

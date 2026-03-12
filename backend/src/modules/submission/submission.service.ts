@@ -78,13 +78,20 @@ export class SubmissionService {
       error: testResult.error,
     });
 
-    return ReturnSubmissionDto.fromEntity(
-      await this.submissionRepository.save(newSubmission),
+    const savedSubmission = await this.submissionRepository.save(newSubmission);
+
+    const returnSubmissionDto = ReturnSubmissionDto.fromEntity(
+      await this.submissionRepository.save(savedSubmission),
     );
+    returnSubmissionDto.last_stdout = testResult.stdout;
+
+    return returnSubmissionDto;
   }
 
-  findAll() {
-    return this.submissionRepository.find();
+  async findAll() {
+    return (await this.submissionRepository.find()).map(
+      (submission: Submission) => ReturnSubmissionDto.fromEntity(submission),
+    );
   }
 
   async findOneById(id: string): Promise<ReturnSubmissionDto> {
