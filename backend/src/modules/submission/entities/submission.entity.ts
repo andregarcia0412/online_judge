@@ -29,4 +29,7 @@ export class Submission {
 
   @Column({ type: 'text', nullable: true })
   error: string | null;
+
+  @Column({ type: 'decimal', precision: 10, scale: 2 })
+  memoryUsageMB: number;
 }

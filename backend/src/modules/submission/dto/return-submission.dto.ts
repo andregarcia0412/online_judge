@@ -32,6 +32,9 @@ export class ReturnSubmissionDto {
   @ApiProperty()
   last_stdout: string | null;
 
+  @ApiProperty()
+  memoryUsageMB: number;
+
   constructor(
     id: string,
     id_user: string,
@@ -43,6 +46,7 @@ export class ReturnSubmissionDto {
     submission_date: Date,
     error: string | null,
     last_stdout: string | null,
+    memoryUsageMB: number,
   ) {
     this.id = id;
     this.id_user = id_user;
@@ -54,6 +58,7 @@ export class ReturnSubmissionDto {
     this.submission_date = submission_date;
     this.error = error;
     this.last_stdout = last_stdout;
+    this.memoryUsageMB = memoryUsageMB;
   }
 
   static fromEntity(submission: Submission): ReturnSubmissionDto {
@@ -68,6 +73,7 @@ export class ReturnSubmissionDto {
       submission.submission_date,
       submission.error,
       null,
+      submission.memoryUsageMB,
     );
   }
 }

@@ -46,44 +46,44 @@ services:
       - ./frontend:/app
       - /app/node_modules
 
-  java-service:
-    build: ./llm-gateway
-    container_name: llmgateway
-    restart: always
-    depends_on:
-      - backend
-      - ollama
-    networks:
-      - app_network
-    ports:
-      - "8081:8081"
-    env_file:
-      - ./backend/.env
+  # java-service:
+  #   build: ./llm-gateway
+  #   container_name: llmgateway
+  #   restart: always
+  #   depends_on:
+  #     - backend
+  #     - ollama
+  #   networks:
+  #     - app_network
+  #   ports:
+  #     - "8081:8081"
+  #   env_file:
+  #     - ./backend/.env
 
-  ollama:
-    image: ollama/ollama:latest
-    container_name: ollama
-    ports:
-      - "11434:11434"
-    volumes:
-      - ollama_storage:/root/.ollama
-      - ./ollama/online_judge_modelfile:/root/online_judge_modelfile
-      - ./ollama/entrypoint.sh:/entrypoint.sh
-    entrypoint: ["/entrypoint.sh"]
-    networks:
-      - app_network
+  # ollama:
+  #   image: ollama/ollama:latest
+  #   container_name: ollama
+  #   ports:
+  #     - "11434:11434"
+  #   volumes:
+  #     - ollama_storage:/root/.ollama
+  #     - ./ollama/online_judge_modelfile:/root/online_judge_modelfile
+  #     - ./ollama/entrypoint.sh:/entrypoint.sh
+  #   entrypoint: ["/entrypoint.sh"]
+  #   networks:
+  #     - app_network
 
-  redis:
-    image: redis:alpine
-    container_name: redis-dev
-    ports:
-      - "6379:6379"
-    networks:
-      - app_network
+  # redis:
+  #   image: redis:alpine
+  #   container_name: redis-dev
+  #   ports:
+  #     - "6379:6379"
+  #   networks:
+  #     - app_network
 
 networks:
   app_network:
 
 volumes:
   db_data:
-  ollama_storage:
+  # ollama_storage:

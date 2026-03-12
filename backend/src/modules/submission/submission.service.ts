@@ -83,6 +83,7 @@ export class SubmissionService {
       status: testResult.status,
       execution_time: testResult.execution_time,
       error: testResult.error,
+      memoryUsageMB: testResult.memoryUsageMB,
     });
 
     const savedSubmission = await this.submissionRepository.save(newSubmission);

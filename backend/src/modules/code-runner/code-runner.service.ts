@@ -199,9 +199,30 @@ export class CodeRunnerService {
             compileResult.stderr || 'Compilation time limit exceeded',
             0,
             true,
+            0,
           );
         }
       }
+
+      const statsStream = (await container.stats({ stream: true })) as any;
+      let maxMemoryBytes = 0;
+
+      statsStream.on('data', (chunk: Buffer) => {
+        const lines = chunk.toString('utf-8').split('\n');
+        for (const line of lines) {
+          if (!line.trim()) {
+            continue;
+          }
+
+          try {
+            const stats = JSON.parse(line);
+            const currentUsage = stats.memory_stats?.usage || 0;
+            if (currentUsage > maxMemoryBytes) {
+              maxMemoryBytes = currentUsage;
+            }
+          } catch (e) {}
+        }
+      });
 
       const start = performance.now();
 
@@ -214,7 +235,13 @@ export class CodeRunnerService {
 
       const end = performance.now();
 
+      statsStream.destroy();
+
       const executionTime = end - start;
+
+      const memoryUsageMB = parseFloat(
+        (maxMemoryBytes / (1024 * 1024)).toFixed(2),
+      );
 
       if (execResult.timedOut) {
         return new ExecuteCodeDto(
@@ -222,6 +249,7 @@ export class CodeRunnerService {
           'Time limit exceeded',
           executionTime,
           true,
+          memoryUsageMB,
         );
       }
 
@@ -230,6 +258,7 @@ export class CodeRunnerService {
         execResult.stderr,
         executionTime,
         execResult.exitCode !== 0,
+        memoryUsageMB,
       );
     } finally {
       try {

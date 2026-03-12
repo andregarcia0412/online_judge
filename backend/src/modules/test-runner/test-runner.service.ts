@@ -46,7 +46,13 @@ export class TestRunnerService {
       );
 
       if (!result || result.timeMs === undefined) {
-        return new TestResult(StatusEnum.REJECTED, 0, null, 'Execution failed');
+        return new TestResult(
+          StatusEnum.REJECTED,
+          0,
+          null,
+          'Execution failed',
+          0,
+        );
       }
 
       if (testCase.output != result.output) {
@@ -55,6 +61,7 @@ export class TestRunnerService {
           Math.trunc(result.timeMs),
           result.output,
           result.errorOcurred ? result.errOutput : null,
+          result.memoryUsageMB,
         );
       }
     }
@@ -64,6 +71,7 @@ export class TestRunnerService {
       Math.trunc(result.timeMs),
       result.output,
       null,
+      result.memoryUsageMB,
     );
   }
 }
