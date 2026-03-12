@@ -1,4 +1,5 @@
-.auth-button {
+.button {
+  position: relative;
   display: flex;
   justify-content: center;
   align-items: center;
@@ -11,6 +12,19 @@
   color: #fff;
 }
 
-.auth-button:hover {
+.button:hover {
   opacity: 0.8;
+}
+
+.button-icon {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 100%;
+  gap: 12px;
+
+  & img {
+    height: 24px;
+    width: 24px;
+  }
 }

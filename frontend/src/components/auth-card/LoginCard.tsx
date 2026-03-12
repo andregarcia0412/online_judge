@@ -1,4 +1,4 @@
-import AuthButton from "../auth-button/AuthButton";
+import Button from "../button/Button";
 import AuthInput from "../auth-input/AuthInput";
 import Checkbox from "../checkbox/Checkbox";
 import { Divider } from "../divider/Divider";
@@ -49,7 +49,7 @@ export const LoginCard = ({
         </div>
 
         <div className="button-wrapper">
-          <AuthButton
+          <Button
             text="Login"
             onClick={login}
             loading={loading}

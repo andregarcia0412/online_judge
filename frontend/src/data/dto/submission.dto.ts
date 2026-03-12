@@ -8,6 +8,7 @@ export type Submission = {
   execution_time: number;
   submission_date: Date;
   error?: string;
+  last_stdout?: string;
 };
 
 export type SubmissionRequestDto = {
@@ -15,4 +16,11 @@ export type SubmissionRequestDto = {
   id_problem: number;
   text: string;
   language: string;
+};
+
+export type ExecuteCodeResponseDto = {
+  output: string;
+  errOutput: string;
+  timeMs: string;
+  errorOcurred: boolean;
 };

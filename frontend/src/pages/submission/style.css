@@ -7,7 +7,7 @@
   justify-content: center;
   max-width: 1980px;
   margin: 0 auto;
-  padding: 64px;
+  padding: 32px;
 }
 
 .submission-container::before {
@@ -135,4 +135,26 @@
   -webkit-background-clip: text;
   background-clip: text;
   -webkit-text-fill-color: transparent;
+}
+
+.language-select-card {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.submission-selector {
+  display: flex;
+  justify-content: center;
+  flex-direction: column;
+  gap: 8px;
+  width: 30%;
+}
+
+.submit-button-wrapper {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 12px;
 }
