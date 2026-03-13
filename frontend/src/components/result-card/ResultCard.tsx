@@ -35,7 +35,23 @@ export const ResultCard = ({
   onClickRight,
 }: ResultCardProps) => {
   const [closing, setClosing] = React.useState<boolean>(false);
-  const date = submissionDate.toLocaleString();
+
+  React.useEffect(() => {
+    document.body.style.overflow = "hidden";
+
+    return () => {
+      document.body.style.overflow = "auto";
+    };
+  }, []);
+
+  const formattedSubmissionDate = new Intl.DateTimeFormat("pt-br", {
+    day: "2-digit",
+    month: "2-digit",
+    year: "2-digit",
+    hour: "numeric",
+    minute: "2-digit",
+    second: "2-digit",
+  }).format(new Date(submissionDate));
 
   const handleClose = () => {
     setClosing(true);
@@ -102,7 +118,7 @@ export const ResultCard = ({
             </div>
             <div className="result-card-footer-inner">
               <p style={{ color: "rgba(255, 255, 255, 0.8)" }}>Date/Hour</p>
-              <p>{date}</p>
+              <p>{formattedSubmissionDate}</p>
             </div>
           </div>
 
