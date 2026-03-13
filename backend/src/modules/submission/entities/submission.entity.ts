@@ -31,5 +31,5 @@ export class Submission {
   error: string | null;
 
   @Column({ type: 'decimal', precision: 10, scale: 2 })
-  memoryUsageMB: number;
+  memory_usage_MB: number;
 }

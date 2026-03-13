@@ -1,3 +1,4 @@
+import { ApiProperty } from '@nestjs/swagger';
 import { StatusEnum } from 'src/modules/submission/enum/submission-status';
 
 export class TestResult {
@@ -15,13 +16,18 @@ export class TestResult {
     this.memory_usage_MB = memory_usage_MB;
   }
 
+  @ApiProperty()
   status: StatusEnum;
 
+  @ApiProperty()
   execution_time: number;
 
+  @ApiProperty()
   stdout: string | null;
 
+  @ApiProperty()
   error: string | null;
 
+  @ApiProperty()
   memory_usage_MB: number;
 }

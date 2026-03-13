@@ -46,7 +46,7 @@ export class ReturnSubmissionDto {
     submission_date: Date,
     error: string | null,
     last_stdout: string | null,
-    memoryUsageMB: number,
+    memory_usage_MB: number,
   ) {
     this.id = id;
     this.id_user = id_user;
@@ -58,7 +58,7 @@ export class ReturnSubmissionDto {
     this.submission_date = submission_date;
     this.error = error;
     this.last_stdout = last_stdout;
-    this.memory_usage_MB = memoryUsageMB;
+    this.memory_usage_MB = memory_usage_MB;
   }
 
   static fromEntity(submission: Submission): ReturnSubmissionDto {
@@ -73,7 +73,7 @@ export class ReturnSubmissionDto {
       submission.submission_date,
       submission.error,
       null,
-      submission.memoryUsageMB,
+      submission.memory_usage_MB,
     );
   }
 }

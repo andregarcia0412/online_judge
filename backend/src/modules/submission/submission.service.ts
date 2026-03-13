@@ -84,7 +84,7 @@ export class SubmissionService {
       status: testResult.status,
       execution_time: testResult.execution_time,
       error: testResult.error,
-      memoryUsageMB: testResult.memory_usage_MB,
+      memory_usage_MB: testResult.memory_usage_MB,
     });
 
     const returnSubmissionDto = ReturnSubmissionDto.fromEntity(

@@ -29,7 +29,7 @@ export class SubmissionController {
   }
 
   @Post('/playground')
-  @ApiCreatedResponse({ type: ExecuteCodeDto })
+  @ApiCreatedResponse({ type: TestResult })
   async createPlaygroundSubmission(
     @Body() createSubmissionDto: CreateSubmissionDto,
   ): Promise<TestResult> {
