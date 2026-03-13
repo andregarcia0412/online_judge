@@ -1,21 +1,11 @@
 import React from "react";
 
-export const useLockBodyScroll = (minWidth: number = 900) => {
+export const useLockBodyScroll = () => {
   React.useEffect(() => {
-    const update = () => {
-      if (window.innerWidth >= minWidth) {
-        document.body.style.overflow = "hidden";
-      } else {
-        document.body.style.overflow = "auto";
-      }
-    };
-
-    update();
-    window.addEventListener("resize", update);
+    document.body.style.overflow = "hidden";
 
     return () => {
       document.body.style.overflow = "auto";
-      window.removeEventListener("resize", update);
     };
   }, []);
 };

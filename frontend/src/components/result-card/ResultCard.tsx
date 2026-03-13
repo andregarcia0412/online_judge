@@ -6,6 +6,7 @@ import xcircle from "../../assets/xcircle.svg";
 import "./style.result-card.css";
 import Button from "../button/Button";
 import React from "react";
+import { useLockBodyScroll } from "../../hooks/useLockBodyScroll";
 
 type ResultCardProps = {
   accepted?: boolean;
@@ -36,13 +37,7 @@ export const ResultCard = ({
 }: ResultCardProps) => {
   const [closing, setClosing] = React.useState<boolean>(false);
 
-  React.useEffect(() => {
-    document.body.style.overflow = "hidden";
-
-    return () => {
-      document.body.style.overflow = "auto";
-    };
-  }, []);
+  useLockBodyScroll();
 
   const formattedSubmissionDate = new Intl.DateTimeFormat("pt-br", {
     day: "2-digit",
