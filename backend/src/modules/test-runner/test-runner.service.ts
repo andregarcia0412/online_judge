@@ -5,6 +5,7 @@ import Docker from 'dockerode';
 import { TestResult } from './dto/test-result.dto';
 import { LANGUAGES } from 'src/modules/code-runner/languages';
 import { StatusEnum } from '../submission/enum/submission-status';
+import { ExecuteCodeDto } from '../code-runner/dto/execute-code.dto';
 
 @Injectable()
 export class TestRunnerService {
@@ -19,12 +20,13 @@ export class TestRunnerService {
     selectedLanguage: string,
   ): Promise<TestResult> {
     const language = LANGUAGES[selectedLanguage];
+    let biggestUsage = 0;
 
     if (!language) {
       throw new BadRequestException('Invalid language name');
     }
 
-    let result: any;
+    let result: ExecuteCodeDto | null = null;
 
     await this.codeRunnerService.ensureImageExists(
       language.imageName,
@@ -45,6 +47,10 @@ export class TestRunnerService {
         testCase.input,
       );
 
+      if (result.memoryUsage > biggestUsage) {
+        biggestUsage = result.memoryUsage;
+      }
+
       if (!result || result.timeMs === undefined) {
         return new TestResult(
           StatusEnum.REJECTED,
@@ -61,9 +67,13 @@ export class TestRunnerService {
           Math.trunc(result.timeMs),
           result.output,
           result.errorOcurred ? result.errOutput : null,
-          result.memoryUsageMB,
+          result.memoryUsage,
         );
       }
+    }
+
+    if (!result) {
+      throw new Error('Unexpected execution state');
     }
 
     return new TestResult(
@@ -71,7 +81,7 @@ export class TestRunnerService {
       Math.trunc(result.timeMs),
       result.output,
       null,
-      result.memoryUsageMB,
+      biggestUsage,
     );
   }
 }
