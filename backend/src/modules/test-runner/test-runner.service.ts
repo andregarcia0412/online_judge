@@ -22,6 +22,7 @@ export class TestRunnerService {
     const language = LANGUAGES[selectedLanguage];
     let biggestUsage = 0;
     let testCasesPassed = 0;
+    let biggestRuntime = 0;
 
     if (!language) {
       throw new BadRequestException('Invalid language name');
@@ -48,14 +49,14 @@ export class TestRunnerService {
         testCase.input,
       );
 
-      if (result.memoryUsage > biggestUsage) {
-        biggestUsage = result.memoryUsage;
-      }
-
-      if (!result || result.timeMs === undefined) {
+      if (
+        !result ||
+        result.timeMs === undefined ||
+        result.memoryUsage === undefined
+      ) {
         return new TestResult(
           StatusEnum.REJECTED,
-          0,
+          biggestRuntime,
           null,
           'Execution failed',
           0,
@@ -63,13 +64,21 @@ export class TestRunnerService {
         );
       }
 
+      if (result.memoryUsage > biggestUsage) {
+        biggestUsage = result.memoryUsage;
+      }
+
+      if (result.timeMs > biggestRuntime) {
+        biggestRuntime = result.timeMs;
+      }
+
       if (testCase.output != result.output) {
         return new TestResult(
           StatusEnum.REJECTED,
-          Math.trunc(result.timeMs),
+          Math.trunc(biggestRuntime),
           result.output,
           result.errorOcurred ? result.errOutput : null,
-          result.memoryUsage,
+          biggestUsage,
           testCasesPassed,
         );
       }
@@ -83,7 +92,7 @@ export class TestRunnerService {
 
     return new TestResult(
       StatusEnum.ACCEPTED,
-      Math.trunc(result.timeMs),
+      Math.trunc(biggestRuntime),
       result.output,
       null,
       biggestUsage,

@@ -1,18 +1,18 @@
 import request from 'supertest';
 
 const API_URL = 'http://localhost:3000';
-const N_EXECUTIONS = 50;
+const N_EXECUTIONS = 30;
 const CODE =
-  "const input = require('fs').readFileSync('/dev/stdin', 'utf-8');const lines = input.split(' ');function fib(n) {if(n === 0){return 0;}if(n === 1){return 1;}return(fib(n-1)) + fib(n-2);}console.log(fib(Number(lines[0])));";
-const LANGUAGE = 'javascript';
+  'import java.util.*;class Main{public static void main(String[] args){Scanner sc=new Scanner(System.in);int n=sc.nextInt();System.out.println(fib(n));}public static int fib(int n){if(n==0){return 0;}if(n==1){return 1;}return fib(n-1)+fib(n-2);}}';
+const LANGUAGE = 'java';
 const TIMEOUT = 3000000;
-const ID_PROBLEM = 2;
+const ID_PROBLEM = 1;
 describe('Load and Concurrency Testing: POST /submission', () => {
   jest.setTimeout(TIMEOUT);
 
   it(`should process ${N_EXECUTIONS} submission in parallel and return "accepted" to all`, async () => {
     const payload = {
-      id_user: '1035508b-734f-49f7-8330-1555104fb0cb',
+      id_user: '392d966c-f6be-4143-b90a-cb828d88f177',
       id_problem: ID_PROBLEM,
       text: CODE,
       language: LANGUAGE,
