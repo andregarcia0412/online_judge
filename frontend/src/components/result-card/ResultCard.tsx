@@ -60,7 +60,7 @@ export const ResultCard = ({
     <div className="popup-overlay">
       <div className={`result-card-container ${closing && "closing"}`}>
         <div className="result-card-title">
-          <h1>Resultado da Submissão</h1>
+          <h1>Submission Result</h1>
           <img src={close} onClick={handleClose} />
         </div>
         <div className="result-card-body">
