@@ -9,6 +9,7 @@ export type Submission = {
   submission_date: Date;
   error?: string;
   last_stdout?: string;
+  memory_usage_MB: number;
 };
 
 export type SubmissionRequestDto = {

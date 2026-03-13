@@ -7,13 +7,13 @@ import play from "../../assets/play.svg";
 import send from "../../assets/send.svg";
 import Button from "../../components/button/Button";
 import { HomeHeader } from "../../components/home-header/HomeHeader";
+import { ResultCard } from "../../components/result-card/ResultCard";
 import { useAuthContext } from "../../contexts/AuthContext";
 import { LanguageConstants } from "../../data/constants/language.constants";
 import type { Problem } from "../../data/dto/problem.dto";
+import type { Submission } from "../../data/dto/submission.dto";
 import { celebrate } from "../../utils/celebrate";
 import "./style.css";
-import { ResultCard } from "../../components/result-card/ResultCard";
-import type { Submission } from "../../data/dto/submission.dto";
 
 export const SubmissionScreen = () => {
   const { userData } = useAuthContext();
@@ -23,7 +23,7 @@ export const SubmissionScreen = () => {
   );
   const [loadingSubmit, setLoadingSubmit] = React.useState<boolean>(false);
   const [loadingRun, setLoadingRun] = React.useState<boolean>(false);
-  const idProblem = 2;
+  const idProblem = 1;
   const [problem, setProblem] = React.useState<Problem>();
   const [showPopup, setShowPopup] = React.useState<boolean>();
   const [submissionInfo, setSubmissionInfo] = React.useState<Submission | null>(
@@ -235,8 +235,8 @@ export const SubmissionScreen = () => {
       </div>
       {showPopup && submissionInfo && (
         <ResultCard
-          language={language}
-          memory={15.2}
+          language={LanguageConstants[language].label}
+          memory={submissionInfo.memory_usage_MB}
           points={problem.points}
           runtime={submissionInfo.execution_time}
           testCasesPassed={48}
