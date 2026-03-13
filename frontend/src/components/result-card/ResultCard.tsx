@@ -18,7 +18,7 @@ type ResultCardProps = {
   points: number;
   submissionDate: Date;
   onClose: () => void;
-  onClickLeft: () => void;
+  onClickLeft?: () => void;
   onClickRight: () => void;
 };
 
@@ -122,7 +122,7 @@ export const ResultCard = ({
               background="#000"
               text="Back to editor"
               loading={false}
-              onClick={onClickLeft}
+              onClick={onClickLeft || handleClose}
               height={32}
               fontSize={14}
             />

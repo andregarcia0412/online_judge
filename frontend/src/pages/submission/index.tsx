@@ -14,6 +14,7 @@ import type { Problem } from "../../data/dto/problem.dto";
 import type { Submission } from "../../data/dto/submission.dto";
 import { celebrate } from "../../utils/celebrate";
 import "./style.css";
+import type { TestCase } from "../../data/dto/test-case.dto";
 
 export const SubmissionScreen = () => {
   const { userData } = useAuthContext();
@@ -29,6 +30,7 @@ export const SubmissionScreen = () => {
   const [submissionInfo, setSubmissionInfo] = React.useState<Submission | null>(
     null,
   );
+  const [testCases, setTestCases] = React.useState<TestCase[] | null>(null);
 
   if (!userData) {
     return null;
@@ -45,7 +47,18 @@ export const SubmissionScreen = () => {
       }
     };
 
+    const findTestCases = async () => {
+      try {
+        const testCases = await problemService.findAllTestCasesById(idProblem);
+        setTestCases(testCases);
+        console.log(testCases);
+      } catch (e) {
+        throw e;
+      }
+    };
+
     findProblem();
+    findTestCases();
   }, []);
 
   if (!problem) {
@@ -233,18 +246,17 @@ export const SubmissionScreen = () => {
           </div>
         </div>
       </div>
-      {showPopup && submissionInfo && (
+      {showPopup && submissionInfo && testCases && (
         <ResultCard
           language={LanguageConstants[language].label}
           memory={submissionInfo.memory_usage_MB}
           points={problem.points}
           runtime={submissionInfo.execution_time}
-          testCasesPassed={48}
-          totalTestCases={48}
+          testCasesPassed={submissionInfo.test_cases_passed}
+          totalTestCases={testCases.length}
           accepted={submissionInfo.status === "accepted"}
           submissionDate={submissionInfo.submission_date}
           onClose={() => setShowPopup(false)}
-          onClickLeft={() => console.log("")}
           onClickRight={() => console.log("A")}
         />
       )}
