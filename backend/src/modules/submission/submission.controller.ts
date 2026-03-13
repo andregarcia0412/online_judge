@@ -14,6 +14,7 @@ import { ApiCreatedResponse } from '@nestjs/swagger';
 import { ReturnSubmissionDto } from './dto/return-submission.dto';
 import { DeleteResult, UpdateResult } from 'typeorm';
 import { ExecuteCodeDto } from '../code-runner/dto/execute-code.dto';
+import { TestResult } from '../test-runner/dto/test-result.dto';
 
 @Controller('submission')
 export class SubmissionController {
@@ -31,7 +32,7 @@ export class SubmissionController {
   @ApiCreatedResponse({ type: ExecuteCodeDto })
   async createPlaygroundSubmission(
     @Body() createSubmissionDto: CreateSubmissionDto,
-  ): Promise<ExecuteCodeDto> {
+  ): Promise<TestResult> {
     return this.submissionService.createPlaygroundSubmission(
       createSubmissionDto,
     );

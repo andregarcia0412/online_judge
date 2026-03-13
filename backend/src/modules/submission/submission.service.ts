@@ -15,6 +15,7 @@ import { ReturnSubmissionDto } from './dto/return-submission.dto';
 import { UpdateSubmissionDto } from './dto/update-submission.dto';
 import { Submission } from './entities/submission.entity';
 import { StatusEnum } from './enum/submission-status';
+import { TestResult } from '../test-runner/dto/test-result.dto';
 
 @Injectable()
 export class SubmissionService {
@@ -83,13 +84,11 @@ export class SubmissionService {
       status: testResult.status,
       execution_time: testResult.execution_time,
       error: testResult.error,
-      memoryUsageMB: testResult.memoryUsageMB,
+      memoryUsageMB: testResult.memory_usage_MB,
     });
 
-    const savedSubmission = await this.submissionRepository.save(newSubmission);
-
     const returnSubmissionDto = ReturnSubmissionDto.fromEntity(
-      await this.submissionRepository.save(savedSubmission),
+      await this.submissionRepository.save(newSubmission),
     );
     returnSubmissionDto.last_stdout = testResult.stdout;
 
@@ -98,14 +97,30 @@ export class SubmissionService {
 
   async createPlaygroundSubmission(
     createSubmissionDto: CreateSubmissionDto,
-  ): Promise<ExecuteCodeDto> {
-    const selectedLanguage = LANGUAGES[createSubmissionDto.language];
-    return this.codeRunnerService.executeCode(
+  ): Promise<TestResult> {
+    const problem = await this.problemRepository.findOneBy({
+      id: createSubmissionDto.id_problem,
+    });
+
+    if (!problem) {
+      throw new NotFoundException('Problem not found');
+    }
+
+    const testCases = await this.testCaseRepository.findBy({
+      id_problem: createSubmissionDto.id_problem,
+    });
+
+    if (!testCases || testCases.length === 0) {
+      throw new NotFoundException('There are no test cases for this problem');
+    }
+
+    const testResults = await this.testRunnerService.runTests(
+      testCases,
       createSubmissionDto.text,
-      new Docker(),
-      selectedLanguage,
-      '',
+      createSubmissionDto.language,
     );
+
+    return testResults;
   }
 
   async findAll() {

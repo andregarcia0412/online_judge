@@ -6,13 +6,13 @@ export class TestResult {
     execution_time: number,
     stdout: string | null,
     error: string | null,
-    memoryUsageMB: number,
+    memory_usage_MB: number,
   ) {
     this.status = status;
     this.execution_time = execution_time;
     this.stdout = stdout;
     this.error = error;
-    this.memoryUsageMB = memoryUsageMB;
+    this.memory_usage_MB = memory_usage_MB;
   }
 
   status: StatusEnum;
@@ -23,5 +23,5 @@ export class TestResult {
 
   error: string | null;
 
-  memoryUsageMB: number;
+  memory_usage_MB: number;
 }
