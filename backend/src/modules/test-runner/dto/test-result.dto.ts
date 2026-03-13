@@ -8,12 +8,14 @@ export class TestResult {
     stdout: string | null,
     error: string | null,
     memory_usage_MB: number,
+    test_cases_passed: number,
   ) {
     this.status = status;
     this.execution_time = execution_time;
     this.stdout = stdout;
     this.error = error;
     this.memory_usage_MB = memory_usage_MB;
+    this.test_cases_passed = test_cases_passed;
   }
 
   @ApiProperty()
@@ -30,4 +32,7 @@ export class TestResult {
 
   @ApiProperty()
   memory_usage_MB: number;
+
+  @ApiProperty()
+  test_cases_passed: number;
 }

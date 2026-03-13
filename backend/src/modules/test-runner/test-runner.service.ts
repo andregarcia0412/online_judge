@@ -21,6 +21,7 @@ export class TestRunnerService {
   ): Promise<TestResult> {
     const language = LANGUAGES[selectedLanguage];
     let biggestUsage = 0;
+    let testCasesPassed = 0;
 
     if (!language) {
       throw new BadRequestException('Invalid language name');
@@ -58,6 +59,7 @@ export class TestRunnerService {
           null,
           'Execution failed',
           0,
+          testCasesPassed,
         );
       }
 
@@ -68,8 +70,11 @@ export class TestRunnerService {
           result.output,
           result.errorOcurred ? result.errOutput : null,
           result.memoryUsage,
+          testCasesPassed,
         );
       }
+
+      testCasesPassed++;
     }
 
     if (!result) {
@@ -82,6 +87,7 @@ export class TestRunnerService {
       result.output,
       null,
       biggestUsage,
+      testCasesPassed,
     );
   }
 }

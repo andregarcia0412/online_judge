@@ -32,4 +32,7 @@ export class Submission {
 
   @Column({ type: 'decimal', precision: 10, scale: 2 })
   memory_usage_MB: number;
+
+  @Column({ type: 'integer' })
+  test_cases_passed: number;
 }
