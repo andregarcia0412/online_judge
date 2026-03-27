@@ -14,7 +14,7 @@ export const HomeHeader = ({ setText, handleSearch }: HomeHeaderProps) => {
         <Logo />
         <div className="header-title">
           <h1>
-            Code<span>Vortex</span>
+            Code<span>Judge</span>
           </h1>
         </div>
       </div>
