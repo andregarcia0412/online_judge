@@ -26,4 +26,16 @@ export class CreateSubmissionDto {
   @IsNotEmpty()
   @ApiProperty()
   language: string;
+
+  constructor(
+    id_user: string,
+    id_problem: number,
+    text: string,
+    language: string,
+  ) {
+    this.id_user = id_user;
+    this.id_problem = id_problem;
+    this.text = text;
+    this.language = language;
+  }
 }

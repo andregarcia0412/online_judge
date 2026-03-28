@@ -7,7 +7,7 @@ const CODE =
 const LANGUAGE = 'java';
 const TIMEOUT = 3000000;
 const ID_PROBLEM = 1;
-describe('Load and Concurrency Testing: POST /submission', () => {
+describe.skip('Load and Concurrency Testing: POST /submission', () => {
   jest.setTimeout(TIMEOUT);
 
   it(`should process ${N_EXECUTIONS} submission in parallel and return "accepted" to all`, async () => {

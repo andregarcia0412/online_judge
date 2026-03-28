@@ -35,4 +35,30 @@ export class Submission {
 
   @Column({ type: 'integer' })
   test_cases_passed: number;
+
+  constructor(
+    id: string,
+    id_user: string,
+    id_problem: number,
+    text: string,
+    language: string,
+    status: StatusEnum,
+    execution_time: number,
+    submission_date: Date,
+    error: string | null,
+    memory_usage_MB: number,
+    test_cases_passed: number,
+  ) {
+    this.id = id;
+    this.id_user = id_user;
+    this.id_problem = id_problem;
+    this.text = text;
+    this.language = language;
+    this.status = status;
+    this.execution_time = execution_time;
+    this.submission_date = submission_date;
+    this.error = error;
+    this.memory_usage_MB = memory_usage_MB;
+    this.test_cases_passed = test_cases_passed;
+  }
 }
