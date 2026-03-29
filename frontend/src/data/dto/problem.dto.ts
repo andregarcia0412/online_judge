@@ -1,6 +1,5 @@
 export type Problem = {
   id: number;
-  number: number;
   title: string;
   points: number;
   author: string;

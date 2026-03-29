@@ -130,7 +130,7 @@ export const SubmissionScreen = () => {
           <div className="submission-card title">
             <div className="submission-card-row">
               <h2>
-                {problem.number}. {problem.title}
+                {problem.id}. {problem.title}
               </h2>
             </div>
 

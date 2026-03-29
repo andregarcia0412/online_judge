@@ -6,9 +6,6 @@ export class ReturnProblemDto {
   id: number;
 
   @ApiProperty()
-  number: number;
-
-  @ApiProperty()
   title: string;
 
   @ApiProperty()
@@ -37,7 +34,6 @@ export class ReturnProblemDto {
 
   constructor(
     id: number,
-    number: number,
     title: string,
     points: number,
     author: string,
@@ -49,7 +45,6 @@ export class ReturnProblemDto {
     creation_date: Date,
   ) {
     this.id = id;
-    this.number = number;
     this.title = title;
     this.points = points;
     this.author = author;
@@ -64,7 +59,6 @@ export class ReturnProblemDto {
   static fromEntity(problem: Problem): ReturnProblemDto {
     return new ReturnProblemDto(
       problem.id,
-      problem.number,
       problem.title,
       problem.points,
       problem.author,

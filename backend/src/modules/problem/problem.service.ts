@@ -1,8 +1,4 @@
-import {
-  ConflictException,
-  Injectable,
-  NotFoundException,
-} from '@nestjs/common';
+import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { DeleteResult, UpdateResult } from 'typeorm/browser';
@@ -23,14 +19,6 @@ export class ProblemService {
   ) {}
 
   async create(createProblemDto: CreateProblemDto): Promise<ReturnProblemDto> {
-    if (
-      await this.problemRepository.findOneBy({
-        number: createProblemDto.number,
-      })
-    ) {
-      throw new ConflictException('This number is already in use');
-    }
-
     const newProblem = this.problemRepository.create(createProblemDto);
     return ReturnProblemDto.fromEntity(
       await this.problemRepository.save(newProblem),
@@ -57,14 +45,6 @@ export class ProblemService {
       throw new NotFoundException('Problem not found');
     }
 
-    return ReturnProblemDto.fromEntity(problem);
-  }
-
-  async findOneByNumber(number: number): Promise<ReturnProblemDto> {
-    const problem = await this.problemRepository.findOneBy({ number });
-    if (!problem) {
-      throw new NotFoundException('Problem not found');
-    }
     return ReturnProblemDto.fromEntity(problem);
   }
 

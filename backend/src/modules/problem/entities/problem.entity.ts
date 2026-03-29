@@ -5,9 +5,6 @@ export class Problem {
   @PrimaryGeneratedColumn({ type: 'integer' })
   id: number;
 
-  @Column({ type: 'integer', unique: true })
-  number: number;
-
   @Column({ type: 'text', unique: true })
   title: string;
 
@@ -37,7 +34,6 @@ export class Problem {
 
   constructor(
     id: number,
-    number: number,
     title: string,
     points: number,
     author: string,
@@ -49,7 +45,6 @@ export class Problem {
     creation_date: Date,
   ) {
     this.id = id;
-    this.number = number;
     this.title = title;
     this.points = points;
     this.author = author;

@@ -19,7 +19,6 @@ export class ProblemFactory {
 
   static makeCreateProblemDto() {
     return new CreateProblemDto(
-      1,
       'Fibonacci',
       2,
       'user',
@@ -33,7 +32,6 @@ export class ProblemFactory {
 
   static makeProblemEntity() {
     return new Problem(
-      1,
       1,
       'Fibonacci',
       2,

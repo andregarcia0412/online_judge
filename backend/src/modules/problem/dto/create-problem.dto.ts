@@ -8,11 +8,6 @@ import {
 } from 'class-validator';
 
 export class CreateProblemDto {
-  @IsNumber()
-  @IsNotEmpty()
-  @ApiProperty()
-  number: number;
-
   @IsString()
   @IsNotEmpty()
   @MaxLength(32)
@@ -64,7 +59,6 @@ export class CreateProblemDto {
   output_example: string;
 
   constructor(
-    number: number,
     title: string,
     points: number,
     author: string,
@@ -74,7 +68,6 @@ export class CreateProblemDto {
     input_example: string,
     output_example: string,
   ) {
-    this.number = number;
     this.title = title;
     this.points = points;
     this.author = author;
