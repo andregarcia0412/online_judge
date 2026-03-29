@@ -34,4 +34,30 @@ export class Problem {
 
   @Column({ type: 'timestamp', default: () => 'CURRENT_TIMESTAMP' })
   creation_date: Date;
+
+  constructor(
+    id: number,
+    number: number,
+    title: string,
+    points: number,
+    author: string,
+    description: string,
+    input_description: string,
+    output_description: string,
+    input_example: string,
+    output_example: string,
+    creation_date: Date,
+  ) {
+    this.id = id;
+    this.number = number;
+    this.title = title;
+    this.points = points;
+    this.author = author;
+    this.description = description;
+    this.input_description = input_description;
+    this.output_description = output_description;
+    this.input_example = input_example;
+    this.output_example = output_example;
+    this.creation_date = creation_date;
+  }
 }

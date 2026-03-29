@@ -62,4 +62,26 @@ export class CreateProblemDto {
   @MaxLength(512)
   @ApiProperty()
   output_example: string;
+
+  constructor(
+    number: number,
+    title: string,
+    points: number,
+    author: string,
+    description: string,
+    input_description: string,
+    output_description: string,
+    input_example: string,
+    output_example: string,
+  ) {
+    this.number = number;
+    this.title = title;
+    this.points = points;
+    this.author = author;
+    this.description = description;
+    this.input_description = input_description;
+    this.output_description = output_description;
+    this.input_example = input_example;
+    this.output_example = output_example;
+  }
 }
