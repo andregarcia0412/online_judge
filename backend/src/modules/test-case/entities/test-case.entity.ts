@@ -13,4 +13,11 @@ export class TestCase {
 
   @Column({ type: 'text', nullable: true })
   output: string;
+
+  constructor(id: string, id_problem: number, input: string, output: string) {
+    this.id = id;
+    this.id_problem = id_problem;
+    this.input = input;
+    this.output = output;
+  }
 }

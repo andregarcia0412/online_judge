@@ -14,4 +14,10 @@ export class CreateTestCaseDto {
   @IsString()
   @ApiProperty()
   output: string;
+
+  constructor(id_problem: number, input: string, output: string) {
+    this.id_problem = id_problem;
+    this.input = input;
+    this.output = output;
+  }
 }
