@@ -1,21 +1,17 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import Docker from 'dockerode';
 import { TestRunnerService } from 'src/modules/test-runner/test-runner.service';
 import { User } from 'src/modules/user/entities/user.entity';
 import { Repository } from 'typeorm';
 import { DeleteResult, UpdateResult } from 'typeorm/browser';
-import { CodeRunnerService } from '../code-runner/code-runner.service';
-import { ExecuteCodeDto } from '../code-runner/dto/execute-code.dto';
-import { LANGUAGES } from '../code-runner/languages';
 import { Problem } from '../problem/entities/problem.entity';
 import { TestCase } from '../test-case/entities/test-case.entity';
+import { TestResult } from '../test-runner/dto/test-result.dto';
 import { CreateSubmissionDto } from './dto/create-submission.dto';
 import { ReturnSubmissionDto } from './dto/return-submission.dto';
 import { UpdateSubmissionDto } from './dto/update-submission.dto';
 import { Submission } from './entities/submission.entity';
 import { StatusEnum } from './enum/submission-status';
-import { TestResult } from '../test-runner/dto/test-result.dto';
 
 @Injectable()
 export class SubmissionService {
@@ -29,7 +25,6 @@ export class SubmissionService {
     @InjectRepository(TestCase)
     private testCaseRepository: Repository<TestCase>,
     private testRunnerService: TestRunnerService,
-    private codeRunnerService: CodeRunnerService,
   ) {}
 
   async create(
