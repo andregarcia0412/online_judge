@@ -1,26 +1,29 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
-import { CreateTestCaseDto } from './dto/create-test-case.dto';
-import { UpdateTestCaseDto } from './dto/update-test-case.dto';
 import { InjectRepository } from '@nestjs/typeorm';
-import { TestCase } from './entities/test-case.entity';
 import { DeleteResult, Repository } from 'typeorm';
-import { ProblemService } from 'src/modules/problem/problem.service';
-import { ReturnTestCaseDto } from './dto/return-test-case.dto';
 import { UpdateResult } from 'typeorm/browser';
+import { Problem } from '../problem/entities/problem.entity';
+import { CreateTestCaseDto } from './dto/create-test-case.dto';
+import { ReturnTestCaseDto } from './dto/return-test-case.dto';
+import { UpdateTestCaseDto } from './dto/update-test-case.dto';
+import { TestCase } from './entities/test-case.entity';
 
 @Injectable()
 export class TestCaseService {
   constructor(
     @InjectRepository(TestCase)
     private testCaseRepository: Repository<TestCase>,
-    private problemService: ProblemService,
+    @InjectRepository(Problem)
+    private problemRepository: Repository<Problem>,
   ) {}
 
   async create(
     createTestCaseDto: CreateTestCaseDto,
   ): Promise<ReturnTestCaseDto> {
     if (
-      !(await this.problemService.findOneById(createTestCaseDto.id_problem))
+      !(await this.problemRepository.findOneBy({
+        id: createTestCaseDto.id_problem,
+      }))
     ) {
       throw new NotFoundException('Problem not found');
     }
