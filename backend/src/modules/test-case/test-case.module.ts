@@ -1,12 +1,12 @@
 import { Module } from '@nestjs/common';
-import { TestCaseService } from './test-case.service';
-import { TestCaseController } from './test-case.controller';
 import { TypeOrmModule } from '@nestjs/typeorm';
+import { Problem } from '../problem/entities/problem.entity';
 import { TestCase } from './entities/test-case.entity';
-import { ProblemModule } from 'src/modules/problem/problem.module';
+import { TestCaseController } from './test-case.controller';
+import { TestCaseService } from './test-case.service';
 
 @Module({
-  imports: [TypeOrmModule.forFeature([TestCase]), ProblemModule],
+  imports: [TypeOrmModule.forFeature([TestCase, Problem])],
   controllers: [TestCaseController],
   providers: [TestCaseService],
   exports: [TestCaseService],
