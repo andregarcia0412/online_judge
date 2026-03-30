@@ -168,7 +168,7 @@ describe('Get User By Id', () => {
     expect(result).not.toHaveProperty('password');
   });
 
-  it('should throw not found exception when id does not matches', async () => {
+  it('should throw not found exception when id does not match', async () => {
     const userRepositoryMock = UserFactory.makeUserRepositoryMock();
     const submissionRepositoryMock =
       SubmissionFactory.makeSubmissionRepositoryMock();
