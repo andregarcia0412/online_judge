@@ -10,9 +10,8 @@ describe('Create User', () => {
   it('should create a user with hashed password', async () => {
     const userRepositoryMock = UserFactory.makeUserRepositoryMock();
 
-    const submissionRepositoryMock = {
-      findBy: jest.fn(),
-    };
+    const submissionRepositoryMock =
+      SubmissionFactory.makeSubmissionRepositoryMock();
 
     const service = new UserService(
       userRepositoryMock as any,
@@ -51,9 +50,8 @@ describe('Create User', () => {
   it('should return conflict exception when user email is already in use', async () => {
     const userRepositoryMock = UserFactory.makeUserRepositoryMock();
 
-    const submissionRepositoryMock = {
-      findBy: jest.fn(),
-    };
+    const submissionRepositoryMock =
+      SubmissionFactory.makeSubmissionRepositoryMock();
 
     const service = new UserService(
       userRepositoryMock as any,
@@ -81,9 +79,8 @@ describe('Create User', () => {
   it('should return conflict exception when username is already in use', async () => {
     const userRepositoryMock = UserFactory.makeUserRepositoryMock();
 
-    const submissionRepositoryMock = {
-      findBy: jest.fn(),
-    };
+    const submissionRepositoryMock =
+      SubmissionFactory.makeSubmissionRepositoryMock();
 
     const service = new UserService(
       userRepositoryMock as any,
@@ -115,9 +112,8 @@ describe('Create User', () => {
 describe('Get All User', () => {
   it('should return a list of ReturnUserDto', async () => {
     const userRepositoryMock = UserFactory.makeUserRepositoryMock();
-    const submissionRepositoryMock = {
-      findBy: jest.fn(),
-    };
+    const submissionRepositoryMock =
+      SubmissionFactory.makeSubmissionRepositoryMock();
 
     const userEntity = UserFactory.makeUserEntity();
     userRepositoryMock.find.mockResolvedValue([userEntity]);
@@ -151,9 +147,8 @@ describe('Get All User', () => {
 describe('Get User By Id', () => {
   it('should return user entity when id matches', async () => {
     const userRepositoryMock = UserFactory.makeUserRepositoryMock();
-    const submissionRepositoryMock = {
-      findBy: jest.fn(),
-    };
+    const submissionRepositoryMock =
+      SubmissionFactory.makeSubmissionRepositoryMock();
 
     const userEntity = UserFactory.makeUserEntity();
     userRepositoryMock.findOneBy.mockResolvedValue(userEntity);
@@ -175,9 +170,8 @@ describe('Get User By Id', () => {
 
   it('should throw not found exception when id does not matches', async () => {
     const userRepositoryMock = UserFactory.makeUserRepositoryMock();
-    const submissionRepositoryMock = {
-      findBy: jest.fn(),
-    };
+    const submissionRepositoryMock =
+      SubmissionFactory.makeSubmissionRepositoryMock();
 
     userRepositoryMock.findOneBy.mockResolvedValue(null);
 
@@ -196,9 +190,8 @@ describe('Get User By Id', () => {
 describe('Get User By Email', () => {
   it('should return user entity when email matches', async () => {
     const userRepositoryMock = UserFactory.makeUserRepositoryMock();
-    const submissionRepositoryMock = {
-      findBy: jest.fn(),
-    };
+    const submissionRepositoryMock =
+      SubmissionFactory.makeSubmissionRepositoryMock();
 
     const userEntity = UserFactory.makeUserEntity();
     userRepositoryMock.findOneBy.mockResolvedValue(userEntity);
@@ -220,9 +213,8 @@ describe('Get User By Email', () => {
 
   it('should throw not found exception when email does not matches', async () => {
     const userRepositoryMock = UserFactory.makeUserRepositoryMock();
-    const submissionRepositoryMock = {
-      findBy: jest.fn(),
-    };
+    const submissionRepositoryMock =
+      SubmissionFactory.makeSubmissionRepositoryMock();
 
     userRepositoryMock.findOneBy.mockResolvedValue(null);
 
@@ -241,9 +233,8 @@ describe('Get User By Email', () => {
 describe('Find Submission By User Id', () => {
   it('should return a list of ReturnSubmissionDto', async () => {
     const userRepositoryMock = UserFactory.makeUserRepositoryMock();
-    const submissionRepositoryMock = {
-      findBy: jest.fn(),
-    };
+    const submissionRepositoryMock =
+      SubmissionFactory.makeSubmissionRepositoryMock();
 
     const savedEntity = SubmissionFactory.makeSubmissionEntity();
     submissionRepositoryMock.findBy.mockResolvedValue([savedEntity]);
@@ -270,9 +261,8 @@ describe('Find Submission By User Id', () => {
 describe('Update User', () => {
   it('should update a user and return update result', async () => {
     const userRepositoryMock = UserFactory.makeUserRepositoryMock();
-    const submissionRepositoryMock = {
-      findBy: jest.fn(),
-    };
+    const submissionRepositoryMock =
+      SubmissionFactory.makeSubmissionRepositoryMock();
 
     const service = new UserService(
       userRepositoryMock as any,
@@ -307,9 +297,8 @@ describe('Update User', () => {
 describe('Delete User', () => {
   it('should delete a user and return delete result', async () => {
     const userRepositoryMock = UserFactory.makeUserRepositoryMock();
-    const submissionRepositoryMock = {
-      findBy: jest.fn(),
-    };
+    const submissionRepositoryMock =
+      SubmissionFactory.makeSubmissionRepositoryMock();
 
     const service = new UserService(
       userRepositoryMock as any,

@@ -6,6 +6,19 @@ import { StatusEnum } from 'src/modules/submission/enum/submission-status';
 export class SubmissionFactory {
   private static readonly fixedDate = new Date('2026-01-01T00:00:00.000Z');
 
+  static makeSubmissionRepositoryMock() {
+    return {
+      findBy: jest.fn(),
+      findOne: jest.fn(),
+      create: jest.fn(),
+      save: jest.fn(),
+      find: jest.fn(),
+      findOneBy: jest.fn(),
+      update: jest.fn(),
+      delete: jest.fn(),
+    };
+  }
+
   static makeCreateSubmissionDto(): CreateSubmissionDto {
     return new CreateSubmissionDto('123', 1, 'print("Hello World!")', 'python');
   }
