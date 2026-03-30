@@ -35,7 +35,9 @@ export class TestCaseService {
   }
 
   async findAll(): Promise<ReturnTestCaseDto[]> {
-    return await this.testCaseRepository.find();
+    return (await this.testCaseRepository.find()).map((testCase: TestCase) =>
+      ReturnTestCaseDto.fromEntity(testCase),
+    );
   }
 
   async findOneById(id: string): Promise<ReturnTestCaseDto> {
