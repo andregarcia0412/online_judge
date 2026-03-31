@@ -1,0 +1,14 @@
+import { StatusEnum } from 'src/modules/submission/enum/submission-status';
+import { TestResult } from 'src/modules/test-runner/dto/test-result.dto';
+
+export class TestRunnerFactory {
+  static makeTestResult(): TestResult {
+    return new TestResult(StatusEnum.ACCEPTED, 10, '10\n', null, 10, 3);
+  }
+
+  static makeTestResultServiceMock() {
+    return {
+      runTests: jest.fn(),
+    };
+  }
+}
