@@ -72,7 +72,7 @@ export class SubmissionService {
       user.points = Number(user.points) + Number(problem.points);
     }
 
-    this.userRepository.save(user);
+    await this.userRepository.save(user);
 
     const newSubmission = this.submissionRepository.create({
       ...createSubmissionDto,
