@@ -1,4 +1,8 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
+import {
+  ConflictException,
+  Injectable,
+  NotFoundException,
+} from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { DeleteResult, UpdateResult } from 'typeorm/browser';
@@ -19,6 +23,11 @@ export class ProblemService {
   ) {}
 
   async create(createProblemDto: CreateProblemDto): Promise<ReturnProblemDto> {
+    if (
+      await this.problemRepository.findOneBy({ title: createProblemDto.title })
+    ) {
+      throw new ConflictException('A problem with this title already exists');
+    }
     const newProblem = this.problemRepository.create(createProblemDto);
     return ReturnProblemDto.fromEntity(
       await this.problemRepository.save(newProblem),
