@@ -1,5 +1,5 @@
 import "./style.button.css";
-import Spinner from "../../assets/ring-resize.svg";
+import Spinner from "../../../assets/ring-resize.svg";
 
 interface ButtonProps {
   text: string;

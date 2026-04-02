@@ -1,6 +1,5 @@
+import Check from "../../../assets/check.svg";
 import "./style.checkbox.css";
-import Check from "../../assets/check.svg";
-import React from "react";
 
 interface CheckboxProps {
   label: string | null;

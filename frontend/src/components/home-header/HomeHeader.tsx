@@ -1,5 +1,5 @@
 import { Logo } from "../logo/Logo";
-import { QuickSearch } from "../quick-search/QuickSearch";
+import { QuickSearch } from "../input/quick-search/QuickSearch";
 import "./style.home-header.css";
 
 type HomeHeaderProps = {

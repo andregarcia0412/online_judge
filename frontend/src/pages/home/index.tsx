@@ -1,4 +1,4 @@
-import { StatCard } from "../../components/info-card/StatCard";
+import { StatCard } from "../../components/card/info-card/StatCard";
 import { useAuthContext } from "../../contexts/AuthContext";
 import "./style.css";
 import Fire from "../../assets/fire.svg";

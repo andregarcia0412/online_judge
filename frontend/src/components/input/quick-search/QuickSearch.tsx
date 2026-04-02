@@ -1,5 +1,5 @@
 import "./style.quick-search.css";
-import Search from "../../assets/search.svg";
+import Search from "../../../assets/search.svg";
 
 type QuickSearchProps = {
   setText: (text: string) => void;

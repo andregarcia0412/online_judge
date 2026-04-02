@@ -1,10 +1,10 @@
 import React from "react";
-import { LoginCard } from "../../components/auth-card/LoginCard";
+import { LoginCard } from "../../components/card/auth-card/LoginCard";
 import "./style.css";
 import { LoginSchema } from "../../validations/login.schema";
 import { useAuthContext } from "../../contexts/AuthContext";
 import { AxiosError } from "axios";
-import { RegisterCard } from "../../components/auth-card/RegisterCard";
+import { RegisterCard } from "../../components/card/auth-card/RegisterCard";
 import { RegisterSchema } from "../../validations/register.schema";
 import { registerService } from "../../api/services/auth.service";
 import { useNavigate } from "react-router-dom";

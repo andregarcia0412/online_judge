@@ -1,6 +1,6 @@
 import "./style.auth-input.css";
-import Visibility from "../../assets/visibility.svg";
-import VisibilityOff from "../../assets/visibility_off.svg";
+import Visibility from "../../../assets/visibility.svg";
+import VisibilityOff from "../../../assets/visibility_off.svg";
 import React from "react";
 
 interface AuthInputProps {

@@ -1,12 +1,12 @@
-import checkCircle from "../../assets/check-circle.svg";
-import clock from "../../assets/clock.svg";
-import database from "../../assets/database.svg";
-import close from "../../assets/close.svg";
-import xcircle from "../../assets/xcircle.svg";
+import checkCircle from "../../../assets/check-circle.svg";
+import clock from "../../../assets/clock.svg";
+import database from "../../../assets/database.svg";
+import close from "../../../assets/close.svg";
+import xcircle from "../../../assets/xcircle.svg";
 import "./style.result-card.css";
-import Button from "../button/Button";
+import Button from "../../input/button/Button";
 import React from "react";
-import { useLockBodyScroll } from "../../hooks/useLockBodyScroll";
+import { useLockBodyScroll } from "../../../hooks/useLockBodyScroll";
 
 type ResultCardProps = {
   accepted?: boolean;
