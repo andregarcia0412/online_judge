@@ -1,9 +1,10 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { IsNotEmpty, IsNumber, IsString } from 'class-validator';
+import { Type } from 'class-transformer';
+import { IsNumber, IsString } from 'class-validator';
 
 export class CreateTestCaseDto {
+  @Type(() => Number)
   @IsNumber()
-  @IsNotEmpty()
   @ApiProperty()
   id_problem: number;
 

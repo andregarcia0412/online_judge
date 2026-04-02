@@ -1,4 +1,5 @@
 import { ApiProperty } from '@nestjs/swagger';
+import { Type } from 'class-transformer';
 import {
   IsString,
   IsNotEmpty,
@@ -12,8 +13,8 @@ export class CreateSubmissionDto {
   @ApiProperty()
   id_user: string;
 
+  @Type(() => Number)
   @IsNumber()
-  @IsNotEmpty()
   @IsPositive()
   @ApiProperty()
   id_problem: number;
