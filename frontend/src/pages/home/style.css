@@ -10,14 +10,15 @@
   inset: 0;
   z-index: -1;
 
-  background: radial-gradient(
+  background:
+    radial-gradient(
       circle at top right,
       rgba(139, 92, 246, 0.35),
       transparent 40%
     ),
     radial-gradient(
       circle at bottom left,
-      rgba(139, 92, 246, 0.09),
+      rgba(139, 92, 246, 0.2),
       transparent 40%
     );
 

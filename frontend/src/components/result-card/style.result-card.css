@@ -1,6 +1,6 @@
 .result-card-container {
   z-index: 1;
-  background: #161b22;
+  background: rgba(17, 24, 39, 1);
   border: 1px solid #30363d;
   width: 25%;
   height: 600px;

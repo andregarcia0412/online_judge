@@ -4,7 +4,7 @@
   align-items: flex-start;
   flex-direction: column;
   gap: 12px;
-  background: #161b22;
+  background: rgba(17, 24, 39, 0.4);
   border: 1px solid #30363d;
   width: 100%;
   min-width: 136px;

@@ -7,7 +7,6 @@ import Trophy from "../../assets/trophy.svg";
 import TrendingUp from "../../assets/trending_up.svg";
 import { HomeHeader } from "../../components/home-header/HomeHeader";
 import React from "react";
-import { ProfileCard } from "../../components/profile-card/ProfileCard";
 
 export const Home = () => {
   const { userData } = useAuthContext();
@@ -67,10 +66,6 @@ export const Home = () => {
             description="Keep Going!"
           />
         </div>
-        <ProfileCard
-          username={userData.user.username}
-          email={userData.user.email}
-        />
       </div>
     </div>
   );
