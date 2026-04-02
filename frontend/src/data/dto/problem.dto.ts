@@ -8,5 +8,8 @@ export type Problem = {
   output_description: string;
   input_example: string;
   output_example: string;
+  total_submitted: number;
+  total_accepted: number;
+  difficulty: string;
   creation_date: Date;
 };
