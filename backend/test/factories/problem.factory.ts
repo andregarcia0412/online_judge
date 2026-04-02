@@ -1,6 +1,7 @@
 import { CreateProblemDto } from 'src/modules/problem/dto/create-problem.dto';
 import { ReturnProblemDto } from 'src/modules/problem/dto/return-problem.dto';
 import { Problem } from 'src/modules/problem/entities/problem.entity';
+import { ProblemDifficultyEnum } from 'src/modules/problem/enum/problem-difficulty.enum';
 
 export class ProblemFactory {
   private static readonly fixedData = new Date('2026-01-01T00:00:00.000Z');
@@ -27,6 +28,7 @@ export class ProblemFactory {
       'output_description',
       'input_example',
       'output_example',
+      ProblemDifficultyEnum.EASY,
     );
   }
 
@@ -41,6 +43,9 @@ export class ProblemFactory {
       'output_description',
       'input_example',
       'output_example',
+      0,
+      0,
+      ProblemDifficultyEnum.EASY,
       new Date(this.fixedData.getTime()),
     );
   }

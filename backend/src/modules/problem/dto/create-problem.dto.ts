@@ -1,36 +1,35 @@
 import { ApiProperty } from '@nestjs/swagger';
 import {
-  IsAlphanumeric,
+  IsEnum,
   IsNotEmpty,
   IsNumber,
   IsString,
   MaxLength,
 } from 'class-validator';
+import { ProblemDifficultyEnum } from '../enum/problem-difficulty.enum';
+import { Type } from 'class-transformer';
 
 export class CreateProblemDto {
   @IsString()
   @IsNotEmpty()
   @MaxLength(32)
-  @IsAlphanumeric()
   @ApiProperty()
   title: string;
 
+  @Type(() => Number)
   @IsNumber()
-  @IsNotEmpty()
   @ApiProperty()
   points: number;
 
   @IsString()
   @IsNotEmpty()
   @MaxLength(32)
-  @IsAlphanumeric()
   @ApiProperty()
   author: string;
 
   @IsString()
   @IsNotEmpty()
   @MaxLength(1024)
-  @IsAlphanumeric()
   @ApiProperty()
   description: string;
 
@@ -58,6 +57,10 @@ export class CreateProblemDto {
   @ApiProperty()
   output_example: string;
 
+  @IsEnum(ProblemDifficultyEnum)
+  @ApiProperty({ enum: ProblemDifficultyEnum })
+  difficulty: ProblemDifficultyEnum;
+
   constructor(
     title: string,
     points: number,
@@ -67,6 +70,7 @@ export class CreateProblemDto {
     output_description: string,
     input_example: string,
     output_example: string,
+    difficulty: ProblemDifficultyEnum,
   ) {
     this.title = title;
     this.points = points;
@@ -76,5 +80,6 @@ export class CreateProblemDto {
     this.output_description = output_description;
     this.input_example = input_example;
     this.output_example = output_example;
+    this.difficulty = difficulty;
   }
 }

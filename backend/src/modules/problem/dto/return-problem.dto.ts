@@ -30,6 +30,15 @@ export class ReturnProblemDto {
   output_example: string;
 
   @ApiProperty()
+  total_submitted: number;
+
+  @ApiProperty()
+  total_accepted: number;
+
+  @ApiProperty()
+  difficulty: string;
+
+  @ApiProperty()
   creation_date: Date;
 
   constructor(
@@ -42,6 +51,9 @@ export class ReturnProblemDto {
     output_description: string,
     input_example: string,
     output_example: string,
+    total_submitted: number,
+    total_accepted: number,
+    difficulty: string,
     creation_date: Date,
   ) {
     this.id = id;
@@ -53,6 +65,9 @@ export class ReturnProblemDto {
     this.output_description = output_description;
     this.input_example = input_example;
     this.output_example = output_example;
+    this.total_submitted = total_submitted;
+    this.total_accepted = total_accepted;
+    this.difficulty = difficulty;
     this.creation_date = creation_date;
   }
 
@@ -67,6 +82,9 @@ export class ReturnProblemDto {
       problem.output_description,
       problem.input_example,
       problem.output_example,
+      problem.total_submitted,
+      problem.total_accepted,
+      problem.difficulty,
       problem.creation_date,
     );
   }
