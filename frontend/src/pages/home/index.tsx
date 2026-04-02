@@ -1,17 +1,18 @@
-import { StatCard } from "../../components/card/info-card/StatCard";
-import { useAuthContext } from "../../contexts/AuthContext";
-import "./style.css";
+import React from "react";
 import Fire from "../../assets/fire.svg";
 import TrackChanges from "../../assets/track_changes.svg";
-import Trophy from "../../assets/trophy.svg";
 import TrendingUp from "../../assets/trending_up.svg";
+import Trophy from "../../assets/trophy.svg";
+import { StatCard } from "../../components/card/info-card/StatCard";
 import { HomeHeader } from "../../components/home-header/HomeHeader";
-import React from "react";
+import { useAuthContext } from "../../contexts/AuthContext";
+import Search from "../../assets/search.svg";
+import "./style.css";
 
 export const Home = () => {
   const { userData } = useAuthContext();
-
   const [quickSearchText, setQuickSearchText] = React.useState<string>("");
+  const [homeSearchText, setHomeSearchText] = React.useState<string>("");
 
   const handleSearch = () => {
     console.log("pesquisou");
@@ -23,7 +24,11 @@ export const Home = () => {
 
   return (
     <div>
-      <HomeHeader setText={setQuickSearchText} handleSearch={handleSearch} />
+      <HomeHeader
+        setText={setQuickSearchText}
+        handleSearch={handleSearch}
+        text={quickSearchText}
+      />
       <div className="home-container">
         <div className="home-title">
           <h1>
@@ -34,6 +39,16 @@ export const Home = () => {
             Practice coding problems, compete in contests, and improve your
             algorithms.
           </p>
+        </div>
+
+        <div className="home-search-input">
+          <img src={Search} />
+          <input
+            type="text"
+            placeholder="Search problem by name or ID"
+            value={homeSearchText}
+            onChange={(e) => setHomeSearchText(e.target.value)}
+          ></input>
         </div>
 
         <div className="stat-cards-container">
