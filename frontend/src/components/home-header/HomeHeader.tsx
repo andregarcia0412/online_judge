@@ -4,10 +4,15 @@ import "./style.home-header.css";
 
 type HomeHeaderProps = {
   setText: (text: string) => void;
+  text: string;
   handleSearch: () => void;
 };
 
-export const HomeHeader = ({ setText, handleSearch }: HomeHeaderProps) => {
+export const HomeHeader = ({
+  setText,
+  handleSearch,
+  text,
+}: HomeHeaderProps) => {
   return (
     <header className="home-header">
       <div className="logo-title">
@@ -19,7 +24,7 @@ export const HomeHeader = ({ setText, handleSearch }: HomeHeaderProps) => {
         </div>
       </div>
 
-      <QuickSearch setText={setText} handleSearch={handleSearch} />
+      <QuickSearch setText={setText} handleSearch={handleSearch} text={text} />
     </header>
   );
 };
