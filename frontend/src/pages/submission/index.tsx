@@ -31,6 +31,7 @@ export const SubmissionScreen = () => {
     null,
   );
   const [testCases, setTestCases] = React.useState<TestCase[] | null>(null);
+  const [quickSearchText, setQuickSearchText] = React.useState<string>("");
 
   if (!userData) {
     return null;
@@ -122,8 +123,9 @@ export const SubmissionScreen = () => {
   return (
     <div>
       <HomeHeader
+        text={quickSearchText}
         handleSearch={() => console.log("teste")}
-        setText={() => console.log("teste")}
+        setText={(text) => setQuickSearchText(text)}
       />
       <div className="submission-container">
         <div className="submission-container-sides">
