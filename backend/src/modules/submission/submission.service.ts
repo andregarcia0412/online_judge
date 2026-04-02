@@ -55,6 +55,7 @@ export class SubmissionService {
         id_user: user.id,
         status: StatusEnum.ACCEPTED,
         language: createSubmissionDto.language,
+        id_problem: createSubmissionDto.id_problem,
       },
     });
 

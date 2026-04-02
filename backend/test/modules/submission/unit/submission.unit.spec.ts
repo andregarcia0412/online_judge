@@ -213,6 +213,7 @@ describe('SubmissionService', () => {
           id_user: savedUser.id,
           status: StatusEnum.ACCEPTED,
           language: createSubmissionDto.language,
+          id_problem: createSubmissionDto.id_problem,
         },
       });
       expect(userRepositoryMock.save).toHaveBeenCalledWith(
