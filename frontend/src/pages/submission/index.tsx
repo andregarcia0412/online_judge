@@ -1,22 +1,24 @@
 import { Editor } from "@monaco-editor/react";
 import { ConfigProvider, Select, theme } from "antd";
 import React from "react";
+import { Navigate, useParams } from "react-router-dom";
 import { problemService } from "../../api/services/problem.service";
 import { submissionService } from "../../api/services/submission.service";
 import play from "../../assets/play.svg";
 import send from "../../assets/send.svg";
-import Button from "../../components/input/button/Button";
-import { HomeHeader } from "../../components/home-header/HomeHeader";
 import { ResultCard } from "../../components/card/result-card/ResultCard";
+import { HomeHeader } from "../../components/home-header/HomeHeader";
+import Button from "../../components/input/button/Button";
 import { useAuthContext } from "../../contexts/AuthContext";
 import { LanguageConstants } from "../../data/constants/language.constants";
 import type { Problem } from "../../data/dto/problem.dto";
 import type { Submission } from "../../data/dto/submission.dto";
+import type { TestCase } from "../../data/dto/test-case.dto";
 import { celebrate } from "../../utils/celebrate";
 import "./style.css";
-import type { TestCase } from "../../data/dto/test-case.dto";
 
 export const SubmissionScreen = () => {
+  const idProblem = Number(useParams().idProblem);
   const { userData } = useAuthContext();
   const [language, setLanguage] = React.useState<string>("java");
   const [code, setCode] = React.useState<string>(
@@ -24,8 +26,9 @@ export const SubmissionScreen = () => {
   );
   const [loadingSubmit, setLoadingSubmit] = React.useState<boolean>(false);
   const [loadingRun, setLoadingRun] = React.useState<boolean>(false);
-  const idProblem = 1;
-  const [problem, setProblem] = React.useState<Problem>();
+  const [problem, setProblem] = React.useState<Problem | null | undefined>(
+    undefined,
+  );
   const [showPopup, setShowPopup] = React.useState<boolean>();
   const [submissionInfo, setSubmissionInfo] = React.useState<Submission | null>(
     null,
@@ -42,9 +45,10 @@ export const SubmissionScreen = () => {
       try {
         const problem = await problemService.findById(idProblem);
         setProblem(problem);
-        console.log(problem);
-      } catch (e) {
-        throw e;
+      } catch (e: any) {
+        if (e.response?.status === 404) {
+          setProblem(null);
+        }
       }
     };
 
@@ -60,10 +64,14 @@ export const SubmissionScreen = () => {
 
     findProblem();
     findTestCases();
-  }, []);
+  }, [idProblem]);
 
-  if (!problem) {
-    return <div></div>;
+  if (problem === null) {
+    return <Navigate to="/not-found" replace />;
+  }
+
+  if (problem === undefined) {
+    return null;
   }
 
   const handleSubmit = async () => {

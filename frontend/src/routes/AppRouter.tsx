@@ -13,7 +13,7 @@ export const AppRouter = () => {
 
         <Route element={<PrivateRoute />}>
           <Route path="/" element={<Home />} />
-          <Route path="/submission" element={<SubmissionScreen />} />
+          <Route path="/submission/:idProblem" element={<SubmissionScreen />} />
         </Route>
 
         <Route path="*" element={<NotFound />} />
