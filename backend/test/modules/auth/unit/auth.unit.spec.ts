@@ -10,6 +10,8 @@ import { AuthService } from 'src/modules/auth/auth.service';
 import { ReturnUserDto } from 'src/modules/user/dto/return-user.dto';
 import { AuthFactory } from 'test/factories/auth.factory';
 import { UserFactory } from 'test/factories/user.factory';
+import { UserService } from 'src/modules/user/user.service';
+import { SubmissionFactory } from 'test/factories/submission.factory';
 
 describe('AuthService', () => {
   let userRepositoryMock: ReturnType<typeof UserFactory.makeUserRepositoryMock>;

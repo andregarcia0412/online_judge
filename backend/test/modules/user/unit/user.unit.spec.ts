@@ -167,7 +167,7 @@ describe('UserService', () => {
   });
 
   describe('Get User By Id', () => {
-    it('should return user entity when id matches', async () => {
+    it('should return user entity and check user streak when id matches', async () => {
       const userRepositoryMock = UserFactory.makeUserRepositoryMock();
       const submissionRepositoryMock =
         SubmissionFactory.makeSubmissionRepositoryMock();
@@ -180,6 +180,10 @@ describe('UserService', () => {
         submissionRepositoryMock as any,
       );
 
+      const updateUserStreakSpy = jest
+        .spyOn(service, 'updateUserStreak')
+        .mockResolvedValue(undefined);
+
       const result = await service.findOneById(userEntity.id);
 
       expect(result).toBeInstanceOf(ReturnUserDto);
@@ -188,6 +192,7 @@ describe('UserService', () => {
         id: userEntity.id,
       });
       expect(result).not.toHaveProperty('password');
+      expect(updateUserStreakSpy).toHaveBeenCalled();
     });
 
     it('should throw not found exception when id does not match', async () => {

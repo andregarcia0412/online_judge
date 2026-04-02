@@ -86,6 +86,7 @@ export class AuthFactory {
   static makeUserServiceMock() {
     return {
       create: jest.fn(),
+      updateUserStreak: jest.fn(),
     };
   }
 }
