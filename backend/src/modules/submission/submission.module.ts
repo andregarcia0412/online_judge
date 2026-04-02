@@ -8,12 +8,14 @@ import { User } from '../user/entities/user.entity';
 import { Submission } from './entities/submission.entity';
 import { SubmissionController } from './submission.controller';
 import { SubmissionService } from './submission.service';
+import { UserModule } from '../user/user.module';
 
 @Module({
   imports: [
     TypeOrmModule.forFeature([Submission, User, Problem, TestCase]),
     CodeRunnerModule,
     TestRunnerModule,
+    UserModule,
   ],
   controllers: [SubmissionController],
   providers: [SubmissionService],
