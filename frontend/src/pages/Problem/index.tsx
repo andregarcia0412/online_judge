@@ -17,7 +17,7 @@ import type { TestCase } from "../../data/dto/test-case.dto";
 import { celebrate } from "../../utils/celebrate";
 import "./style.css";
 
-export const SubmissionScreen = () => {
+export const ProblemScreen = () => {
   const idProblem = Number(useParams().idProblem);
   const { userData } = useAuthContext();
   const [language, setLanguage] = React.useState<string>("java");
@@ -135,28 +135,28 @@ export const SubmissionScreen = () => {
         handleSearch={() => console.log("teste")}
         setText={(text) => setQuickSearchText(text)}
       />
-      <div className="submission-container">
-        <div className="submission-container-sides">
-          <div className="submission-card title">
-            <div className="submission-card-row">
+      <div className="problem-container">
+        <div className="problem-container-sides">
+          <div className="problem-card title">
+            <div className="problem-card-row">
               <h2>
                 {problem.id}. {problem.title}
               </h2>
             </div>
 
-            <div className="submission-card-points">
+            <div className="problem-card-points">
               <p>Points</p>
-              <p className="submission-card-points-label">{problem.points}</p>
+              <p className="problem-card-points-label">{problem.points}</p>
             </div>
           </div>
 
-          <div className="submission-card">
-            <div className="submission-card-row">
+          <div className="problem-card">
+            <div className="problem-card-row">
               <h3>Description</h3>
               <p>{problem.description}</p>
             </div>
             <hr color="#30363d" style={{ width: "100%" }} />
-            <div className="submission-card-row">
+            <div className="problem-card-row">
               <h3>Input</h3>
               <p>
                 {problem.input_description ||
@@ -164,23 +164,23 @@ export const SubmissionScreen = () => {
               </p>
             </div>
             <hr color="#30363d" style={{ width: "100%" }} />
-            <div className="submission-card-row">
+            <div className="problem-card-row">
               <h3>Output</h3>
               <p>{problem.output_description}</p>
             </div>
             <hr color="#30363d" style={{ width: "100%" }} />
-            <div className="submission-card-row">
+            <div className="problem-card-row">
               <h3>Examples</h3>
-              <div className="submission-examples">
-                <div className="submission-example">
+              <div className="problem-examples">
+                <div className="problem-example">
                   <p>Input Example</p>
-                  <div className="submission-example-box">
+                  <div className="problem-example-box">
                     <p>{problem.input_example}</p>
                   </div>
                 </div>
-                <div className="submission-example">
+                <div className="problem-example">
                   <p>Output Example</p>
-                  <div className="submission-example-box">
+                  <div className="problem-example-box">
                     <p>{problem.output_example}</p>
                   </div>
                 </div>
@@ -188,12 +188,12 @@ export const SubmissionScreen = () => {
             </div>
           </div>
         </div>
-        <div className="submission-container-sides">
+        <div className="problem-container-sides">
           <div
-            className="submission-card language-select-card"
+            className="problem-card language-select-card"
             style={{ height: "auto" }}
           >
-            <div className="submission-selector">
+            <div className="problem-selector">
               <ConfigProvider
                 theme={{
                   algorithm: theme.darkAlgorithm,
@@ -240,7 +240,7 @@ export const SubmissionScreen = () => {
               />
             </div>
           </div>
-          <div className="submission-editor-wrapper">
+          <div className="problem-editor-wrapper">
             <Editor
               height="100%"
               language={LanguageConstants[language].languageName}
