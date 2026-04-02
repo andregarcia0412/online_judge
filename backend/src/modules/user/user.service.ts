@@ -54,6 +54,7 @@ export class UserService {
       throw new NotFoundException('User not found');
     }
 
+    await this.updateUserStreak(user);
     return ReturnUserDto.fromEntity(user);
   }
 
@@ -82,5 +83,67 @@ export class UserService {
 
   async remove(id: string): Promise<DeleteResult> {
     return await this.userRepository.delete(id);
+  }
+
+  async updateUserStreak(user: User) {
+    const lastUserSubmission = await this.submissionRepository.findOne({
+      where: {
+        id_user: user.id,
+      },
+      order: {
+        submission_date: 'DESC',
+      },
+    });
+
+    if (!lastUserSubmission) {
+      user.streak = 0;
+    } else {
+      const lastDate = new Date(lastUserSubmission.submission_date);
+      const today = new Date();
+
+      lastDate.setHours(0, 0, 0, 0);
+      today.setHours(0, 0, 0, 0);
+
+      const diffDays =
+        (today.getTime() - lastDate.getTime()) / (1000 * 60 * 60 * 24);
+
+      if (diffDays === 1) {
+        user.streak = Number(user.streak) + 1;
+      } else if (diffDays > 1) {
+        user.streak = 0;
+      }
+    }
+
+    await this.userRepository.save(user);
+  }
+
+  async updateUserStreakOnSubmission(user: User) {
+    const lastUserSubmission = await this.submissionRepository.findOne({
+      where: {
+        id_user: user.id,
+      },
+      order: {
+        submission_date: 'DESC',
+      },
+    });
+
+    if (!lastUserSubmission) {
+      user.streak = 1;
+    } else {
+      const lastDate = new Date(lastUserSubmission.submission_date);
+      const today = new Date();
+
+      lastDate.setHours(0, 0, 0, 0);
+      today.setHours(0, 0, 0, 0);
+
+      const diffDays =
+        (today.getTime() - lastDate.getTime()) / (1000 * 60 * 60 * 24);
+
+      if (diffDays === 1) {
+        user.streak = Number(user.streak) + 1;
+      } else if (diffDays > 1) {
+        user.streak = 1;
+      }
+    }
   }
 }

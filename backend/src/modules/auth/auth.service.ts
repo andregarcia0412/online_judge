@@ -73,6 +73,8 @@ export class AuthService {
       throw new BadRequestException('Incorrect email or password');
     }
 
+    await this.userService.updateUserStreak(user);
+
     const tokens = await this.getTokens(user.id, user.email);
 
     const returnUser: ReturnUserDto = ReturnUserDto.fromEntity(user);
