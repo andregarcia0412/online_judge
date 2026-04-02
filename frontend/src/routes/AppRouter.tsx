@@ -3,7 +3,7 @@ import { Auth } from "../pages/auth";
 import { Home } from "../pages/home";
 import { NotFound } from "../pages/not-found/NotFound";
 import { PrivateRoute } from "./PrivateRoute";
-import { ProblemScreen } from "../pages/Problem";
+import { ProblemScreen } from "../pages/problem";
 
 export const AppRouter = () => {
   return (
