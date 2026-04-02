@@ -25,7 +25,7 @@ export class UserController {
     return this.userService.create(createUserDto);
   }
 
-  @Post(':id/submission')
+  @Get(':id/submission')
   @ApiCreatedResponse({ type: [ReturnSubmissionDto] })
   findAllSubmissionsById(
     @Param('id') id: string,
