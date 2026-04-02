@@ -5,275 +5,230 @@ import { ReturnTestCaseDto } from 'src/modules/test-case/dto/return-test-case.dt
 import { ProblemFactory } from 'test/factories/problem.factory';
 import { TestCaseFactory } from 'test/factories/test-case.factory';
 
-describe('Create Problem', () => {
-  it('should create a problem and return ReturnProblemDto when title does not match', async () => {
-    const problemRepositoryMock = ProblemFactory.makeProblemRepositoryMock();
-    const testCaseRepositoryMock = TestCaseFactory.makeTestCaseRepositoryMock();
+describe('ProblemService', () => {
+  let problemRepositoryMock: ReturnType<
+    typeof ProblemFactory.makeProblemRepositoryMock
+  >;
+  let testCaseRepositoryMock: ReturnType<
+    typeof TestCaseFactory.makeTestCaseRepositoryMock
+  >;
+  let service: ProblemService;
 
-    const service = new ProblemService(
+  beforeEach(() => {
+    problemRepositoryMock = ProblemFactory.makeProblemRepositoryMock();
+    testCaseRepositoryMock = TestCaseFactory.makeTestCaseRepositoryMock();
+
+    service = new ProblemService(
       problemRepositoryMock as any,
       testCaseRepositoryMock as any,
     );
-
-    const createProblemDto = ProblemFactory.makeCreateProblemDto();
-    const createdProblem = ProblemFactory.makeProblemEntity();
-    const savedProblem = ProblemFactory.makeProblemEntity();
-
-    problemRepositoryMock.findOneBy.mockResolvedValue(null);
-    problemRepositoryMock.create.mockReturnValue(createdProblem);
-    problemRepositoryMock.save.mockResolvedValue(savedProblem);
-
-    const result = await service.create({ ...createProblemDto });
-
-    expect(problemRepositoryMock.create).toHaveBeenCalledWith(createProblemDto);
-    expect(problemRepositoryMock.save).toHaveBeenCalledWith(createdProblem);
-    expect(result).toBeInstanceOf(ReturnProblemDto);
-    expect(result).toMatchObject(ProblemFactory.makeReturnProblemDto());
   });
 
-  it('should throw ConflictException when title matches', async () => {
-    const problemRepositoryMock = ProblemFactory.makeProblemRepositoryMock();
-    const testCaseRepositoryMock = TestCaseFactory.makeTestCaseRepositoryMock();
-
-    const service = new ProblemService(
-      problemRepositoryMock as any,
-      testCaseRepositoryMock as any,
-    );
-
-    const createProblemDto = ProblemFactory.makeCreateProblemDto();
-    problemRepositoryMock.findOneBy.mockResolvedValue(
-      ProblemFactory.makeProblemEntity(),
-    );
-
-    const createPromise = service.create(createProblemDto);
-
-    await expect(createPromise).rejects.toThrow(ConflictException);
-    await expect(createPromise).rejects.toThrow(
-      'A problem with this title already exists',
-    );
+  afterEach(() => {
+    jest.restoreAllMocks();
   });
-});
 
-describe('Find all problems', () => {
-  it('should return a list of problems', async () => {
-    const problemRepositoryMock = ProblemFactory.makeProblemRepositoryMock();
-    const testCaseRepositoryMock = TestCaseFactory.makeTestCaseRepositoryMock();
+  describe('Create Problem', () => {
+    it('should create a problem and return ReturnProblemDto when title does not match', async () => {
+      const createProblemDto = ProblemFactory.makeCreateProblemDto();
+      const createdProblem = ProblemFactory.makeProblemEntity();
+      const savedProblem = ProblemFactory.makeProblemEntity();
 
-    const service = new ProblemService(
-      problemRepositoryMock as any,
-      testCaseRepositoryMock as any,
-    );
+      problemRepositoryMock.findOneBy.mockResolvedValue(null);
+      problemRepositoryMock.create.mockReturnValue(createdProblem);
+      problemRepositoryMock.save.mockResolvedValue(savedProblem);
 
-    const savedEntity = ProblemFactory.makeProblemEntity();
-    problemRepositoryMock.find.mockResolvedValue([savedEntity]);
+      const result = await service.create({ ...createProblemDto });
 
-    const result = await service.findAll();
-
-    expect(result).toHaveLength(1);
-    expect(problemRepositoryMock.find).toHaveBeenCalledTimes(1);
-    expect(result[0]).toBeInstanceOf(ReturnProblemDto);
-    expect(result[0]).toMatchObject({
-      id: savedEntity.id,
-      title: savedEntity.title,
-      points: savedEntity.points,
-      author: savedEntity.author,
-      description: savedEntity.description,
-      input_description: savedEntity.input_description,
-      output_description: savedEntity.output_description,
-      input_example: savedEntity.input_example,
-      output_example: savedEntity.output_example,
-      creation_date: savedEntity.creation_date,
+      expect(problemRepositoryMock.create).toHaveBeenCalledWith(
+        createProblemDto,
+      );
+      expect(problemRepositoryMock.save).toHaveBeenCalledWith(createdProblem);
+      expect(result).toBeInstanceOf(ReturnProblemDto);
+      expect(result).toMatchObject(ProblemFactory.makeReturnProblemDto());
     });
-  });
-});
 
-describe('Find Problem By Id', () => {
-  it('should return ReturnProblemDto when id matches', async () => {
-    const problemRepositoryMock = ProblemFactory.makeProblemRepositoryMock();
-    const testCaseRepositoryMock = TestCaseFactory.makeTestCaseRepositoryMock();
+    it('should throw ConflictException when title matches', async () => {
+      const problemRepositoryMock = ProblemFactory.makeProblemRepositoryMock();
+      const testCaseRepositoryMock =
+        TestCaseFactory.makeTestCaseRepositoryMock();
 
-    const service = new ProblemService(
-      problemRepositoryMock as any,
-      testCaseRepositoryMock as any,
-    );
+      const service = new ProblemService(
+        problemRepositoryMock as any,
+        testCaseRepositoryMock as any,
+      );
 
-    const problemEntity = ProblemFactory.makeProblemEntity();
-    problemRepositoryMock.findOneBy.mockResolvedValue(problemEntity);
+      const createProblemDto = ProblemFactory.makeCreateProblemDto();
+      problemRepositoryMock.findOneBy.mockResolvedValue(
+        ProblemFactory.makeProblemEntity(),
+      );
 
-    const result = await service.findOneById(problemEntity.id);
+      const createPromise = service.create(createProblemDto);
 
-    expect(result).toBeInstanceOf(ReturnProblemDto);
-    expect(result).toMatchObject({
-      id: problemEntity.id,
-      title: problemEntity.title,
-      points: problemEntity.points,
-      author: problemEntity.author,
-      description: problemEntity.description,
-      input_description: problemEntity.input_description,
-      output_description: problemEntity.output_description,
-      input_example: problemEntity.input_example,
-      output_example: problemEntity.output_example,
-      creation_date: problemEntity.creation_date,
-    });
-    expect(problemRepositoryMock.findOneBy).toHaveBeenCalledWith({
-      id: problemEntity.id,
+      await expect(createPromise).rejects.toThrow(ConflictException);
+      await expect(createPromise).rejects.toThrow(
+        'A problem with this title already exists',
+      );
     });
   });
 
-  it('should throw NotFoundException when id does not match', async () => {
-    const problemRepositoryMock = ProblemFactory.makeProblemRepositoryMock();
-    const testCaseRepositoryMock = TestCaseFactory.makeTestCaseRepositoryMock();
+  describe('Find all problems', () => {
+    it('should return a list of problems', async () => {
+      const savedEntity = ProblemFactory.makeProblemEntity();
+      problemRepositoryMock.find.mockResolvedValue([savedEntity]);
 
-    const service = new ProblemService(
-      problemRepositoryMock as any,
-      testCaseRepositoryMock as any,
-    );
+      const result = await service.findAll();
 
-    problemRepositoryMock.findOneBy.mockResolvedValue(null);
-
-    const findPromise = service.findOneById(1);
-
-    await expect(findPromise).rejects.toThrow(NotFoundException);
-    await expect(findPromise).rejects.toThrow('Problem not found');
-  });
-});
-
-describe('Find Problem By Title', () => {
-  it('should return ReturnProblemDto when title matches', async () => {
-    const problemRepositoryMock = ProblemFactory.makeProblemRepositoryMock();
-    const testCaseRepositoryMock = TestCaseFactory.makeTestCaseRepositoryMock();
-
-    const service = new ProblemService(
-      problemRepositoryMock as any,
-      testCaseRepositoryMock as any,
-    );
-
-    const problemEntity = ProblemFactory.makeProblemEntity();
-
-    problemRepositoryMock.findOneBy.mockResolvedValue(problemEntity);
-
-    const result = await service.findOneByTitle(problemEntity.title);
-
-    expect(result).toBeInstanceOf(ReturnProblemDto);
-    expect(result).toMatchObject({
-      id: problemEntity.id,
-      title: problemEntity.title,
-      points: problemEntity.points,
-      author: problemEntity.author,
-      description: problemEntity.description,
-      input_description: problemEntity.input_description,
-      output_description: problemEntity.output_description,
-      input_example: problemEntity.input_example,
-      output_example: problemEntity.output_example,
-      creation_date: problemEntity.creation_date,
-    });
-    expect(problemRepositoryMock.findOneBy).toHaveBeenCalledWith({
-      title: problemEntity.title,
+      expect(result).toHaveLength(1);
+      expect(problemRepositoryMock.find).toHaveBeenCalledTimes(1);
+      expect(result[0]).toBeInstanceOf(ReturnProblemDto);
+      expect(result[0]).toMatchObject({
+        id: savedEntity.id,
+        title: savedEntity.title,
+        points: savedEntity.points,
+        author: savedEntity.author,
+        description: savedEntity.description,
+        input_description: savedEntity.input_description,
+        output_description: savedEntity.output_description,
+        input_example: savedEntity.input_example,
+        output_example: savedEntity.output_example,
+        creation_date: savedEntity.creation_date,
+      });
     });
   });
 
-  it('should throw NotFoundException when title does not match', async () => {
-    const problemRepositoryMock = ProblemFactory.makeProblemRepositoryMock();
-    const testCaseRepositoryMock = TestCaseFactory.makeTestCaseRepositoryMock();
+  describe('Find Problem By Id', () => {
+    it('should return ReturnProblemDto when id matches', async () => {
+      const problemEntity = ProblemFactory.makeProblemEntity();
+      problemRepositoryMock.findOneBy.mockResolvedValue(problemEntity);
 
-    const service = new ProblemService(
-      problemRepositoryMock as any,
-      testCaseRepositoryMock as any,
-    );
+      const result = await service.findOneById(problemEntity.id);
 
-    problemRepositoryMock.findOneBy.mockResolvedValue(null);
-
-    const findPromise = service.findOneByTitle('title');
-
-    await expect(findPromise).rejects.toThrow(NotFoundException);
-    await expect(findPromise).rejects.toThrow('Problem not found');
-  });
-});
-
-describe('Find All Test Cases By Id', () => {
-  it('should return a list of ReturnTestCaseDto', async () => {
-    const problemRepositoryMock = ProblemFactory.makeProblemRepositoryMock();
-    const testCaseRepositoryMock = TestCaseFactory.makeTestCaseRepositoryMock();
-
-    const service = new ProblemService(
-      problemRepositoryMock as any,
-      testCaseRepositoryMock as any,
-    );
-
-    const problemId = 1;
-    const savedTestCase = TestCaseFactory.makeTestCaseEntity();
-    testCaseRepositoryMock.findBy.mockResolvedValue([savedTestCase]);
-
-    const result = await service.findAllTestCasesById(problemId);
-
-    expect(result).toHaveLength(1);
-    expect(testCaseRepositoryMock.findBy).toHaveBeenCalledWith({
-      id_problem: problemId,
+      expect(result).toBeInstanceOf(ReturnProblemDto);
+      expect(result).toMatchObject({
+        id: problemEntity.id,
+        title: problemEntity.title,
+        points: problemEntity.points,
+        author: problemEntity.author,
+        description: problemEntity.description,
+        input_description: problemEntity.input_description,
+        output_description: problemEntity.output_description,
+        input_example: problemEntity.input_example,
+        output_example: problemEntity.output_example,
+        creation_date: problemEntity.creation_date,
+      });
+      expect(problemRepositoryMock.findOneBy).toHaveBeenCalledWith({
+        id: problemEntity.id,
+      });
     });
-    expect(result[0]).toBeInstanceOf(ReturnTestCaseDto);
-    expect(result[0]).toMatchObject({
-      id: savedTestCase.id,
-      id_problem: savedTestCase.id_problem,
-      input: savedTestCase.input,
-      output: savedTestCase.output,
+
+    it('should throw NotFoundException when id does not match', async () => {
+      problemRepositoryMock.findOneBy.mockResolvedValue(null);
+
+      const findPromise = service.findOneById(1);
+
+      await expect(findPromise).rejects.toThrow(NotFoundException);
+      await expect(findPromise).rejects.toThrow('Problem not found');
     });
   });
-});
 
-describe('Update Problem', () => {
-  it('should update problem and return UpdateResult', async () => {
-    const problemRepositoryMock = ProblemFactory.makeProblemRepositoryMock();
-    const testCaseRepositoryMock = TestCaseFactory.makeTestCaseRepositoryMock();
+  describe('Find Problem By Title', () => {
+    it('should return ReturnProblemDto when title matches', async () => {
+      const problemEntity = ProblemFactory.makeProblemEntity();
 
-    const service = new ProblemService(
-      problemRepositoryMock as any,
-      testCaseRepositoryMock as any,
-    );
+      problemRepositoryMock.findOneBy.mockResolvedValue(problemEntity);
 
-    const id = 1;
-    const updateProblemDto = {
-      title: 'Fibonacci Updated',
-      points: 10,
-    };
-    const updateResult = {
-      generatedMaps: [],
-      raw: [],
-      affected: 1,
-    };
+      const result = await service.findOneByTitle(problemEntity.title);
 
-    problemRepositoryMock.update.mockResolvedValue(updateResult);
+      expect(result).toBeInstanceOf(ReturnProblemDto);
+      expect(result).toMatchObject({
+        id: problemEntity.id,
+        title: problemEntity.title,
+        points: problemEntity.points,
+        author: problemEntity.author,
+        description: problemEntity.description,
+        input_description: problemEntity.input_description,
+        output_description: problemEntity.output_description,
+        input_example: problemEntity.input_example,
+        output_example: problemEntity.output_example,
+        creation_date: problemEntity.creation_date,
+      });
+      expect(problemRepositoryMock.findOneBy).toHaveBeenCalledWith({
+        title: problemEntity.title,
+      });
+    });
 
-    const result = await service.update(id, updateProblemDto as any);
+    it('should throw NotFoundException when title does not match', async () => {
+      problemRepositoryMock.findOneBy.mockResolvedValue(null);
 
-    expect(problemRepositoryMock.update).toHaveBeenCalledWith(
-      id,
-      updateProblemDto,
-    );
-    expect(result).toEqual(updateResult);
+      const findPromise = service.findOneByTitle('title');
+
+      await expect(findPromise).rejects.toThrow(NotFoundException);
+      await expect(findPromise).rejects.toThrow('Problem not found');
+    });
   });
-});
 
-describe('Delete Problem', () => {
-  it('should delete problem and return DeleteResult', async () => {
-    const problemRepositoryMock = ProblemFactory.makeProblemRepositoryMock();
-    const testCaseRepositoryMock = TestCaseFactory.makeTestCaseRepositoryMock();
+  describe('Find All Test Cases By Id', () => {
+    it('should return a list of ReturnTestCaseDto', async () => {
+      const problemId = 1;
+      const savedTestCase = TestCaseFactory.makeTestCaseEntity();
+      testCaseRepositoryMock.findBy.mockResolvedValue([savedTestCase]);
 
-    const service = new ProblemService(
-      problemRepositoryMock as any,
-      testCaseRepositoryMock as any,
-    );
+      const result = await service.findAllTestCasesById(problemId);
 
-    const id = 1;
-    const deleteResult = {
-      raw: [],
-      affected: 1,
-    };
+      expect(result).toHaveLength(1);
+      expect(testCaseRepositoryMock.findBy).toHaveBeenCalledWith({
+        id_problem: problemId,
+      });
+      expect(result[0]).toBeInstanceOf(ReturnTestCaseDto);
+      expect(result[0]).toMatchObject({
+        id: savedTestCase.id,
+        id_problem: savedTestCase.id_problem,
+        input: savedTestCase.input,
+        output: savedTestCase.output,
+      });
+    });
+  });
 
-    problemRepositoryMock.delete.mockResolvedValue(deleteResult);
+  describe('Update Problem', () => {
+    it('should update problem and return UpdateResult', async () => {
+      const id = 1;
+      const updateProblemDto = {
+        title: 'Fibonacci Updated',
+        points: 10,
+      };
+      const updateResult = {
+        generatedMaps: [],
+        raw: [],
+        affected: 1,
+      };
 
-    const result = await service.remove(id);
+      problemRepositoryMock.update.mockResolvedValue(updateResult);
 
-    expect(problemRepositoryMock.delete).toHaveBeenCalledWith(id);
-    expect(result).toEqual(deleteResult);
+      const result = await service.update(id, updateProblemDto as any);
+
+      expect(problemRepositoryMock.update).toHaveBeenCalledWith(
+        id,
+        updateProblemDto,
+      );
+      expect(result).toEqual(updateResult);
+    });
+  });
+
+  describe('Delete Problem', () => {
+    it('should delete problem and return DeleteResult', async () => {
+      const id = 1;
+      const deleteResult = {
+        raw: [],
+        affected: 1,
+      };
+
+      problemRepositoryMock.delete.mockResolvedValue(deleteResult);
+
+      const result = await service.remove(id);
+
+      expect(problemRepositoryMock.delete).toHaveBeenCalledWith(id);
+      expect(result).toEqual(deleteResult);
+    });
   });
 });
