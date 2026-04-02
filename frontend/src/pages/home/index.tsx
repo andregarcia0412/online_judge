@@ -8,11 +8,22 @@ import { HomeHeader } from "../../components/home-header/HomeHeader";
 import { useAuthContext } from "../../contexts/AuthContext";
 import Search from "../../assets/search.svg";
 import "./style.css";
+import type { Problem } from "../../data/dto/problem.dto";
+import { problemService } from "../../api/services/problem.service";
+import { ProblemCard } from "../../components/card/problem-card/ProblemCard";
+import type { Submission } from "../../data/dto/submission.dto";
+import { userService } from "../../api/services/user.service";
+import { useNavigate } from "react-router-dom";
 
 export const Home = () => {
   const { userData } = useAuthContext();
+  const navigate = useNavigate();
   const [quickSearchText, setQuickSearchText] = React.useState<string>("");
   const [homeSearchText, setHomeSearchText] = React.useState<string>("");
+  const [problems, setProblems] = React.useState<Problem[] | null>(null);
+  const [userSubmissions, setUserSubmissions] = React.useState<
+    Submission[] | null
+  >(null);
 
   const handleSearch = () => {
     console.log("pesquisou");
@@ -20,6 +31,33 @@ export const Home = () => {
 
   if (!userData) {
     return;
+  }
+
+  React.useEffect(() => {
+    const getProblems = async () => {
+      try {
+        const response = await problemService.findAll();
+        setProblems(response);
+      } catch (e) {
+        throw e;
+      }
+    };
+
+    const getUserSubmissions = async () => {
+      try {
+        const response = await userService.getSubmissionsById(userData.user.id);
+        setUserSubmissions(response);
+      } catch (e) {
+        throw e;
+      }
+    };
+
+    getProblems();
+    getUserSubmissions();
+  }, []);
+
+  if (!userSubmissions) {
+    return null;
   }
 
   return (
@@ -80,6 +118,33 @@ export const Home = () => {
             icon={Fire}
             description="Keep Going!"
           />
+        </div>
+
+        <div className="home-problem-card-container">
+          <div className="home-problem-card-header">
+            <h2>Problems</h2>
+            <p>Challenge yourself with coding problems</p>
+          </div>
+
+          <div className="home-problem-card-title">
+            <p>Status</p>
+            <p>Title</p>
+            <p>Acceptance</p>
+            <p>Difficulty</p>
+          </div>
+
+          <div className="home-problem-card-wrapper">
+            {problems?.map((problem: Problem) => {
+              return (
+                <ProblemCard
+                  key={problem.id}
+                  problem={problem}
+                  userSubmissions={userSubmissions}
+                  onRedirect={() => navigate(`/problem/${problem.id}`)}
+                />
+              );
+            })}
+          </div>
         </div>
       </div>
     </div>

@@ -30,4 +30,17 @@ export const problemService = {
       throw e;
     }
   },
+
+  async findAll(): Promise<Problem[]> {
+    try {
+      const { data } = await api.get("/problem");
+      return data;
+    } catch (e) {
+      console.error(
+        "Error while getting problems:",
+        e instanceof Error ? e.message : "Unknown Error",
+      );
+      throw e;
+    }
+  },
 };

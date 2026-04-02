@@ -1,7 +1,6 @@
 import type {
-  ExecuteCodeResponseDto,
   Submission,
-  SubmissionRequestDto,
+  SubmissionRequestDto
 } from "../../data/dto/submission.dto";
 import type { TestCase } from "../../data/dto/test-case.dto";
 import { api } from "../api.client";

@@ -1,0 +1,34 @@
+.home-problem-card {
+  display: grid;
+  grid-template-columns: 32px minmax(260px, 1fr) 220px 90px;
+  align-items: center;
+  column-gap: 28px;
+  width: 100%;
+  background: rgba(17, 24, 39, 0.4);
+  border: 1px solid #30363d;
+  color: #fff;
+  padding: 20px 24px;
+  border-radius: 12px;
+
+  cursor: pointer;
+  transition: border-color 0.15s ease;
+}
+
+.home-problem-card:hover {
+  border: 1px solid #8b5cf6;
+}
+
+.home-problem-status {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.home-problem-acceptance {
+  min-width: 220px;
+}
+
+.home-problem-difficulty {
+  text-align: left;
+  font-weight: 600;
+}

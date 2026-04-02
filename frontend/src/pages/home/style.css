@@ -7,9 +7,10 @@
 
 .home-container::before {
   content: "";
-  position: absolute;
+  position: fixed;
   inset: 0;
   z-index: -1;
+  pointer-events: none;
 
   background:
     radial-gradient(
@@ -99,4 +100,57 @@
 
 .home-search-input:focus-within {
   border: 1px solid #8b5cf6;
+}
+
+.home-problem-card-header {
+  margin-top: 64px;
+  margin-bottom: 32px;
+  color: #fff;
+
+  & p {
+    opacity: 0.6;
+  }
+}
+
+.home-problem-card-wrapper {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.home-problem-card-title {
+  display: grid;
+  grid-template-columns: 48px minmax(260px, 1fr) 220px 120px;
+  align-items: center;
+  column-gap: 28px;
+  background: rgba(0, 0, 0, 0.3);
+  border: 1px solid #30363d;
+  padding: 12px 20px;
+  border-radius: 12px;
+  margin-bottom: 12px;
+
+  & p {
+    font-size: 14px;
+    color: #fff;
+    opacity: 0.5;
+  }
+}
+
+.home-problem-card-title p {
+  margin: 0;
+}
+
+.home-problem-card-title p:nth-child(1) {
+  justify-self: center;
+}
+
+.home-problem-card-title p:nth-child(2) {
+  justify-self: start;
+}
+
+.home-problem-card-title p:nth-child(3) {
+  justify-self: center;
+}
+.home-problem-card-title p:nth-child(4) {
+  justify-self: start;
 }
