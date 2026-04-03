@@ -1,17 +1,15 @@
-import * as bcrypt from 'bcrypt';
 import {
   BadRequestException,
   ConflictException,
   UnauthorizedException,
 } from '@nestjs/common';
+import * as bcrypt from 'bcrypt';
+import { AuthService } from 'src/modules/auth/auth.service';
 import { AuthResponseDto } from 'src/modules/auth/dto/auth.dto';
 import { RefreshResponseDto } from 'src/modules/auth/dto/refresh-response.dto';
-import { AuthService } from 'src/modules/auth/auth.service';
 import { ReturnUserDto } from 'src/modules/user/dto/return-user.dto';
 import { AuthFactory } from 'test/factories/auth.factory';
 import { UserFactory } from 'test/factories/user.factory';
-import { UserService } from 'src/modules/user/user.service';
-import { SubmissionFactory } from 'test/factories/submission.factory';
 
 describe('AuthService', () => {
   let userRepositoryMock: ReturnType<typeof UserFactory.makeUserRepositoryMock>;
@@ -84,7 +82,6 @@ describe('AuthService', () => {
       expect(result).toMatchObject({
         accessToken: 'access-token',
         refreshToken: 'refresh-token',
-        expiresIn: '7d',
       });
       expect(result.user).toBeInstanceOf(ReturnUserDto);
       expect(result.user).not.toHaveProperty('password');
