@@ -4,6 +4,7 @@ import "./style.problem-card.css";
 import type { Submission } from "../../../data/dto/submission.dto";
 import Check from "../../../assets/check-circle.svg";
 import Circle from "../../../assets/circle.svg";
+import WhiteCircle from "../../../assets/circle_white.svg";
 
 type ProblemCardProps = {
   problem: Problem;
@@ -22,18 +23,32 @@ export const ProblemCard = ({
       : problem.difficulty === "medium"
         ? "#FACC15"
         : "#F87171";
+
+  const iconSrc = () => {
+    const submission = userSubmissions.find(
+      (submission) => submission.id_problem === problem.id,
+    );
+
+    if (!submission) {
+      return WhiteCircle;
+    }
+
+    const acceptedSubmission = userSubmissions.find(
+      (submission) =>
+        submission.id_problem === problem.id &&
+        submission.status === "accepted",
+    );
+
+    if (acceptedSubmission) {
+      return Check;
+    }
+
+    return Circle;
+  };
   return (
     <div className="home-problem-card" onClick={onRedirect}>
       <div className="home-problem-status">
-        <img
-          src={
-            userSubmissions.find(
-              (submission) => submission.id_problem === problem.id,
-            )
-              ? Check
-              : Circle
-          }
-        />
+        <img src={iconSrc()} />
       </div>
 
       <div className="home-problem-title">
@@ -45,7 +60,7 @@ export const ProblemCard = ({
       <div className="home-problem-acceptance">
         <Progress
           strokeColor={"#4ADE80"}
-          trailColor="#1F2937"
+          railColor="#1F2937"
           format={(percent) => (
             <span style={{ color: "rgba(255, 255, 255, 0.8)" }}>
               {percent}%
