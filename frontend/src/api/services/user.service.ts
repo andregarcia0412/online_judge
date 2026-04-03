@@ -13,4 +13,18 @@ export const userService = {
       throw e;
     }
   },
+
+  async getUserById(id: string) {
+    try {
+      const { data } = await api.get(`/user/${id}`);
+      console.log(data);
+      return data;
+    } catch (e) {
+      console.error(
+        "Error while fetching user data:",
+        e instanceof Error ? e.message : "Unknown Error",
+      );
+      throw e;
+    }
+  },
 };

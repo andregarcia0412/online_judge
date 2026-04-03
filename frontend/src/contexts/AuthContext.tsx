@@ -2,20 +2,20 @@ import React from "react";
 import type { LoginDto, LoginResponseDto } from "../data/dto/auth.dto";
 import { api } from "../api/api.client";
 import { loginService } from "../api/services/auth.service";
+import { userService } from "../api/services/user.service";
 
 type AuthContextType = {
   userData: LoginResponseDto | null;
   isLoading: boolean;
   login: (data: LoginDto, rememberMe: boolean) => Promise<void>;
+  getUserData: (id: string) => Promise<void>;
 };
 
 type AuthProviderProps = {
   children: React.ReactNode;
 };
 
-export const AuthContext = React.createContext<AuthContextType>(
-  {} as AuthContextType,
-);
+export const AuthContext = React.createContext<AuthContextType | null>(null);
 
 export const AuthProvider = ({ children }: AuthProviderProps) => {
   const [userData, setUserData] = React.useState<LoginResponseDto | null>(null);
@@ -63,7 +63,7 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
 
       if (rememberMe) {
         localStorage.setItem("userData", JSON.stringify(response));
-        sessionStorage.removeItem("userData")
+        sessionStorage.removeItem("userData");
       } else {
         sessionStorage.setItem("userData", JSON.stringify(response));
         localStorage.removeItem("userData");
@@ -73,8 +73,36 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
     }
   };
 
+  const getUserData = async (id: string) => {
+    try {
+      const response = await userService.getUserById(id);
+      setUserData((prev) =>
+        prev
+          ? {
+              ...prev,
+              user: response,
+            }
+          : prev,
+      );
+
+      const storage = localStorage.getItem("userData")
+        ? localStorage
+        : sessionStorage;
+
+      const savedData = storage.getItem("userData");
+
+      if (savedData) {
+        const parsedData: LoginResponseDto = JSON.parse(savedData);
+        parsedData.user = response;
+        storage.setItem("userData", JSON.stringify(parsedData));
+      }
+    } catch (e) {
+      throw e;
+    }
+  };
+
   return (
-    <AuthContext.Provider value={{ userData, isLoading, login }}>
+    <AuthContext.Provider value={{ userData, isLoading, login, getUserData }}>
       {children}
     </AuthContext.Provider>
   );

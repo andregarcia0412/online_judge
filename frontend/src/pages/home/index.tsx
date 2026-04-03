@@ -16,7 +16,7 @@ import { userService } from "../../api/services/user.service";
 import { useNavigate } from "react-router-dom";
 
 export const Home = () => {
-  const { userData } = useAuthContext();
+  const { userData, getUserData } = useAuthContext();
   const navigate = useNavigate();
   const [quickSearchText, setQuickSearchText] = React.useState<string>("");
   const [homeSearchText, setHomeSearchText] = React.useState<string>("");
@@ -43,6 +43,14 @@ export const Home = () => {
       }
     };
 
+    const reloadUser = async () => {
+      try {
+        getUserData(userData.user.id);
+      } catch (e) {
+        throw e;
+      }
+    };
+
     const getUserSubmissions = async () => {
       try {
         const response = await userService.getSubmissionsById(userData.user.id);
@@ -52,6 +60,7 @@ export const Home = () => {
       }
     };
 
+    reloadUser();
     getProblems();
     getUserSubmissions();
   }, []);
