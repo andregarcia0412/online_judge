@@ -58,7 +58,6 @@ export const ProblemScreen = () => {
         const testCases =
           await problemService.findAllTestCasesById(safeIdProblem);
         setTestCases(testCases);
-        console.log(testCases);
       } catch (e) {
         setProblem(null);
       }

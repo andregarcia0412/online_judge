@@ -17,7 +17,6 @@ export const userService = {
   async getUserById(id: string) {
     try {
       const { data } = await api.get(`/user/${id}`);
-      console.log(data);
       return data;
     } catch (e) {
       console.error(
