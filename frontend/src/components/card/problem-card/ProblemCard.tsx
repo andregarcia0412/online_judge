@@ -51,11 +51,11 @@ export const ProblemCard = ({
               {percent}%
             </span>
           )}
-          percent={
-            Math.floor(
-              (problem.total_submitted / problem.total_accepted) * 100,
-            ) / 100
-          }
+          percent={Number(
+            ((problem.total_accepted / problem.total_submitted) * 100).toFixed(
+              2,
+            ),
+          )}
         />
       </div>
 
