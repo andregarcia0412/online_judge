@@ -82,7 +82,6 @@ export class AuthService {
     return new AuthResponseDto(
       tokens.access_token,
       tokens.refresh_token,
-      this.configService.get<string>('JWT_REFRESH_EXPIRATION_TIME') as any,
       returnUser,
     );
   }

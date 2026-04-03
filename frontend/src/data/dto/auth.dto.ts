@@ -8,7 +8,6 @@ export type LoginDto = {
 export type LoginResponseDto = {
   accessToken: string;
   refreshToken: string;
-  expiresIn: number;
   user: User;
 };
 
