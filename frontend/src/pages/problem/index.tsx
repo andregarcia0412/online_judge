@@ -18,7 +18,10 @@ import { celebrate } from "../../utils/celebrate";
 import "./style.css";
 
 export const ProblemScreen = () => {
-  const idProblem = Number(useParams().idProblem);
+  const { idProblem } = useParams();
+  const safeIdProblem = Number(idProblem);
+  const isInvalidId = Number.isNaN(safeIdProblem);
+
   const { userData } = useAuthContext();
   const [language, setLanguage] = React.useState<string>("java");
   const [code, setCode] = React.useState<string>(
@@ -36,14 +39,12 @@ export const ProblemScreen = () => {
   const [testCases, setTestCases] = React.useState<TestCase[] | null>(null);
   const [quickSearchText, setQuickSearchText] = React.useState<string>("");
 
-  if (!userData) {
-    return null;
-  }
-
   React.useEffect(() => {
+    if (isInvalidId || !userData) return;
+
     const findProblem = async () => {
       try {
-        const problem = await problemService.findById(idProblem);
+        const problem = await problemService.findById(safeIdProblem);
         setProblem(problem);
       } catch (e: any) {
         if (e.response?.status === 404) {
@@ -54,19 +55,20 @@ export const ProblemScreen = () => {
 
     const findTestCases = async () => {
       try {
-        const testCases = await problemService.findAllTestCasesById(idProblem);
+        const testCases =
+          await problemService.findAllTestCasesById(safeIdProblem);
         setTestCases(testCases);
         console.log(testCases);
       } catch (e) {
-        throw e;
+        setProblem(null);
       }
     };
 
     findProblem();
     findTestCases();
-  }, [idProblem]);
+  }, [safeIdProblem, isInvalidId, userData]);
 
-  if (problem === null) {
+  if (!userData || isInvalidId || problem === null) {
     return <Navigate to="/not-found" replace />;
   }
 
@@ -82,7 +84,7 @@ export const ProblemScreen = () => {
     setLoadingSubmit(true);
     try {
       const response = await submissionService.createSubmission({
-        id_problem: idProblem,
+        id_problem: safeIdProblem,
         id_user: userData?.user.id,
         language: language,
         text: code,
@@ -108,7 +110,7 @@ export const ProblemScreen = () => {
     setLoadingRun(true);
     try {
       const response = await submissionService.submitPlayground({
-        id_problem: idProblem,
+        id_problem: safeIdProblem,
         id_user: userData?.user.id,
         language: language,
         text: code,
