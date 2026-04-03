@@ -35,7 +35,11 @@ export class ProblemService {
   }
 
   async findAll(): Promise<ReturnProblemDto[]> {
-    return (await this.problemRepository.find()).map((problem: Problem) =>
+    return (await this.problemRepository.find({
+      order: {
+        id: 'ASC'
+      }
+    })).map((problem: Problem) =>
       ReturnProblemDto.fromEntity(problem),
     );
   }
