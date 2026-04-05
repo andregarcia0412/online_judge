@@ -135,24 +135,26 @@ export const Home = () => {
             <p>Challenge yourself with coding problems</p>
           </div>
 
-          <div className="home-problem-card-title">
-            <p>Status</p>
-            <p>Title</p>
-            <p>Acceptance</p>
-            <p>Difficulty</p>
-          </div>
+          <div style={{display:"flex", flexDirection: "column"}}>
+            <div className="home-problem-card-title">
+              <p>Status</p>
+              <p>Title</p>
+              <p>Acceptance</p>
+              <p>Difficulty</p>
+            </div>
 
-          <div className="home-problem-card-wrapper">
-            {problems?.map((problem: Problem) => {
-              return (
-                <ProblemCard
-                  key={problem.id}
-                  problem={problem}
-                  userSubmissions={userSubmissions}
-                  onRedirect={() => navigate(`/problem/${problem.id}`)}
-                />
-              );
-            })}
+            <div className="home-problem-card-wrapper">
+              {problems?.map((problem: Problem) => {
+                return (
+                  <ProblemCard
+                    key={problem.id}
+                    problem={problem}
+                    userSubmissions={userSubmissions}
+                    onRedirect={() => navigate(`/problem/${problem.id}`)}
+                  />
+                );
+              })}
+            </div>
           </div>
         </div>
       </div>
