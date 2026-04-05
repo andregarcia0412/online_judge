@@ -1,5 +1,5 @@
-import { CreateProblemDto } from 'src/modules/problem/dto/create-problem.dto';
-import { ReturnProblemDto } from 'src/modules/problem/dto/return-problem.dto';
+import { CreateProblemDto } from 'src/modules/problem/dto/problem/create-problem.dto';
+import { ReturnProblemDto } from 'src/modules/problem/dto/problem/return-problem.dto';
 import { Problem } from 'src/modules/problem/entities/problem.entity';
 import { ProblemDifficultyEnum } from 'src/modules/problem/enum/problem-difficulty.enum';
 

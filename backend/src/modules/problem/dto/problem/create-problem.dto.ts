@@ -6,7 +6,7 @@ import {
   IsString,
   MaxLength,
 } from 'class-validator';
-import { ProblemDifficultyEnum } from '../enum/problem-difficulty.enum';
+import { ProblemDifficultyEnum } from '../../enum/problem-difficulty.enum';
 import { Type } from 'class-transformer';
 
 export class CreateProblemDto {

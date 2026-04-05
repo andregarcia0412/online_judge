@@ -6,12 +6,12 @@ import {
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { DeleteResult, UpdateResult } from 'typeorm/browser';
-import { ReturnTestCaseDto } from '../test-case/dto/return-test-case.dto';
-import { TestCase } from '../test-case/entities/test-case.entity';
-import { CreateProblemDto } from './dto/create-problem.dto';
-import { ReturnProblemDto } from './dto/return-problem.dto';
-import { UpdateProblemDto } from './dto/update-problem.dto';
-import { Problem } from './entities/problem.entity';
+import { ReturnTestCaseDto } from '../../test-case/dto/return-test-case.dto';
+import { TestCase } from '../../test-case/entities/test-case.entity';
+import { CreateProblemDto } from '../dto/problem/create-problem.dto';
+import { ReturnProblemDto } from '../dto/problem/return-problem.dto';
+import { UpdateProblemDto } from '../dto/problem/update-problem.dto';
+import { Problem } from '../entities/problem.entity';
 
 @Injectable()
 export class ProblemService {
@@ -35,13 +35,13 @@ export class ProblemService {
   }
 
   async findAll(): Promise<ReturnProblemDto[]> {
-    return (await this.problemRepository.find({
-      order: {
-        id: 'ASC'
-      }
-    })).map((problem: Problem) =>
-      ReturnProblemDto.fromEntity(problem),
-    );
+    return (
+      await this.problemRepository.find({
+        order: {
+          id: 'ASC',
+        },
+      })
+    ).map((problem: Problem) => ReturnProblemDto.fromEntity(problem));
   }
 
   async findOneById(id: number): Promise<ReturnProblemDto> {

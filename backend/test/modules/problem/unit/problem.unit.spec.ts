@@ -1,6 +1,6 @@
 import { ConflictException, NotFoundException } from '@nestjs/common';
-import { ReturnProblemDto } from 'src/modules/problem/dto/return-problem.dto';
-import { ProblemService } from 'src/modules/problem/problem.service';
+import { ReturnProblemDto } from 'src/modules/problem/dto/problem/return-problem.dto';
+import { ProblemService } from 'src/modules/problem/service/problem.service';
 import { ReturnTestCaseDto } from 'src/modules/test-case/dto/return-test-case.dto';
 import { ProblemFactory } from 'test/factories/problem.factory';
 import { TestCaseFactory } from 'test/factories/test-case.factory';
