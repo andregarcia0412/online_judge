@@ -12,15 +12,22 @@ describe('ProblemService', () => {
   let testCaseRepositoryMock: ReturnType<
     typeof TestCaseFactory.makeTestCaseRepositoryMock
   >;
+  let categoryService: {
+    findCategoriesByProblemId: jest.Mock;
+  };
   let service: ProblemService;
 
   beforeEach(() => {
     problemRepositoryMock = ProblemFactory.makeProblemRepositoryMock();
     testCaseRepositoryMock = TestCaseFactory.makeTestCaseRepositoryMock();
+    categoryService = {
+      findCategoriesByProblemId: jest.fn().mockResolvedValue([]),
+    };
 
     service = new ProblemService(
       problemRepositoryMock as any,
       testCaseRepositoryMock as any,
+      categoryService as any,
     );
   });
 
@@ -49,15 +56,6 @@ describe('ProblemService', () => {
     });
 
     it('should throw ConflictException when title matches', async () => {
-      const problemRepositoryMock = ProblemFactory.makeProblemRepositoryMock();
-      const testCaseRepositoryMock =
-        TestCaseFactory.makeTestCaseRepositoryMock();
-
-      const service = new ProblemService(
-        problemRepositoryMock as any,
-        testCaseRepositoryMock as any,
-      );
-
       const createProblemDto = ProblemFactory.makeCreateProblemDto();
       problemRepositoryMock.findOneBy.mockResolvedValue(
         ProblemFactory.makeProblemEntity(),
