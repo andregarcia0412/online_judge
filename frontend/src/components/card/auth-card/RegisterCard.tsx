@@ -31,6 +31,11 @@ export const RegisterCard = ({
   setChecked,
   switchCard,
 }: AuthCardProps) => {
+  const handleEnterPress = (e: React.KeyboardEvent<HTMLInputElement>) => {
+    if (e.key === "Enter") {
+      register();
+    }
+  };
   return (
     <div className="auth-card">
       <div className="auth-card-title">
@@ -42,6 +47,7 @@ export const RegisterCard = ({
           placeholder="Username"
           setText={setUsername}
           isPassword={false}
+          onKeyDown={handleEnterPress}
         />
         <AuthInput placeholder="Email" setText={setEmail} isPassword={false} />
         <div className="password-checkbox">
@@ -50,12 +56,14 @@ export const RegisterCard = ({
               placeholder="Password"
               setText={setPassword}
               isPassword={true}
+              onKeyDown={handleEnterPress}
             />
 
             <AuthInput
               placeholder="Confirm password"
               setText={setConfirmPassword}
               isPassword={true}
+              onKeyDown={handleEnterPress}
             />
           </div>
 

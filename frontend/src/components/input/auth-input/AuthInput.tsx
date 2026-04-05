@@ -7,9 +7,15 @@ interface AuthInputProps {
   placeholder: string;
   setText: (text: string) => void;
   isPassword: boolean;
+  onKeyDown?: (e: React.KeyboardEvent<HTMLInputElement>) => void;
 }
 
-const AuthInput = ({ placeholder, setText, isPassword }: AuthInputProps) => {
+const AuthInput = ({
+  placeholder,
+  setText,
+  isPassword,
+  onKeyDown,
+}: AuthInputProps) => {
   const [visible, setVisible] = React.useState<boolean>(false);
 
   return (
@@ -21,6 +27,7 @@ const AuthInput = ({ placeholder, setText, isPassword }: AuthInputProps) => {
           type="text"
           onChange={(e) => setText(e.target.value)}
           maxLength={100}
+          onKeyDown={onKeyDown}
         />
       )}
 
@@ -28,11 +35,12 @@ const AuthInput = ({ placeholder, setText, isPassword }: AuthInputProps) => {
         <div className="password-input">
           <input
             className="auth-input"
-            style={{paddingRight: "60px"}}
+            style={{ paddingRight: "60px" }}
             placeholder={placeholder}
             type={visible ? "text" : "password"}
             onChange={(e) => setText(e.target.value)}
             maxLength={32}
+            onKeyDown={onKeyDown}
           />
           <img
             src={visible ? VisibilityOff : Visibility}

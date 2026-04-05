@@ -27,6 +27,12 @@ export const LoginCard = ({
   setChecked,
   switchCard,
 }: AuthCardProps) => {
+  const handleEnterPress = (e: React.KeyboardEvent<HTMLInputElement>) => {
+    if (e.key === "Enter") {
+      login();
+    }
+  };
+
   return (
     <div className="auth-card">
       <div className="auth-card-title">
@@ -34,12 +40,18 @@ export const LoginCard = ({
         <p>Glad you're back!</p>
       </div>
       <div className="inputs-wrapper">
-        <AuthInput placeholder="Email" setText={setEmail} isPassword={false} />
+        <AuthInput
+          placeholder="Email"
+          setText={setEmail}
+          isPassword={false}
+          onKeyDown={handleEnterPress}
+        />
         <div className="password-checkbox">
           <AuthInput
             placeholder="Password"
             setText={setPassword}
             isPassword={true}
+            onKeyDown={handleEnterPress}
           />
           <Checkbox
             label={"Remember me"}
