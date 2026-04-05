@@ -12,14 +12,16 @@ import { CreateProblemDto } from '../dto/problem/create-problem.dto';
 import { ReturnProblemDto } from '../dto/problem/return-problem.dto';
 import { UpdateProblemDto } from '../dto/problem/update-problem.dto';
 import { Problem } from '../entities/problem.entity';
+import { CategoryService } from './category.service';
 
 @Injectable()
 export class ProblemService {
   constructor(
     @InjectRepository(Problem)
-    private problemRepository: Repository<Problem>,
+    private readonly problemRepository: Repository<Problem>,
     @InjectRepository(TestCase)
-    private testCaseRepository: Repository<TestCase>,
+    private readonly testCaseRepository: Repository<TestCase>,
+    private readonly categoryService: CategoryService,
   ) {}
 
   async create(createProblemDto: CreateProblemDto): Promise<ReturnProblemDto> {
@@ -35,13 +37,20 @@ export class ProblemService {
   }
 
   async findAll(): Promise<ReturnProblemDto[]> {
-    return (
-      await this.problemRepository.find({
-        order: {
-          id: 'ASC',
-        },
-      })
-    ).map((problem: Problem) => ReturnProblemDto.fromEntity(problem));
+    const problems = await this.problemRepository.find({
+      order: {
+        id: 'ASC',
+      },
+    });
+
+    return await Promise.all(
+      problems.map(async (problem: Problem) => {
+        const categories = await this.categoryService.findCategoriesByProblemId(
+          problem.id,
+        );
+        return ReturnProblemDto.fromEntity(problem, categories);
+      }),
+    );
   }
 
   async findOneById(id: number): Promise<ReturnProblemDto> {
@@ -49,7 +58,12 @@ export class ProblemService {
     if (!problem) {
       throw new NotFoundException('Problem not found');
     }
-    return ReturnProblemDto.fromEntity(problem);
+
+    const categories = await this.categoryService.findCategoriesByProblemId(
+      problem.id,
+    );
+
+    return ReturnProblemDto.fromEntity(problem, categories);
   }
 
   async findOneByTitle(title: string): Promise<ReturnProblemDto> {
@@ -58,7 +72,11 @@ export class ProblemService {
       throw new NotFoundException('Problem not found');
     }
 
-    return ReturnProblemDto.fromEntity(problem);
+    const categories = await this.categoryService.findCategoriesByProblemId(
+      problem.id,
+    );
+
+    return ReturnProblemDto.fromEntity(problem, categories);
   }
 
   async findAllTestCasesById(id: number): Promise<ReturnTestCaseDto[]> {

@@ -1,5 +1,6 @@
 import { ApiProperty } from '@nestjs/swagger';
 import { Problem } from '../../entities/problem.entity';
+import { ReturnCategoryDto } from '../category/return-category.dto';
 
 export class ReturnProblemDto {
   @ApiProperty()
@@ -39,6 +40,9 @@ export class ReturnProblemDto {
   difficulty: string;
 
   @ApiProperty()
+  categories: ReturnCategoryDto[];
+
+  @ApiProperty()
   creation_date: Date;
 
   constructor(
@@ -55,6 +59,7 @@ export class ReturnProblemDto {
     total_accepted: number,
     difficulty: string,
     creation_date: Date,
+    categories?: ReturnCategoryDto[],
   ) {
     this.id = id;
     this.title = title;
@@ -69,9 +74,13 @@ export class ReturnProblemDto {
     this.total_accepted = total_accepted;
     this.difficulty = difficulty;
     this.creation_date = creation_date;
+    this.categories = categories ?? [];
   }
 
-  static fromEntity(problem: Problem): ReturnProblemDto {
+  static fromEntity(
+    problem: Problem,
+    categories?: ReturnCategoryDto[],
+  ): ReturnProblemDto {
     return new ReturnProblemDto(
       problem.id,
       problem.title,
@@ -86,6 +95,7 @@ export class ReturnProblemDto {
       problem.total_accepted,
       problem.difficulty,
       problem.creation_date,
+      categories,
     );
   }
 }
