@@ -13,3 +13,20 @@ export type Problem = {
   difficulty: string;
   creation_date: Date;
 };
+
+export type CreateProblemForm = {
+  title: string;
+  author: string;
+  points: string;
+  difficulty: string;
+  categories: string[];
+  description: string;
+  inputDescription: string;
+  outputDescription: string;
+  inputExample: string;
+  outputExample: string;
+  testCases: {
+    input: string;
+    output: string;
+  }[];
+};
