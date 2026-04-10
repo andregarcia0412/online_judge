@@ -9,13 +9,15 @@ import { Submission } from './entities/submission.entity';
 import { SubmissionController } from './submission.controller';
 import { SubmissionService } from './submission.service';
 import { UserModule } from '../user/user.module';
+import { ProblemModule } from '../problem/problem.module';
 
 @Module({
   imports: [
-    TypeOrmModule.forFeature([Submission, User, Problem, TestCase]),
+    TypeOrmModule.forFeature([Submission, User, TestCase]),
     CodeRunnerModule,
     TestRunnerModule,
     UserModule,
+    ProblemModule,
   ],
   controllers: [SubmissionController],
   providers: [SubmissionService],

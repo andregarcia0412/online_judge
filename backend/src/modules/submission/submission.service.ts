@@ -1,4 +1,4 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
+import { Inject, Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { TestRunnerService } from 'src/modules/test-runner/test-runner.service';
 import { User } from 'src/modules/user/entities/user.entity';
@@ -13,6 +13,8 @@ import { UpdateSubmissionDto } from './dto/update-submission.dto';
 import { Submission } from './entities/submission.entity';
 import { StatusEnum } from './enum/submission-status';
 import { UserService } from '../user/user.service';
+import { ProblemRepositoryPort } from '../problem/interface/problem.repository.port';
+import { TestCaseRepositoryPort } from '../problem/interface/test-case.repository.port';
 
 @Injectable()
 export class SubmissionService {
@@ -21,10 +23,10 @@ export class SubmissionService {
     private submissionRepository: Repository<Submission>,
     @InjectRepository(User)
     private userRepository: Repository<User>,
-    @InjectRepository(Problem)
-    private problemRepository: Repository<Problem>,
-    @InjectRepository(TestCase)
-    private testCaseRepository: Repository<TestCase>,
+    @Inject(ProblemRepositoryPort)
+    private problemRepository: ProblemRepositoryPort,
+    @Inject(TestCaseRepositoryPort)
+    private testCaseRepository: TestCaseRepositoryPort,
     private testRunnerService: TestRunnerService,
     private userService: UserService,
   ) {}
@@ -69,7 +71,7 @@ export class SubmissionService {
     user.total_submissions = Number(user.total_submissions) + 1;
 
     await this.userRepository.save(user);
-    await this.problemRepository.save(problem);
+    await this.problemRepository.createAndSave(problem);
 
     const newSubmission = this.submissionRepository.create({
       ...createSubmissionDto,
@@ -149,7 +151,7 @@ export class SubmissionService {
   }
 
   private async getProblemOrThrow(id: number): Promise<Problem> {
-    const problem = await this.problemRepository.findOneBy({ id: id });
+    const problem = await this.problemRepository.findById(id);
     if (!problem) {
       throw new NotFoundException('Problem not found');
     }
@@ -158,9 +160,7 @@ export class SubmissionService {
   }
 
   private async getTestCasesOrThrow(id_problem: number): Promise<TestCase[]> {
-    const testCases = await this.testCaseRepository.findBy({
-      id_problem: id_problem,
-    });
+    const testCases = await this.testCaseRepository.findByProblemId(id_problem);
 
     if (!testCases || testCases.length === 0) {
       throw new NotFoundException('There are no test cases for this problem');
