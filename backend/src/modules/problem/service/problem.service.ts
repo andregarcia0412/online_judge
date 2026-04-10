@@ -93,6 +93,8 @@ export class ProblemService {
   }
 
   async remove(id: number): Promise<DeleteResult> {
+    await this.testCaseRepository.delete({ id_problem: id });
+    await this.categoryService.removeByProblemId(id);
     return await this.problemRepository.delete(id);
   }
 }

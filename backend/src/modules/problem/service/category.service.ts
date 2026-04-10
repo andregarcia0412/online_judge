@@ -82,4 +82,8 @@ export class CategoryService {
   async remove(id: number): Promise<DeleteResult> {
     return await this.categoryRepository.delete(id);
   }
+
+  async removeByProblemId(id_problem: number): Promise<DeleteResult> {
+    return await this.categoryRepository.delete({ id_problem });
+  }
 }
