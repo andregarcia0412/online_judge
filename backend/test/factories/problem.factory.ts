@@ -7,14 +7,28 @@ export class ProblemFactory {
   private static readonly fixedData = new Date('2026-01-01T00:00:00.000Z');
 
   static makeProblemRepositoryMock() {
+    const findOneBy = jest.fn();
+    const save = jest.fn();
+    const find = jest.fn();
+    const update = jest.fn();
+    const deleteFn = jest.fn();
+
     return {
+      // Ports/adapters methods
+      findByTitle: jest.fn(),
+      createAndSave: save,
+      findAllOrdered: find,
+      findById: findOneBy,
+      updateById: update,
+      deleteProblemAndChildren: deleteFn,
+      // Legacy TypeORM-like methods still used in other services/tests
       create: jest.fn(),
-      findOneBy: jest.fn(),
-      save: jest.fn(),
-      find: jest.fn(),
+      findOneBy,
+      save,
+      find,
       findBy: jest.fn(),
-      update: jest.fn(),
-      delete: jest.fn(),
+      update,
+      delete: deleteFn,
     };
   }
 

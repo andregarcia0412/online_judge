@@ -6,13 +6,13 @@ import { CategoryEnum } from 'src/modules/problem/enum/category.enum';
 export class CategoryFactory {
   static makeCategoryRepositoryMock() {
     return {
-      create: jest.fn(),
-      findOneBy: jest.fn(),
-      save: jest.fn(),
-      find: jest.fn(),
-      findBy: jest.fn(),
-      update: jest.fn(),
+      createAndSave: jest.fn(),
+      findAll: jest.fn(),
+      findById: jest.fn(),
+      findByProblemId: jest.fn(),
+      updateById: jest.fn(),
       delete: jest.fn(),
+      deleteByProblemId: jest.fn(),
     };
   }
 

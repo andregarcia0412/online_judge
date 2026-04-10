@@ -82,12 +82,12 @@ describe('SubmissionService', () => {
       expect(userRepositoryMock.findOneBy).toHaveBeenCalledWith({
         id: createSubmissionDto.id_user,
       });
-      expect(problemRepositoryMock.findOneBy).toHaveBeenCalledWith({
-        id: createSubmissionDto.id_problem,
-      });
-      expect(testCaseRepositoryMock.findBy).toHaveBeenCalledWith({
-        id_problem: createSubmissionDto.id_problem,
-      });
+      expect(problemRepositoryMock.findOneBy).toHaveBeenCalledWith(
+        createSubmissionDto.id_problem,
+      );
+      expect(testCaseRepositoryMock.findBy).toHaveBeenCalledWith(
+        createSubmissionDto.id_problem,
+      );
       expect(testRunnerServiceMock.runTests).toHaveBeenCalledWith(
         [savedTestCase],
         createSubmissionDto.text,
@@ -316,13 +316,13 @@ describe('SubmissionService', () => {
       const result =
         await service.createPlaygroundSubmission(createSubmissionDto);
 
-      expect(problemRepositoryMock.findOneBy).toHaveBeenCalledWith({
-        id: createSubmissionDto.id_problem,
-      });
+      expect(problemRepositoryMock.findOneBy).toHaveBeenCalledWith(
+        createSubmissionDto.id_problem,
+      );
 
-      expect(testCaseRepositoryMock.findBy).toHaveBeenLastCalledWith({
-        id_problem: createSubmissionDto.id_problem,
-      });
+      expect(testCaseRepositoryMock.findBy).toHaveBeenLastCalledWith(
+        createSubmissionDto.id_problem,
+      );
 
       expect(testRunnerServiceMock.runTests).toHaveBeenCalledWith(
         testCases,

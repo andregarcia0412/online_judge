@@ -31,23 +31,20 @@ describe('CategoryService', () => {
     it('should create a category for a problem when problem id matches', async () => {
       const createCategoryDto = CategoryFactory.makeCreateCategoryDto();
       const savedProblem = ProblemFactory.makeProblemEntity();
-      const createdCategory = CategoryFactory.makeCategoryEntity();
       const savedCategory = CategoryFactory.makeCategoryEntity();
 
-      problemRepositoryMock.findOneBy.mockResolvedValue(savedProblem);
-      categoryRepositoryMock.create.mockReturnValue(createdCategory);
-      categoryRepositoryMock.save.mockResolvedValue(savedCategory);
+      problemRepositoryMock.findById.mockResolvedValue(savedProblem);
+      categoryRepositoryMock.createAndSave.mockResolvedValue(savedCategory);
 
       const result = await service.create(createCategoryDto, savedProblem.id);
 
-      expect(problemRepositoryMock.findOneBy).toHaveBeenCalledWith({
-        id: savedProblem.id,
-      });
-      expect(categoryRepositoryMock.create).toHaveBeenCalledWith({
-        id_problem: savedProblem.id,
-        category: createCategoryDto.category,
-      });
-      expect(categoryRepositoryMock.save).toHaveBeenCalledWith(createdCategory);
+      expect(problemRepositoryMock.findById).toHaveBeenCalledWith(
+        savedProblem.id,
+      );
+      expect(categoryRepositoryMock.createAndSave).toHaveBeenCalledWith(
+        createCategoryDto,
+        savedProblem.id,
+      );
 
       expect(result).toBeInstanceOf(ReturnCategoryDto);
       expect(result).toMatchObject(CategoryFactory.makeReturnCategoryDto());
@@ -67,11 +64,11 @@ describe('CategoryService', () => {
     it('should return a list of categories', async () => {
       const savedCategory = CategoryFactory.makeCategoryEntity();
 
-      categoryRepositoryMock.find.mockResolvedValue([savedCategory]);
+      categoryRepositoryMock.findAll.mockResolvedValue([savedCategory]);
 
       const result = await service.findAll();
 
-      expect(categoryRepositoryMock.find).toHaveBeenCalled();
+      expect(categoryRepositoryMock.findAll).toHaveBeenCalled();
       expect(result).toHaveLength(1);
       expect(result[0]).toBeInstanceOf(ReturnCategoryDto);
       expect(result[0]).toMatchObject({
@@ -86,13 +83,13 @@ describe('CategoryService', () => {
     it('should return ReturnCategoryDto when id matches', async () => {
       const savedCategory = CategoryFactory.makeCategoryEntity();
 
-      categoryRepositoryMock.findOneBy.mockResolvedValue(savedCategory);
+      categoryRepositoryMock.findById.mockResolvedValue(savedCategory);
 
       const result = await service.findOneById(savedCategory.id);
 
-      expect(categoryRepositoryMock.findOneBy).toHaveBeenCalledWith({
-        id: savedCategory.id,
-      });
+      expect(categoryRepositoryMock.findById).toHaveBeenCalledWith(
+        savedCategory.id,
+      );
 
       expect(result).toMatchObject({
         id: savedCategory.id,
@@ -114,17 +111,17 @@ describe('CategoryService', () => {
       const savedProblem = ProblemFactory.makeProblemEntity();
       const savedCategory = CategoryFactory.makeCategoryEntity();
 
-      problemRepositoryMock.findOneBy.mockResolvedValue(savedProblem);
-      categoryRepositoryMock.findBy.mockResolvedValue([savedCategory]);
+      problemRepositoryMock.findById.mockResolvedValue(savedProblem);
+      categoryRepositoryMock.findByProblemId.mockResolvedValue([savedCategory]);
 
       const result = await service.findCategoriesByProblemId(savedCategory.id);
 
-      expect(problemRepositoryMock.findOneBy).toHaveBeenCalledWith({
-        id: savedProblem.id,
-      });
-      expect(categoryRepositoryMock.findBy).toHaveBeenCalledWith({
-        id_problem: savedProblem.id,
-      });
+      expect(problemRepositoryMock.findById).toHaveBeenCalledWith(
+        savedProblem.id,
+      );
+      expect(categoryRepositoryMock.findByProblemId).toHaveBeenCalledWith(
+        savedProblem.id,
+      );
       expect(result).toHaveLength(1);
       expect(result[0]).toBeInstanceOf(ReturnCategoryDto);
       expect(result[0]).toMatchObject({
@@ -155,15 +152,15 @@ describe('CategoryService', () => {
         raw: [],
       };
 
-      categoryRepositoryMock.update.mockResolvedValue(updateResult);
+      categoryRepositoryMock.updateById.mockResolvedValue(updateResult);
 
       const result = await service.update(categoryId, updateCategoryDto);
 
-      expect(categoryRepositoryMock.update).toHaveBeenCalledWith(
+      expect(categoryRepositoryMock.updateById).toHaveBeenCalledWith(
         categoryId,
         updateCategoryDto,
       );
-      expect(categoryRepositoryMock.update).toHaveBeenCalledTimes(1);
+      expect(categoryRepositoryMock.updateById).toHaveBeenCalledTimes(1);
       expect(result).toEqual(updateResult);
     });
   });

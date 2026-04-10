@@ -1,17 +1,30 @@
-import { CreateTestCaseDto } from 'src/modules/test-case/dto/create-test-case.dto';
-import { ReturnTestCaseDto } from 'src/modules/test-case/dto/return-test-case.dto';
+import { CreateTestCaseDto } from 'src/modules/problem/dto/test-case/create-test-case.dto';
+import { ReturnTestCaseDto } from 'src/modules/problem/dto/test-case/return-test-case.dto';
 import { TestCase } from 'src/modules/problem/entities/test-case.entity';
 
 export class TestCaseFactory {
   static makeTestCaseRepositoryMock() {
+    const createAndSave = jest.fn();
+    const findAll = jest.fn();
+    const findOneById = jest.fn();
+    const findByProblemId = jest.fn();
+    const updateById = jest.fn();
+
     return {
-      save: jest.fn(),
-      find: jest.fn(),
-      findOneBy: jest.fn(),
-      findBy: jest.fn(),
-      update: jest.fn(),
+      createAndSave,
+      findAll,
+      findOneById,
+      findByProblemId,
+      updateById,
       delete: jest.fn(),
-      create: jest.fn(),
+      deleteByProblemId: jest.fn(),
+      // Legacy TypeORM-like methods still used in some suites
+      create: createAndSave,
+      save: createAndSave,
+      find: findAll,
+      findOneBy: findOneById,
+      findBy: findByProblemId,
+      update: updateById,
     };
   }
 

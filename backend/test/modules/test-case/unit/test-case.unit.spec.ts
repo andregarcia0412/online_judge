@@ -1,5 +1,5 @@
 import { NotFoundException } from '@nestjs/common';
-import { ReturnTestCaseDto } from 'src/modules/test-case/dto/return-test-case.dto';
+import { ReturnTestCaseDto } from 'src/modules/problem/dto/test-case/return-test-case.dto';
 import { TestCaseService } from 'src/modules/problem/service/test-case.service';
 import { ProblemFactory } from 'test/factories/problem.factory';
 import { TestCaseFactory } from 'test/factories/test-case.factory';
@@ -31,25 +31,22 @@ describe('TestCaseService', () => {
     it('should create a test case when problem exists', async () => {
       const createTestCaseDto = TestCaseFactory.makeCreateTestCaseDto();
       const savedProblem = ProblemFactory.makeProblemEntity();
-      const createdTestCase = TestCaseFactory.makeTestCaseEntity();
       const savedTestCase = TestCaseFactory.makeTestCaseEntity();
 
-      problemRepositoryMock.findOneBy.mockResolvedValue(savedProblem);
-      testCaseRepositoryMock.create.mockReturnValue(createdTestCase);
-      testCaseRepositoryMock.save.mockResolvedValue(savedTestCase);
+      problemRepositoryMock.findById.mockResolvedValue(savedProblem);
+      testCaseRepositoryMock.createAndSave.mockResolvedValue(savedTestCase);
 
       const result = await service.create({ ...createTestCaseDto });
 
-      expect(problemRepositoryMock.findOneBy).toHaveBeenCalledWith({
-        id: createTestCaseDto.id_problem,
-      });
+      expect(problemRepositoryMock.findById).toHaveBeenCalledWith(
+        createTestCaseDto.id_problem,
+      );
 
-      expect(problemRepositoryMock.findOneBy).toHaveBeenCalledTimes(1);
+      expect(problemRepositoryMock.findById).toHaveBeenCalledTimes(1);
 
-      expect(testCaseRepositoryMock.create).toHaveBeenCalledWith(
+      expect(testCaseRepositoryMock.createAndSave).toHaveBeenCalledWith(
         createTestCaseDto,
       );
-      expect(testCaseRepositoryMock.save).toHaveBeenCalledWith(createdTestCase);
 
       expect(result).toBeInstanceOf(ReturnTestCaseDto);
       expect(result).toMatchObject(TestCaseFactory.makeReturnTestCaseDto());
@@ -58,32 +55,32 @@ describe('TestCaseService', () => {
     it('should throw not found exception when problem does not exist', async () => {
       const createTestCaseDto = TestCaseFactory.makeCreateTestCaseDto();
 
-      problemRepositoryMock.findOneBy.mockResolvedValue(null);
+      problemRepositoryMock.findById.mockResolvedValue(null);
 
       const createPromise = service.create({ ...createTestCaseDto });
 
       await expect(createPromise).rejects.toThrow(NotFoundException);
       await expect(createPromise).rejects.toThrow('Problem not found');
 
-      expect(problemRepositoryMock.findOneBy).toHaveBeenCalledWith({
-        id: createTestCaseDto.id_problem,
-      });
+      expect(problemRepositoryMock.findById).toHaveBeenCalledWith(
+        createTestCaseDto.id_problem,
+      );
 
-      expect(problemRepositoryMock.findOneBy).toHaveBeenCalledTimes(1);
-      expect(testCaseRepositoryMock.save).not.toHaveBeenCalled();
+      expect(problemRepositoryMock.findById).toHaveBeenCalledTimes(1);
+      expect(testCaseRepositoryMock.createAndSave).not.toHaveBeenCalled();
     });
   });
 
   describe('Find all Test Cases', () => {
     it('should return a list of ReturnTestCaseDto', async () => {
       const testCaseEntity = TestCaseFactory.makeTestCaseEntity();
-      testCaseRepositoryMock.find.mockResolvedValue([testCaseEntity]);
+      testCaseRepositoryMock.findAll.mockResolvedValue([testCaseEntity]);
 
       const result = await service.findAll();
 
       expect(result).toHaveLength(1);
       expect(result[0]).toBeInstanceOf(ReturnTestCaseDto);
-      expect(testCaseRepositoryMock.find).toHaveBeenCalled();
+      expect(testCaseRepositoryMock.findAll).toHaveBeenCalled();
 
       expect(result[0]).toMatchObject({
         id: testCaseEntity.id,
@@ -97,7 +94,7 @@ describe('TestCaseService', () => {
   describe('Get Test Case By Id', () => {
     it('should return a test case entity when id matches', async () => {
       const testCaseEntity = TestCaseFactory.makeTestCaseEntity();
-      testCaseRepositoryMock.findOneBy.mockResolvedValue(testCaseEntity);
+      testCaseRepositoryMock.findOneById.mockResolvedValue(testCaseEntity);
 
       const result = await service.findOneById(testCaseEntity.id);
 
@@ -108,13 +105,13 @@ describe('TestCaseService', () => {
         input: testCaseEntity.input,
         output: testCaseEntity.output,
       });
-      expect(testCaseRepositoryMock.findOneBy).toHaveBeenCalledWith({
-        id: testCaseEntity.id,
-      });
+      expect(testCaseRepositoryMock.findOneById).toHaveBeenCalledWith(
+        testCaseEntity.id,
+      );
     });
 
     it('should throw not found exception when id does not match', async () => {
-      testCaseRepositoryMock.findOneBy.mockResolvedValue(null);
+      testCaseRepositoryMock.findOneById.mockResolvedValue(null);
 
       const findPromise = service.findOneById('123');
 
@@ -126,15 +123,15 @@ describe('TestCaseService', () => {
   describe('Get All Test Case By Problem Id', () => {
     it('should return a list of ReturnTestCaseDto', async () => {
       const testCaseEntity = TestCaseFactory.makeTestCaseEntity();
-      testCaseRepositoryMock.findBy.mockResolvedValue([testCaseEntity]);
+      testCaseRepositoryMock.findByProblemId.mockResolvedValue([
+        testCaseEntity,
+      ]);
 
       const result = await service.findAllByProblemId(1);
 
       expect(result).toHaveLength(1);
       expect(result[0]).toBeInstanceOf(ReturnTestCaseDto);
-      expect(testCaseRepositoryMock.findBy).toHaveBeenCalledWith({
-        id_problem: 1,
-      });
+      expect(testCaseRepositoryMock.findByProblemId).toHaveBeenCalledWith(1);
 
       expect(result[0]).toMatchObject({
         id: testCaseEntity.id,
@@ -159,15 +156,15 @@ describe('TestCaseService', () => {
         raw: [],
       };
 
-      testCaseRepositoryMock.update.mockResolvedValue(updateResult);
+      testCaseRepositoryMock.updateById.mockResolvedValue(updateResult);
 
       const result = await service.update(testCaseId, updateTestCaseDto);
 
-      expect(testCaseRepositoryMock.update).toHaveBeenCalledWith(
+      expect(testCaseRepositoryMock.updateById).toHaveBeenCalledWith(
         testCaseId,
         updateTestCaseDto,
       );
-      expect(testCaseRepositoryMock.update).toHaveBeenCalledTimes(1);
+      expect(testCaseRepositoryMock.updateById).toHaveBeenCalledTimes(1);
       expect(result).toEqual(updateResult);
     });
   });

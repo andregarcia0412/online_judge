@@ -1,7 +1,7 @@
 import { ConflictException, NotFoundException } from '@nestjs/common';
 import { ReturnProblemDto } from 'src/modules/problem/dto/problem/return-problem.dto';
 import { ProblemService } from 'src/modules/problem/service/problem.service';
-import { ReturnTestCaseDto } from 'src/modules/test-case/dto/return-test-case.dto';
+import { ReturnTestCaseDto } from 'src/modules/problem/dto/test-case/return-test-case.dto';
 import { ProblemFactory } from 'test/factories/problem.factory';
 import { TestCaseFactory } from 'test/factories/test-case.factory';
 
@@ -12,22 +12,22 @@ describe('ProblemService', () => {
   let testCaseRepositoryMock: ReturnType<
     typeof TestCaseFactory.makeTestCaseRepositoryMock
   >;
-  let categoryService: {
-    findCategoriesByProblemId: jest.Mock;
+  let categoryRepositoryMock: {
+    findByProblemId: jest.Mock;
   };
   let service: ProblemService;
 
   beforeEach(() => {
     problemRepositoryMock = ProblemFactory.makeProblemRepositoryMock();
     testCaseRepositoryMock = TestCaseFactory.makeTestCaseRepositoryMock();
-    categoryService = {
-      findCategoriesByProblemId: jest.fn().mockResolvedValue([]),
+    categoryRepositoryMock = {
+      findByProblemId: jest.fn().mockResolvedValue([]),
     };
 
     service = new ProblemService(
       problemRepositoryMock as any,
       testCaseRepositoryMock as any,
-      categoryService as any,
+      categoryRepositoryMock as any,
     );
   });
 
@@ -38,26 +38,23 @@ describe('ProblemService', () => {
   describe('Create Problem', () => {
     it('should create a problem and return ReturnProblemDto when title does not match', async () => {
       const createProblemDto = ProblemFactory.makeCreateProblemDto();
-      const createdProblem = ProblemFactory.makeProblemEntity();
       const savedProblem = ProblemFactory.makeProblemEntity();
 
-      problemRepositoryMock.findOneBy.mockResolvedValue(null);
-      problemRepositoryMock.create.mockReturnValue(createdProblem);
-      problemRepositoryMock.save.mockResolvedValue(savedProblem);
+      problemRepositoryMock.findByTitle.mockResolvedValue(null);
+      problemRepositoryMock.createAndSave.mockResolvedValue(savedProblem);
 
       const result = await service.create({ ...createProblemDto });
 
-      expect(problemRepositoryMock.create).toHaveBeenCalledWith(
+      expect(problemRepositoryMock.createAndSave).toHaveBeenCalledWith(
         createProblemDto,
       );
-      expect(problemRepositoryMock.save).toHaveBeenCalledWith(createdProblem);
       expect(result).toBeInstanceOf(ReturnProblemDto);
       expect(result).toMatchObject(ProblemFactory.makeReturnProblemDto());
     });
 
     it('should throw ConflictException when title matches', async () => {
       const createProblemDto = ProblemFactory.makeCreateProblemDto();
-      problemRepositoryMock.findOneBy.mockResolvedValue(
+      problemRepositoryMock.findByTitle.mockResolvedValue(
         ProblemFactory.makeProblemEntity(),
       );
 
@@ -73,12 +70,15 @@ describe('ProblemService', () => {
   describe('Find all problems', () => {
     it('should return a list of problems', async () => {
       const savedEntity = ProblemFactory.makeProblemEntity();
-      problemRepositoryMock.find.mockResolvedValue([savedEntity]);
+      problemRepositoryMock.findAllOrdered.mockResolvedValue([savedEntity]);
 
       const result = await service.findAll();
 
       expect(result).toHaveLength(1);
-      expect(problemRepositoryMock.find).toHaveBeenCalledTimes(1);
+      expect(problemRepositoryMock.findAllOrdered).toHaveBeenCalledTimes(1);
+      expect(categoryRepositoryMock.findByProblemId).toHaveBeenCalledWith(
+        savedEntity.id,
+      );
       expect(result[0]).toBeInstanceOf(ReturnProblemDto);
       expect(result[0]).toMatchObject({
         id: savedEntity.id,
@@ -98,7 +98,7 @@ describe('ProblemService', () => {
   describe('Find Problem By Id', () => {
     it('should return ReturnProblemDto when id matches', async () => {
       const problemEntity = ProblemFactory.makeProblemEntity();
-      problemRepositoryMock.findOneBy.mockResolvedValue(problemEntity);
+      problemRepositoryMock.findById.mockResolvedValue(problemEntity);
 
       const result = await service.findOneById(problemEntity.id);
 
@@ -115,13 +115,16 @@ describe('ProblemService', () => {
         output_example: problemEntity.output_example,
         creation_date: problemEntity.creation_date,
       });
-      expect(problemRepositoryMock.findOneBy).toHaveBeenCalledWith({
-        id: problemEntity.id,
-      });
+      expect(problemRepositoryMock.findById).toHaveBeenCalledWith(
+        problemEntity.id,
+      );
+      expect(categoryRepositoryMock.findByProblemId).toHaveBeenCalledWith(
+        problemEntity.id,
+      );
     });
 
     it('should throw NotFoundException when id does not match', async () => {
-      problemRepositoryMock.findOneBy.mockResolvedValue(null);
+      problemRepositoryMock.findById.mockResolvedValue(null);
 
       const findPromise = service.findOneById(1);
 
@@ -134,7 +137,7 @@ describe('ProblemService', () => {
     it('should return ReturnProblemDto when title matches', async () => {
       const problemEntity = ProblemFactory.makeProblemEntity();
 
-      problemRepositoryMock.findOneBy.mockResolvedValue(problemEntity);
+      problemRepositoryMock.findByTitle.mockResolvedValue(problemEntity);
 
       const result = await service.findOneByTitle(problemEntity.title);
 
@@ -151,13 +154,16 @@ describe('ProblemService', () => {
         output_example: problemEntity.output_example,
         creation_date: problemEntity.creation_date,
       });
-      expect(problemRepositoryMock.findOneBy).toHaveBeenCalledWith({
-        title: problemEntity.title,
-      });
+      expect(problemRepositoryMock.findByTitle).toHaveBeenCalledWith(
+        problemEntity.title,
+      );
+      expect(categoryRepositoryMock.findByProblemId).toHaveBeenCalledWith(
+        problemEntity.id,
+      );
     });
 
     it('should throw NotFoundException when title does not match', async () => {
-      problemRepositoryMock.findOneBy.mockResolvedValue(null);
+      problemRepositoryMock.findByTitle.mockResolvedValue(null);
 
       const findPromise = service.findOneByTitle('title');
 
@@ -170,14 +176,14 @@ describe('ProblemService', () => {
     it('should return a list of ReturnTestCaseDto', async () => {
       const problemId = 1;
       const savedTestCase = TestCaseFactory.makeTestCaseEntity();
-      testCaseRepositoryMock.findBy.mockResolvedValue([savedTestCase]);
+      testCaseRepositoryMock.findByProblemId.mockResolvedValue([savedTestCase]);
 
       const result = await service.findAllTestCasesById(problemId);
 
       expect(result).toHaveLength(1);
-      expect(testCaseRepositoryMock.findBy).toHaveBeenCalledWith({
-        id_problem: problemId,
-      });
+      expect(testCaseRepositoryMock.findByProblemId).toHaveBeenCalledWith(
+        problemId,
+      );
       expect(result[0]).toBeInstanceOf(ReturnTestCaseDto);
       expect(result[0]).toMatchObject({
         id: savedTestCase.id,
@@ -201,11 +207,11 @@ describe('ProblemService', () => {
         affected: 1,
       };
 
-      problemRepositoryMock.update.mockResolvedValue(updateResult);
+      problemRepositoryMock.updateById.mockResolvedValue(updateResult);
 
       const result = await service.update(id, updateProblemDto as any);
 
-      expect(problemRepositoryMock.update).toHaveBeenCalledWith(
+      expect(problemRepositoryMock.updateById).toHaveBeenCalledWith(
         id,
         updateProblemDto,
       );
@@ -221,11 +227,15 @@ describe('ProblemService', () => {
         affected: 1,
       };
 
-      problemRepositoryMock.delete.mockResolvedValue(deleteResult);
+      problemRepositoryMock.deleteProblemAndChildren.mockResolvedValue(
+        deleteResult,
+      );
 
       const result = await service.remove(id);
 
-      expect(problemRepositoryMock.delete).toHaveBeenCalledWith(id);
+      expect(
+        problemRepositoryMock.deleteProblemAndChildren,
+      ).toHaveBeenCalledWith(id);
       expect(result).toEqual(deleteResult);
     });
   });
