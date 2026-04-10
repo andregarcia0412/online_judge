@@ -1,6 +1,6 @@
 import { NotFoundException } from '@nestjs/common';
 import { ReturnTestCaseDto } from 'src/modules/test-case/dto/return-test-case.dto';
-import { TestCaseService } from 'src/modules/test-case/test-case.service';
+import { TestCaseService } from 'src/modules/problem/service/test-case.service';
 import { ProblemFactory } from 'test/factories/problem.factory';
 import { TestCaseFactory } from 'test/factories/test-case.factory';
 

@@ -1,6 +1,6 @@
 import { BadRequestException, Injectable } from '@nestjs/common';
 import { CodeRunnerService } from 'src/modules/code-runner/code-runner.service';
-import { TestCase } from 'src/modules/test-case/entities/test-case.entity';
+import { TestCase } from 'src/modules/problem/entities/test-case.entity';
 import Docker from 'dockerode';
 import { TestResult } from './dto/test-result.dto';
 import { LANGUAGES } from 'src/modules/code-runner/languages';

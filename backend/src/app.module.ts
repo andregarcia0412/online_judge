@@ -4,7 +4,6 @@ import { ConfigModule, ConfigService } from '@nestjs/config';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { UserModule } from './modules/user/user.module';
 import { ProblemModule } from './modules/problem/problem.module';
-import { TestCaseModule } from './modules/test-case/test-case.module';
 import { AuthModule } from './modules/auth/auth.module';
 import { LlmModule } from './modules/llm/llm.module';
 import { SystemModule } from './modules/system/system.module';
@@ -32,7 +31,6 @@ import { SystemModule } from './modules/system/system.module';
     SubmissionModule,
     UserModule,
     ProblemModule,
-    TestCaseModule,
     AuthModule,
     LlmModule,
     SystemModule,

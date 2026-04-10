@@ -5,7 +5,7 @@ import { User } from 'src/modules/user/entities/user.entity';
 import { Repository } from 'typeorm';
 import { DeleteResult, UpdateResult } from 'typeorm/browser';
 import { Problem } from '../problem/entities/problem.entity';
-import { TestCase } from '../test-case/entities/test-case.entity';
+import { TestCase } from '../problem/entities/test-case.entity';
 import { TestResult } from '../test-runner/dto/test-result.dto';
 import { CreateSubmissionDto } from './dto/create-submission.dto';
 import { ReturnSubmissionDto } from './dto/return-submission.dto';

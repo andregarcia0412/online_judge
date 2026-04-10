@@ -1,5 +1,5 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { TestCase } from '../entities/test-case.entity';
+import { TestCase } from '../../entities/test-case.entity';
 
 export class ReturnTestCaseDto {
   @ApiProperty()

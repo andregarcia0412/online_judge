@@ -1,6 +1,6 @@
 import { CreateTestCaseDto } from 'src/modules/test-case/dto/create-test-case.dto';
 import { ReturnTestCaseDto } from 'src/modules/test-case/dto/return-test-case.dto';
-import { TestCase } from 'src/modules/test-case/entities/test-case.entity';
+import { TestCase } from 'src/modules/problem/entities/test-case.entity';
 
 export class TestCaseFactory {
   static makeTestCaseRepositoryMock() {
