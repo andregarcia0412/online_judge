@@ -4,6 +4,7 @@ import { CreateProblemInput } from "../../components/input/create-problem-input/
 import type { CreateProblemForm } from "../../data/dto/problem.dto";
 import "./style.css";
 import { ConfigProvider, Select, theme } from "antd";
+import { CategoryBadge } from "../../components/card/category-badge/CategoryBadge";
 
 export const CreateProblem = () => {
   const [createProblemForm, setCreateProblemForm] =
@@ -106,6 +107,8 @@ export const CreateProblem = () => {
               />
             </ConfigProvider>
           </div>
+
+          <CategoryBadge title="Grafos" onClick={() => console.log("Clicou")} />
         </div>
       </div>
     </div>
