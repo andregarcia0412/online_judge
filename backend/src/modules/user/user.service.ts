@@ -1,36 +1,35 @@
 import {
   ConflictException,
+  Inject,
   Injectable,
   NotFoundException,
 } from '@nestjs/common';
-import { InjectRepository } from '@nestjs/typeorm';
 import * as bcrypt from 'bcrypt';
-import { Repository } from 'typeorm';
-import { DeleteResult, UpdateResult } from 'typeorm/browser';
+import { ReturnSubmissionDto } from 'src/modules/submission/dto/return-submission.dto';
+import { Submission } from 'src/modules/submission/entities/submission.entity';
+import { DeleteResult, UpdateResult } from 'typeorm';
+import { SubmissionRepositoryPort } from '../submission/interface/submission.repository.port';
 import { CreateUserDto } from './dto/create-user.dto';
 import { ReturnUserDto } from './dto/return-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
 import { User } from './entities/user.entity';
-import { Submission } from 'src/modules/submission/entities/submission.entity';
-import { ReturnSubmissionDto } from 'src/modules/submission/dto/return-submission.dto';
+import { UserRepositoryPort } from './interface/user.repository.port';
 
 @Injectable()
 export class UserService {
   constructor(
-    @InjectRepository(User)
-    private userRepository: Repository<User>,
-    @InjectRepository(Submission)
-    private submissionRepository: Repository<Submission>,
+    @Inject(UserRepositoryPort)
+    private userRepository: UserRepositoryPort,
+    @Inject(SubmissionRepositoryPort)
+    private submissionRepository: SubmissionRepositoryPort,
   ) {}
 
   async create(createUserDto: CreateUserDto): Promise<ReturnUserDto> {
-    if (await this.userRepository.findOneBy({ email: createUserDto.email })) {
+    if (await this.userRepository.findOneByEmail(createUserDto.email)) {
       throw new ConflictException('This email is already in use');
     }
 
-    if (
-      await this.userRepository.findOneBy({ username: createUserDto.username })
-    ) {
+    if (await this.userRepository.findOneByUsername(createUserDto.username)) {
       throw new ConflictException('This username is already in use');
     }
 
@@ -43,13 +42,13 @@ export class UserService {
   }
 
   async findAll(): Promise<ReturnUserDto[]> {
-    return (await this.userRepository.find()).map((user: User) =>
+    return (await this.userRepository.findAll()).map((user: User) =>
       ReturnUserDto.fromEntity(user),
     );
   }
 
   async findOneById(id: string): Promise<ReturnUserDto> {
-    const user = await this.userRepository.findOneBy({ id });
+    const user = await this.userRepository.findOneById(id);
     if (!user) {
       throw new NotFoundException('User not found');
     }
@@ -59,7 +58,7 @@ export class UserService {
   }
 
   async findOneByEmail(email: string): Promise<ReturnUserDto> {
-    const user = await this.userRepository.findOneBy({ email });
+    const user = await this.userRepository.findOneByEmail(email);
 
     if (!user) {
       throw new NotFoundException('User not found');
@@ -69,7 +68,7 @@ export class UserService {
   }
 
   async findAllSubmissionsById(id: string): Promise<ReturnSubmissionDto[]> {
-    return (await this.submissionRepository.findBy({ id_user: id })).map(
+    return (await this.submissionRepository.findAllByUserId(id)).map(
       (submission: Submission) => ReturnSubmissionDto.fromEntity(submission),
     );
   }
@@ -78,7 +77,7 @@ export class UserService {
     id: string,
     updateUserDto: UpdateUserDto,
   ): Promise<UpdateResult> {
-    return await this.userRepository.update(id, updateUserDto);
+    return await this.userRepository.updateById(id, updateUserDto);
   }
 
   async remove(id: string): Promise<DeleteResult> {
@@ -86,14 +85,9 @@ export class UserService {
   }
 
   async updateUserStreak(user: User) {
-    const lastUserSubmission = await this.submissionRepository.findOne({
-      where: {
-        id_user: user.id,
-      },
-      order: {
-        submission_date: 'DESC',
-      },
-    });
+    const lastUserSubmission =
+      await this.submissionRepository.findLastUserSubmission(user.id);
+    const oldUserStreak = user.streak;
 
     if (!lastUserSubmission) {
       user.streak = 0;
@@ -101,31 +95,24 @@ export class UserService {
       const lastDate = new Date(lastUserSubmission.submission_date);
       const today = new Date();
 
-      lastDate.setHours(0, 0, 0, 0);
-      today.setHours(0, 0, 0, 0);
+      lastDate.setUTCHours(0, 0, 0, 0);
+      today.setUTCHours(0, 0, 0, 0);
 
-      const diffDays =
-        (today.getTime() - lastDate.getTime()) / (1000 * 60 * 60 * 24);
+      const diffDays = this.getDiffDays(today, lastDate);
 
-      if (diffDays === 1) {
-        user.streak = Number(user.streak) + 1;
-      } else if (diffDays > 1) {
+      if (diffDays > 1) {
         user.streak = 0;
       }
     }
-
-    await this.userRepository.save(user);
+    const newUserStreak = user.streak;
+    if (oldUserStreak !== newUserStreak) {
+      await this.userRepository.saveExistingEntity(user);
+    }
   }
 
   async updateUserStreakOnSubmission(user: User) {
-    const lastUserSubmission = await this.submissionRepository.findOne({
-      where: {
-        id_user: user.id,
-      },
-      order: {
-        submission_date: 'DESC',
-      },
-    });
+    const lastUserSubmission =
+      await this.submissionRepository.findLastUserSubmission(user.id);
 
     if (!lastUserSubmission) {
       user.streak = 1;
@@ -133,11 +120,12 @@ export class UserService {
       const lastDate = new Date(lastUserSubmission.submission_date);
       const today = new Date();
 
-      lastDate.setHours(0, 0, 0, 0);
-      today.setHours(0, 0, 0, 0);
+      lastDate.setUTCHours(0, 0, 0, 0);
+      today.setUTCHours(0, 0, 0, 0);
 
-      const diffDays =
-        (today.getTime() - lastDate.getTime()) / (1000 * 60 * 60 * 24);
+      const diffDays = this.getDiffDays(today, lastDate);
+
+      if (diffDays === 0) return;
 
       if (diffDays === 1) {
         user.streak = Number(user.streak) + 1;
@@ -145,5 +133,10 @@ export class UserService {
         user.streak = 1;
       }
     }
+  }
+  private getDiffDays(today: Date, lastDate: Date): number {
+    return Math.floor(
+      (today.getTime() - lastDate.getTime()) / (1000 * 60 * 60 * 24),
+    );
   }
 }

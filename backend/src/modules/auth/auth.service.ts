@@ -1,26 +1,25 @@
 import {
   BadRequestException,
+  Inject,
   Injectable,
   UnauthorizedException,
 } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { JwtService } from '@nestjs/jwt';
-import { InjectRepository } from '@nestjs/typeorm';
 import * as bcrypt from 'bcrypt';
 import { CreateUserDto } from 'src/modules/user/dto/create-user.dto';
 import { ReturnUserDto } from 'src/modules/user/dto/return-user.dto';
-import { User } from 'src/modules/user/entities/user.entity';
-import { Repository } from 'typeorm';
+import { UserService } from 'src/modules/user/user.service';
+import { UserRepositoryPort } from '../user/interface/user.repository.port';
 import { AuthResponseDto } from './dto/auth.dto';
 import { LoginDto } from './dto/login.dto';
 import { RefreshResponseDto } from './dto/refresh-response.dto';
-import { UserService } from 'src/modules/user/user.service';
 
 @Injectable()
 export class AuthService {
   constructor(
-    @InjectRepository(User)
-    private userRepository: Repository<User>,
+    @Inject(UserRepositoryPort)
+    private userRepository: UserRepositoryPort,
     private userService: UserService,
     private jwtService: JwtService,
     private configService: ConfigService,
@@ -67,7 +66,7 @@ export class AuthService {
   }
 
   async login(loginDto: LoginDto): Promise<AuthResponseDto> {
-    const user = await this.userRepository.findOneBy({ email: loginDto.email });
+    const user = await this.userRepository.findOneByEmail(loginDto.email);
 
     if (!user || !(await bcrypt.compare(loginDto.password, user.password))) {
       throw new BadRequestException('Incorrect email or password');
@@ -91,7 +90,7 @@ export class AuthService {
       const payload = await this.jwtService.verifyAsync(refreshToken, {
         secret: this.configService.get<string>('JWT_REFRESH_SECRET'),
       });
-      const user = await this.userRepository.findOneBy({ id: payload.sub });
+      const user = await this.userRepository.findOneById(payload.sub);
 
       if (!user) {
         throw new UnauthorizedException('User does not exist');
