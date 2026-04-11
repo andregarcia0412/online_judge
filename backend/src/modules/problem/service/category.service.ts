@@ -1,13 +1,8 @@
 import { Inject, Injectable, NotFoundException } from '@nestjs/common';
+import { DeleteResult, UpdateResult } from 'typeorm';
 import { CreateCategoryDto } from '../dto/category/create-category.dto';
-import { UpdateCategoryDto } from '../dto/category/update-category.dto';
-import { InjectRepository } from '@nestjs/typeorm';
-import { Category } from '../entities/category.entity';
-import { Repository } from 'typeorm';
-import { Problem } from '../entities/problem.entity';
 import { ReturnCategoryDto } from '../dto/category/return-category.dto';
-import { UpdateResult } from 'typeorm/browser';
-import { DeleteResult } from 'typeorm/browser';
+import { UpdateCategoryDto } from '../dto/category/update-category.dto';
 import { CategoryRepositoryPort } from '../interface/category.repository.port';
 import { ProblemRepositoryPort } from '../interface/problem.repository.port';
 

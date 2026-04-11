@@ -1,10 +1,7 @@
-import { TestCase } from 'src/modules/problem/entities/test-case.entity';
-import { UpdateResult } from 'typeorm';
-import { DeleteResult } from 'typeorm/browser';
+import { DeleteResult, UpdateResult } from 'typeorm';
 import { CreateProblemDto } from '../dto/problem/create-problem.dto';
 import { UpdateProblemDto } from '../dto/problem/update-problem.dto';
 import { Problem } from '../entities/problem.entity';
-import { Category } from '../entities/category.entity';
 
 export interface ProblemRepositoryPort {
   findByTitle(title: string): Promise<Problem | null>;

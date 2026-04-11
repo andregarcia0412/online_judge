@@ -1,11 +1,10 @@
 import { Inject, Injectable, NotFoundException } from '@nestjs/common';
-import { DeleteResult } from 'typeorm';
-import { UpdateResult } from 'typeorm/browser';
-import { ProblemRepositoryPort } from '../interface/problem.repository.port';
+import { DeleteResult, UpdateResult } from 'typeorm';
 import { CreateTestCaseDto } from '../dto/test-case/create-test-case.dto';
 import { ReturnTestCaseDto } from '../dto/test-case/return-test-case.dto';
 import { UpdateTestCaseDto } from '../dto/test-case/update-test-case.dto';
 import { TestCase } from '../entities/test-case.entity';
+import { ProblemRepositoryPort } from '../interface/problem.repository.port';
 import { TestCaseRepositoryPort } from '../interface/test-case.repository.port';
 
 @Injectable()

@@ -4,16 +4,16 @@ import {
   Injectable,
   NotFoundException,
 } from '@nestjs/common';
-import { DeleteResult, UpdateResult } from 'typeorm/browser';
-import { ReturnTestCaseDto } from '../dto/test-case/return-test-case.dto';
-import { TestCase } from '../entities/test-case.entity';
+import { TestCaseRepositoryPort } from 'src/modules/problem/interface/test-case.repository.port';
+import { DeleteResult, UpdateResult } from 'typeorm';
 import { CreateProblemDto } from '../dto/problem/create-problem.dto';
 import { ReturnProblemDto } from '../dto/problem/return-problem.dto';
 import { UpdateProblemDto } from '../dto/problem/update-problem.dto';
+import { ReturnTestCaseDto } from '../dto/test-case/return-test-case.dto';
 import { Problem } from '../entities/problem.entity';
-import { ProblemRepositoryPort } from '../interface/problem.repository.port';
-import { TestCaseRepositoryPort } from 'src/modules/problem/interface/test-case.repository.port';
+import { TestCase } from '../entities/test-case.entity';
 import { CategoryRepositoryPort } from '../interface/category.repository.port';
+import { ProblemRepositoryPort } from '../interface/problem.repository.port';
 
 @Injectable()
 export class ProblemService {
