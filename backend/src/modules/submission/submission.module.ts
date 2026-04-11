@@ -1,25 +1,28 @@
-import { Module } from '@nestjs/common';
+import { forwardRef, Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { CodeRunnerModule } from 'src/modules/code-runner/code-runner.module';
 import { TestRunnerModule } from 'src/modules/test-runner/test-runner.module';
-import { Problem } from '../problem/entities/problem.entity';
-import { TestCase } from '../problem/entities/test-case.entity';
-import { User } from '../user/entities/user.entity';
+import { ProblemModule } from '../problem/problem.module';
+import { UserModule } from '../user/user.module';
 import { Submission } from './entities/submission.entity';
+import { SubmissionRepositoryPort } from './interface/submission.repository.port';
+import { SubmissionRepository } from './repository/submission.repository';
 import { SubmissionController } from './submission.controller';
 import { SubmissionService } from './submission.service';
-import { UserModule } from '../user/user.module';
-import { ProblemModule } from '../problem/problem.module';
 
 @Module({
   imports: [
-    TypeOrmModule.forFeature([Submission, User, TestCase]),
+    TypeOrmModule.forFeature([Submission]),
     CodeRunnerModule,
     TestRunnerModule,
-    UserModule,
+    forwardRef(() => UserModule),
     ProblemModule,
   ],
   controllers: [SubmissionController],
-  providers: [SubmissionService],
+  providers: [
+    SubmissionService,
+    { provide: SubmissionRepositoryPort, useClass: SubmissionRepository },
+  ],
+  exports: [SubmissionService, SubmissionRepositoryPort],
 })
 export class SubmissionModule {}
