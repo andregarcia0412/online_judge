@@ -40,21 +40,20 @@ describe('UserService', () => {
 
       const createUserDto = UserFactory.makeCreateUserDto();
 
-      userRepositoryMock.findOneBy
-        .mockResolvedValueOnce(null)
-        .mockResolvedValueOnce(null);
+      userRepositoryMock.findOneByEmail.mockResolvedValueOnce(null);
+      userRepositoryMock.findOneByUsername.mockResolvedValueOnce(null);
 
       userRepositoryMock.save.mockResolvedValue(UserFactory.makeUserEntity());
 
       const result = await service.create({ ...createUserDto });
 
-      expect(userRepositoryMock.findOneBy).toHaveBeenNthCalledWith(1, {
-        email: createUserDto.email,
-      });
+      expect(userRepositoryMock.findOneByEmail).toHaveBeenCalledWith(
+        createUserDto.email,
+      );
 
-      expect(userRepositoryMock.findOneBy).toHaveBeenNthCalledWith(2, {
-        username: createUserDto.username,
-      });
+      expect(userRepositoryMock.findOneByUsername).toHaveBeenCalledWith(
+        createUserDto.username,
+      );
 
       const savedPayload = userRepositoryMock.save.mock.calls[0][0];
       expect(savedPayload.password).not.toBe(createUserDto.password);
@@ -82,7 +81,7 @@ describe('UserService', () => {
 
       const foundUser = UserFactory.makeUserEntity();
 
-      userRepositoryMock.findOneBy.mockResolvedValueOnce(foundUser);
+      userRepositoryMock.findOneByEmail.mockResolvedValueOnce(foundUser);
 
       const createPromise = service.create({ ...createUserDto });
 
@@ -91,10 +90,10 @@ describe('UserService', () => {
         'This email is already in use',
       );
 
-      expect(userRepositoryMock.findOneBy).toHaveBeenCalledWith({
-        email: createUserDto.email,
-      });
-      expect(userRepositoryMock.findOneBy).toHaveBeenCalledTimes(1);
+      expect(userRepositoryMock.findOneByEmail).toHaveBeenCalledWith(
+        createUserDto.email,
+      );
+      expect(userRepositoryMock.findOneByEmail).toHaveBeenCalledTimes(1);
       expect(userRepositoryMock.save).not.toHaveBeenCalled();
     });
 
@@ -113,9 +112,8 @@ describe('UserService', () => {
 
       const foundUser = UserFactory.makeUserEntity();
 
-      userRepositoryMock.findOneBy
-        .mockResolvedValueOnce(null)
-        .mockResolvedValueOnce(foundUser);
+      userRepositoryMock.findOneByEmail.mockResolvedValueOnce(null);
+      userRepositoryMock.findOneByUsername.mockResolvedValueOnce(foundUser);
 
       const createPromise = service.create({ ...createUserDto });
 
@@ -124,9 +122,9 @@ describe('UserService', () => {
         'This username is already in use',
       );
 
-      expect(userRepositoryMock.findOneBy).toHaveBeenNthCalledWith(2, {
-        username: createUserDto.username,
-      });
+      expect(userRepositoryMock.findOneByUsername).toHaveBeenCalledWith(
+        createUserDto.username,
+      );
       expect(userRepositoryMock.save).not.toHaveBeenCalled();
     });
   });
@@ -138,7 +136,7 @@ describe('UserService', () => {
         SubmissionFactory.makeSubmissionRepositoryMock();
 
       const userEntity = UserFactory.makeUserEntity();
-      userRepositoryMock.find.mockResolvedValue([userEntity]);
+      userRepositoryMock.findAll.mockResolvedValue([userEntity]);
 
       const service = new UserService(
         userRepositoryMock as any,
@@ -149,7 +147,7 @@ describe('UserService', () => {
 
       expect(result).toHaveLength(1);
       expect(result[0]).toBeInstanceOf(ReturnUserDto);
-      expect(userRepositoryMock.find).toHaveBeenCalled();
+      expect(userRepositoryMock.findAll).toHaveBeenCalled();
 
       expect(result[0]).toMatchObject({
         id: userEntity.id,
@@ -173,7 +171,7 @@ describe('UserService', () => {
         SubmissionFactory.makeSubmissionRepositoryMock();
 
       const userEntity = UserFactory.makeUserEntity();
-      userRepositoryMock.findOneBy.mockResolvedValue(userEntity);
+      userRepositoryMock.findOneById.mockResolvedValue(userEntity);
 
       const service = new UserService(
         userRepositoryMock as any,
@@ -188,9 +186,9 @@ describe('UserService', () => {
 
       expect(result).toBeInstanceOf(ReturnUserDto);
       expect(result.email).toMatch(userEntity.email);
-      expect(userRepositoryMock.findOneBy).toHaveBeenCalledWith({
-        id: userEntity.id,
-      });
+      expect(userRepositoryMock.findOneById).toHaveBeenCalledWith(
+        userEntity.id,
+      );
       expect(result).not.toHaveProperty('password');
       expect(updateUserStreakSpy).toHaveBeenCalled();
     });
@@ -200,7 +198,7 @@ describe('UserService', () => {
       const submissionRepositoryMock =
         SubmissionFactory.makeSubmissionRepositoryMock();
 
-      userRepositoryMock.findOneBy.mockResolvedValue(null);
+      userRepositoryMock.findOneById.mockResolvedValue(null);
 
       const service = new UserService(
         userRepositoryMock as any,
@@ -221,7 +219,7 @@ describe('UserService', () => {
         SubmissionFactory.makeSubmissionRepositoryMock();
 
       const userEntity = UserFactory.makeUserEntity();
-      userRepositoryMock.findOneBy.mockResolvedValue(userEntity);
+      userRepositoryMock.findOneByEmail.mockResolvedValue(userEntity);
 
       const service = new UserService(
         userRepositoryMock as any,
@@ -232,9 +230,9 @@ describe('UserService', () => {
 
       expect(result).toBeInstanceOf(ReturnUserDto);
       expect(result.id).toMatch(userEntity.id);
-      expect(userRepositoryMock.findOneBy).toHaveBeenCalledWith({
-        email: userEntity.email,
-      });
+      expect(userRepositoryMock.findOneByEmail).toHaveBeenCalledWith(
+        userEntity.email,
+      );
       expect(result).not.toHaveProperty('password');
     });
 
@@ -243,7 +241,7 @@ describe('UserService', () => {
       const submissionRepositoryMock =
         SubmissionFactory.makeSubmissionRepositoryMock();
 
-      userRepositoryMock.findOneBy.mockResolvedValue(null);
+      userRepositoryMock.findOneByEmail.mockResolvedValue(null);
 
       const service = new UserService(
         userRepositoryMock as any,
@@ -264,7 +262,7 @@ describe('UserService', () => {
         SubmissionFactory.makeSubmissionRepositoryMock();
 
       const savedEntity = SubmissionFactory.makeSubmissionEntity();
-      submissionRepositoryMock.findBy.mockResolvedValue([savedEntity]);
+      submissionRepositoryMock.findAllByUserId.mockResolvedValue([savedEntity]);
 
       const service = new UserService(
         userRepositoryMock as any,
@@ -277,9 +275,9 @@ describe('UserService', () => {
 
       expect(result.length).toBe(1);
       expect(result[0]).toBeInstanceOf(ReturnSubmissionDto);
-      expect(submissionRepositoryMock.findBy).toHaveBeenCalledWith({
+      expect(submissionRepositoryMock.findAllByUserId).toHaveBeenCalledWith(
         id_user,
-      });
+      );
 
       expect(result[0].id).toMatch(savedEntity.id);
     });
@@ -308,15 +306,15 @@ describe('UserService', () => {
         raw: [],
       };
 
-      userRepositoryMock.update.mockResolvedValue(updateResult);
+      userRepositoryMock.updateById.mockResolvedValue(updateResult);
 
       const result = await service.update(userId, updateUserDto);
 
-      expect(userRepositoryMock.update).toHaveBeenCalledWith(
+      expect(userRepositoryMock.updateById).toHaveBeenCalledWith(
         userId,
         updateUserDto,
       );
-      expect(userRepositoryMock.update).toHaveBeenCalledTimes(1);
+      expect(userRepositoryMock.updateById).toHaveBeenCalledTimes(1);
       expect(result).toEqual(updateResult);
     });
   });

@@ -7,15 +7,24 @@ export class SubmissionFactory {
   private static readonly fixedDate = new Date('2026-01-01T00:00:00.000Z');
 
   static makeSubmissionRepositoryMock() {
+    const findOneUserAcceptedSubmission = jest.fn();
+    const findLastUserSubmission = jest.fn();
+    const createAndSave = jest.fn();
+    const findAll = jest.fn();
+    const findOneById = jest.fn();
+    const findAllByUserId = jest.fn();
+    const updateById = jest.fn();
+    const deleteFn = jest.fn();
+
     return {
-      findBy: jest.fn(),
-      findOne: jest.fn(),
-      create: jest.fn(),
-      save: jest.fn(),
-      find: jest.fn(),
-      findOneBy: jest.fn(),
-      update: jest.fn(),
-      delete: jest.fn(),
+      findOneUserAcceptedSubmission,
+      findLastUserSubmission,
+      createAndSave,
+      findAll,
+      findOneById,
+      findAllByUserId,
+      updateById,
+      delete: deleteFn,
     };
   }
 

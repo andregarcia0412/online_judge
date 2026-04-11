@@ -14,21 +14,12 @@ export class ProblemFactory {
     const deleteFn = jest.fn();
 
     return {
-      // Ports/adapters methods
       findByTitle: jest.fn(),
       createAndSave: save,
       findAllOrdered: find,
       findById: findOneBy,
       updateById: update,
       deleteProblemAndChildren: deleteFn,
-      // Legacy TypeORM-like methods still used in other services/tests
-      create: jest.fn(),
-      findOneBy,
-      save,
-      find,
-      findBy: jest.fn(),
-      update,
-      delete: deleteFn,
     };
   }
 

@@ -18,13 +18,6 @@ export class TestCaseFactory {
       updateById,
       delete: jest.fn(),
       deleteByProblemId: jest.fn(),
-      // Legacy TypeORM-like methods still used in some suites
-      create: createAndSave,
-      save: createAndSave,
-      find: findAll,
-      findOneBy: findOneById,
-      findBy: findByProblemId,
-      update: updateById,
     };
   }
 

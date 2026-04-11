@@ -43,16 +43,16 @@ describe('AuthService', () => {
       const user = AuthFactory.makeAuthUserEntity({ password: hashedPassword });
       const loginDto = AuthFactory.makeLoginDto(user.email, plainPassword);
 
-      userRepositoryMock.findOneBy.mockResolvedValue(user);
+      userRepositoryMock.findOneByEmail.mockResolvedValue(user);
       jwtServiceMock.signAsync
         .mockResolvedValueOnce('access-token')
         .mockResolvedValueOnce('refresh-token');
 
       const result = await service.login(loginDto);
 
-      expect(userRepositoryMock.findOneBy).toHaveBeenCalledWith({
-        email: loginDto.email,
-      });
+      expect(userRepositoryMock.findOneByEmail).toHaveBeenCalledWith(
+        loginDto.email,
+      );
 
       expect(jwtServiceMock.signAsync).toHaveBeenNthCalledWith(
         1,
@@ -89,7 +89,7 @@ describe('AuthService', () => {
 
     it('should throw BadRequestException when user does not exist', async () => {
       const loginDto = AuthFactory.makeLoginDto();
-      userRepositoryMock.findOneBy.mockResolvedValue(null);
+      userRepositoryMock.findOneByEmail.mockResolvedValue(null);
 
       const loginPromise = service.login(loginDto);
 
@@ -103,7 +103,7 @@ describe('AuthService', () => {
       const user = AuthFactory.makeAuthUserEntity({ password: hashedPassword });
       const loginDto = AuthFactory.makeLoginDto(user.email, '123123123');
 
-      userRepositoryMock.findOneBy.mockResolvedValue(user);
+      userRepositoryMock.findOneByEmail.mockResolvedValue(user);
 
       const loginPromise = service.login(loginDto);
 
@@ -118,7 +118,7 @@ describe('AuthService', () => {
       });
       const loginDto = AuthFactory.makeLoginDto(user.email, '123123123');
 
-      userRepositoryMock.findOneBy.mockResolvedValue(user);
+      userRepositoryMock.findOneByEmail.mockResolvedValue(user);
 
       await expect(service.login(loginDto)).rejects.toThrow();
       expect(jwtServiceMock.signAsync).not.toHaveBeenCalled();
@@ -134,7 +134,7 @@ describe('AuthService', () => {
       });
 
       jwtServiceMock.verifyAsync.mockResolvedValue(payload);
-      userRepositoryMock.findOneBy.mockResolvedValue(user);
+      userRepositoryMock.findOneById.mockResolvedValue(user);
       jwtServiceMock.signAsync
         .mockResolvedValueOnce('new-access-token')
         .mockResolvedValueOnce('new-refresh-token');
@@ -147,9 +147,7 @@ describe('AuthService', () => {
           secret: 'refresh-secret',
         },
       );
-      expect(userRepositoryMock.findOneBy).toHaveBeenCalledWith({
-        id: payload.sub,
-      });
+      expect(userRepositoryMock.findOneById).toHaveBeenCalledWith(payload.sub);
       expect(result).toBeInstanceOf(RefreshResponseDto);
       expect(result).toMatchObject({
         accessToken: 'new-access-token',
@@ -164,14 +162,14 @@ describe('AuthService', () => {
 
       await expect(refreshPromise).rejects.toThrow(UnauthorizedException);
       await expect(refreshPromise).rejects.toThrow('Invalid refresh token');
-      expect(userRepositoryMock.findOneBy).not.toHaveBeenCalled();
+      expect(userRepositoryMock.findOneById).not.toHaveBeenCalled();
     });
 
     it('should throw UnauthorizedException when user does not exist after token verification', async () => {
       const payload = AuthFactory.makeTokenPayload();
 
       jwtServiceMock.verifyAsync.mockResolvedValue(payload);
-      userRepositoryMock.findOneBy.mockResolvedValue(null);
+      userRepositoryMock.findOneById.mockResolvedValue(null);
 
       const refreshPromise = service.refresh('valid-token-with-deleted-user');
 
@@ -185,7 +183,7 @@ describe('AuthService', () => {
       const payload = AuthFactory.makeTokenPayload({ sub: user.id });
 
       jwtServiceMock.verifyAsync.mockResolvedValue(payload);
-      userRepositoryMock.findOneBy.mockResolvedValue(user);
+      userRepositoryMock.findOneById.mockResolvedValue(user);
       jwtServiceMock.signAsync.mockRejectedValue(new Error('jwt sign failed'));
 
       const refreshPromise = service.refresh('valid-token');

@@ -28,13 +28,24 @@ export class UserFactory {
   }
 
   static makeUserRepositoryMock() {
+    const findOneByEmail = jest.fn();
+    const findOneByUsername = jest.fn();
+    const findOneById = jest.fn();
+    const save = jest.fn();
+    const saveExistingEntity = jest.fn();
+    const findAll = jest.fn();
+    const updateById = jest.fn();
+    const deleteFn = jest.fn();
+
     return {
-      findOneBy: jest.fn(),
-      save: jest.fn(),
-      findAll: jest.fn(),
-      find: jest.fn(),
-      update: jest.fn(),
-      delete: jest.fn(),
+      findOneByEmail,
+      findOneByUsername,
+      findOneById,
+      save,
+      saveExistingEntity,
+      findAll,
+      updateById,
+      delete: deleteFn,
     };
   }
 }
