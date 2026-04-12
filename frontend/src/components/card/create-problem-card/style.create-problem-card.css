@@ -1,0 +1,26 @@
+.create-card {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  background: rgba(17, 24, 39, 0.4);
+  border: 1px solid #30363d;
+  color: #fff;
+  padding: 24px 32px;
+  border-radius: 12px;
+  gap: 24px;
+
+  & h2 {
+    font-weight: normal;
+  }
+}
+
+.create-card-title {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+
+  & p {
+    opacity: 0.7;
+  }
+}
