@@ -13,7 +13,6 @@ import { useAuthContext } from "../../contexts/AuthContext";
 import { LanguageConstants } from "../../data/constants/language.constants";
 import type { Problem } from "../../data/dto/problem.dto";
 import type { Submission } from "../../data/dto/submission.dto";
-import type { TestCase } from "../../data/dto/test-case.dto";
 import { celebrate } from "../../utils/celebrate";
 import "./style.css";
 
@@ -36,7 +35,6 @@ export const ProblemScreen = () => {
   const [submissionInfo, setSubmissionInfo] = React.useState<Submission | null>(
     null,
   );
-  const [testCases, setTestCases] = React.useState<TestCase[] | null>(null);
   const [quickSearchText, setQuickSearchText] = React.useState<string>("");
 
   React.useEffect(() => {
@@ -53,18 +51,7 @@ export const ProblemScreen = () => {
       }
     };
 
-    const findTestCases = async () => {
-      try {
-        const testCases =
-          await problemService.findAllTestCasesById(safeIdProblem);
-        setTestCases(testCases);
-      } catch (e) {
-        setProblem(null);
-      }
-    };
-
     findProblem();
-    findTestCases();
   }, [safeIdProblem, isInvalidId, userData]);
 
   if (!userData || isInvalidId || problem === null) {
@@ -257,14 +244,14 @@ export const ProblemScreen = () => {
           </div>
         </div>
       </div>
-      {showPopup && submissionInfo && testCases && (
+      {showPopup && submissionInfo && (
         <ResultCard
           language={LanguageConstants[language].label}
           memory={submissionInfo.memory_usage_MB}
           points={problem.points}
           runtime={submissionInfo.execution_time}
           testCasesPassed={submissionInfo.test_cases_passed}
-          totalTestCases={testCases.length}
+          totalTestCases={problem.test_cases.length}
           accepted={submissionInfo.status === "accepted"}
           submissionDate={submissionInfo.submission_date}
           onClose={() => setShowPopup(false)}

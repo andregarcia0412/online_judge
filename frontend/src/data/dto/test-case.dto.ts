@@ -5,3 +5,10 @@ export type TestCase = {
   output: string;
   memory_usage_MB: number;
 };
+
+export type ReturnTestCaseDto = {
+  id: string;
+  id_problem: number;
+  input: string;
+  output: string;
+};
