@@ -5,6 +5,7 @@ import { TestCase } from 'src/modules/problem/entities/test-case.entity';
 export class TestCaseFactory {
   static makeTestCaseRepositoryMock() {
     const createAndSave = jest.fn();
+    const createAndSaveMany = jest.fn();
     const findAll = jest.fn();
     const findOneById = jest.fn();
     const findByProblemId = jest.fn();
@@ -12,6 +13,7 @@ export class TestCaseFactory {
 
     return {
       createAndSave,
+      createAndSaveMany,
       findAll,
       findOneById,
       findByProblemId,
@@ -22,7 +24,7 @@ export class TestCaseFactory {
   }
 
   static makeCreateTestCaseDto() {
-    return new CreateTestCaseDto(1, '10\n', '55\n');
+    return new CreateTestCaseDto('10\n', '55\n', 1);
   }
 
   static makeTestCaseEntity() {

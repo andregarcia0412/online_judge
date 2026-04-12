@@ -2,6 +2,7 @@ import { ConflictException, NotFoundException } from '@nestjs/common';
 import { ReturnProblemDto } from 'src/modules/problem/dto/problem/return-problem.dto';
 import { ProblemService } from 'src/modules/problem/service/problem.service';
 import { ReturnTestCaseDto } from 'src/modules/problem/dto/test-case/return-test-case.dto';
+import { CategoryFactory } from 'test/factories/category.factory';
 import { ProblemFactory } from 'test/factories/problem.factory';
 import { TestCaseFactory } from 'test/factories/test-case.factory';
 
@@ -14,6 +15,10 @@ describe('ProblemService', () => {
   >;
   let categoryRepositoryMock: {
     findByProblemId: jest.Mock;
+    createAndSaveMany: jest.Mock;
+  };
+  let dataSourceMock: {
+    transaction: jest.Mock;
   };
   let service: ProblemService;
 
@@ -22,12 +27,20 @@ describe('ProblemService', () => {
     testCaseRepositoryMock = TestCaseFactory.makeTestCaseRepositoryMock();
     categoryRepositoryMock = {
       findByProblemId: jest.fn().mockResolvedValue([]),
+      createAndSaveMany: jest.fn(),
     };
+    dataSourceMock = {
+      transaction: jest.fn(),
+    };
+    dataSourceMock.transaction.mockImplementation(async (callback) =>
+      callback({}),
+    );
 
     service = new ProblemService(
       problemRepositoryMock as any,
       testCaseRepositoryMock as any,
       categoryRepositoryMock as any,
+      dataSourceMock as any,
     );
   });
 
@@ -39,23 +52,71 @@ describe('ProblemService', () => {
     it('should create a problem and return ReturnProblemDto when title does not match', async () => {
       const createProblemDto = ProblemFactory.makeCreateProblemDto();
       const savedProblem = ProblemFactory.makeProblemEntity();
+      const savedCategory = CategoryFactory.makeCategoryEntity();
+      const savedTestCase = TestCaseFactory.makeTestCaseEntity();
+      const manager = {};
+
+      dataSourceMock.transaction.mockImplementationOnce(async (callback) =>
+        callback(manager),
+      );
 
       problemRepositoryMock.findByTitle.mockResolvedValue(null);
       problemRepositoryMock.createAndSave.mockResolvedValue(savedProblem);
+      categoryRepositoryMock.createAndSaveMany.mockResolvedValue([
+        savedCategory,
+      ]);
+      testCaseRepositoryMock.createAndSaveMany.mockResolvedValue([
+        savedTestCase,
+      ]);
 
       const result = await service.create({ ...createProblemDto });
 
+      expect(dataSourceMock.transaction).toHaveBeenCalledTimes(1);
+      expect(problemRepositoryMock.findByTitle).toHaveBeenCalledWith(
+        createProblemDto.title,
+        manager,
+      );
       expect(problemRepositoryMock.createAndSave).toHaveBeenCalledWith(
         createProblemDto,
+        manager,
+      );
+      expect(categoryRepositoryMock.createAndSaveMany).toHaveBeenCalledWith(
+        createProblemDto.category,
+        savedProblem.id,
+        manager,
+      );
+      expect(testCaseRepositoryMock.createAndSaveMany).toHaveBeenCalledWith(
+        createProblemDto.test_cases,
+        manager,
       );
       expect(result).toBeInstanceOf(ReturnProblemDto);
-      expect(result).toMatchObject(ProblemFactory.makeReturnProblemDto());
+      expect(result).toMatchObject({
+        ...ProblemFactory.makeReturnProblemDto(),
+        categories: [
+          {
+            id: savedCategory.id,
+            id_problem: savedCategory.id_problem,
+            category: savedCategory.category,
+          },
+        ],
+        test_cases: [
+          {
+            id: savedTestCase.id,
+            id_problem: savedTestCase.id_problem,
+            input: savedTestCase.input,
+            output: savedTestCase.output,
+          },
+        ],
+      });
     });
 
     it('should throw ConflictException when title matches', async () => {
       const createProblemDto = ProblemFactory.makeCreateProblemDto();
       problemRepositoryMock.findByTitle.mockResolvedValue(
         ProblemFactory.makeProblemEntity(),
+      );
+      dataSourceMock.transaction.mockImplementationOnce(async (callback) =>
+        callback({}),
       );
 
       const createPromise = service.create(createProblemDto);
@@ -227,15 +288,11 @@ describe('ProblemService', () => {
         affected: 1,
       };
 
-      problemRepositoryMock.deleteProblemAndChildren.mockResolvedValue(
-        deleteResult,
-      );
+      problemRepositoryMock.delete.mockResolvedValue(deleteResult);
 
       const result = await service.remove(id);
 
-      expect(
-        problemRepositoryMock.deleteProblemAndChildren,
-      ).toHaveBeenCalledWith(id);
+      expect(problemRepositoryMock.delete).toHaveBeenCalledWith(id);
       expect(result).toEqual(deleteResult);
     });
   });

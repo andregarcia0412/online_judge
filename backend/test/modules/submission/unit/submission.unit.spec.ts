@@ -75,7 +75,7 @@ describe('SubmissionService', () => {
       );
       submissionRepositoryMock.createAndSave.mockResolvedValue(savedSubmission);
       userRepositoryMock.save.mockResolvedValue(savedUser);
-      problemRepositoryMock.createAndSave.mockResolvedValue(savedProblem);
+      problemRepositoryMock.saveExistingEntity.mockResolvedValue(savedProblem);
 
       const result = await service.create(createSubmissionDto);
 
@@ -115,7 +115,7 @@ describe('SubmissionService', () => {
           total_resolved: 1,
         }),
       );
-      expect(problemRepositoryMock.createAndSave).toHaveBeenCalledWith(
+      expect(problemRepositoryMock.saveExistingEntity).toHaveBeenCalledWith(
         expect.objectContaining({
           total_submitted: 4,
           total_accepted: 2,
@@ -202,7 +202,7 @@ describe('SubmissionService', () => {
       );
       submissionRepositoryMock.createAndSave.mockResolvedValue(savedSubmission);
       userRepositoryMock.save.mockResolvedValue(savedUser);
-      problemRepositoryMock.createAndSave.mockResolvedValue(savedProblem);
+      problemRepositoryMock.saveExistingEntity.mockResolvedValue(savedProblem);
 
       await service.create(createSubmissionDto);
 
@@ -220,7 +220,7 @@ describe('SubmissionService', () => {
           total_resolved: 3,
         }),
       );
-      expect(problemRepositoryMock.createAndSave).toHaveBeenCalledWith(
+      expect(problemRepositoryMock.saveExistingEntity).toHaveBeenCalledWith(
         expect.objectContaining({
           total_submitted: 9,
           total_accepted: 5,
@@ -260,7 +260,7 @@ describe('SubmissionService', () => {
       );
       submissionRepositoryMock.createAndSave.mockResolvedValue(savedSubmission);
       userRepositoryMock.save.mockResolvedValue(savedUser);
-      problemRepositoryMock.createAndSave.mockResolvedValue(savedProblem);
+      problemRepositoryMock.saveExistingEntity.mockResolvedValue(savedProblem);
 
       await service.create(createSubmissionDto);
 
@@ -271,7 +271,7 @@ describe('SubmissionService', () => {
           total_resolved: 1,
         }),
       );
-      expect(problemRepositoryMock.createAndSave).toHaveBeenCalledWith(
+      expect(problemRepositoryMock.saveExistingEntity).toHaveBeenCalledWith(
         expect.objectContaining({
           total_submitted: 3,
           total_accepted: 1,

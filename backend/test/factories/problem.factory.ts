@@ -1,6 +1,9 @@
 import { CreateProblemDto } from 'src/modules/problem/dto/problem/create-problem.dto';
+import { CreateCategoryDto } from 'src/modules/problem/dto/category/create-category.dto';
+import { CreateTestCaseDto } from 'src/modules/problem/dto/test-case/create-test-case.dto';
 import { ReturnProblemDto } from 'src/modules/problem/dto/problem/return-problem.dto';
 import { Problem } from 'src/modules/problem/entities/problem.entity';
+import { CategoryEnum } from 'src/modules/problem/enum/category.enum';
 import { ProblemDifficultyEnum } from 'src/modules/problem/enum/problem-difficulty.enum';
 
 export class ProblemFactory {
@@ -16,10 +19,11 @@ export class ProblemFactory {
     return {
       findByTitle: jest.fn(),
       createAndSave: save,
+      saveExistingEntity: jest.fn(),
       findAllOrdered: find,
       findById: findOneBy,
       updateById: update,
-      deleteProblemAndChildren: deleteFn,
+      delete: deleteFn,
     };
   }
 
@@ -34,6 +38,8 @@ export class ProblemFactory {
       'input_example',
       'output_example',
       ProblemDifficultyEnum.EASY,
+      [new CreateCategoryDto(CategoryEnum.BASICS)],
+      [new CreateTestCaseDto('10\n', '55\n')],
     );
   }
 
