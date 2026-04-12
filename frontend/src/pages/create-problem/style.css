@@ -87,3 +87,9 @@
     opacity: 1;
   }
 }
+
+.create-button-row {
+  display: flex;
+  gap: 16px;
+  padding-bottom: 48px;
+}

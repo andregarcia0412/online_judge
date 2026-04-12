@@ -2,7 +2,7 @@ import type {
   Submission,
   SubmissionRequestDto
 } from "../../data/dto/submission.dto";
-import type { TestCase } from "../../data/dto/test-case.dto";
+import type { TestCase } from "../../data/dto/problem.dto";
 import { api } from "../api.client";
 
 export const submissionService = {

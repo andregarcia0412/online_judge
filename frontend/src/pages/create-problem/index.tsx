@@ -1,4 +1,5 @@
-import { ConfigProvider, Select, theme } from "antd";
+import { ConfigProvider, notification, Select, theme } from "antd";
+import axios from "axios";
 import React from "react";
 import { problemService } from "../../api/services/problem.service";
 import { CreateProblemCard } from "../../components/card/create-problem-card/CreateProblemCard";
@@ -9,8 +10,11 @@ import Button from "../../components/input/button/Button";
 import { CreateProblemInput } from "../../components/input/create-problem-input/CreateProblemInput";
 import type {
   CategoryDto,
+  CreateProblemDto,
   CreateProblemForm,
 } from "../../data/dto/problem.dto";
+import { normalizeNewLines } from "../../utils/normalizeNewLines";
+import { createProblemSchema } from "../../validations/create-problem.schema";
 import "./style.css";
 
 type TestCase = {
@@ -19,6 +23,17 @@ type TestCase = {
 };
 
 export const CreateProblem = () => {
+  const [api, contextHolder] = notification.useNotification();
+  const openNotificationWithIcon = (
+    type: "success" | "info" | "warning" | "error",
+    title: string,
+    message: string,
+  ) => {
+    api[type]({
+      title: title,
+      description: message,
+    });
+  };
   const [createProblemForm, setCreateProblemForm] =
     React.useState<CreateProblemForm>({
       title: "",
@@ -40,6 +55,7 @@ export const CreateProblem = () => {
   >([]);
   const [categoryLoadingFailed, setCategoryLoadingFailed] =
     React.useState<boolean>(false);
+  const [loadingCreate, setLoadingCreate] = React.useState<boolean>(false);
 
   React.useEffect(() => {
     const loadCategories = async () => {
@@ -70,6 +86,68 @@ export const CreateProblem = () => {
     }));
   };
 
+  const handleCreateProblem = async () => {
+    if (loadingCreate) return;
+
+    const parsing = createProblemSchema.safeParse(createProblemForm);
+
+    if (!parsing.success) {
+      openNotificationWithIcon(
+        "error",
+        "Error",
+        parsing.error.issues[0].message,
+      );
+      return;
+    }
+
+    if (testCases.length <= 0) {
+      openNotificationWithIcon(
+        "error",
+        "Error",
+        "Problem should have at least one Test Case",
+      );
+      return;
+    }
+
+    setLoadingCreate(true);
+
+    try {
+      const createProblemDto: CreateProblemDto = {
+        title: createProblemForm.title,
+        points: Number(createProblemForm.points),
+        author: createProblemForm.author,
+        description: createProblemForm.description,
+        input_description: createProblemForm.inputDescription,
+        output_description: createProblemForm.outputDescription,
+        input_example: createProblemForm.inputExample,
+        output_example: createProblemForm.outputExample,
+        difficulty: createProblemForm.difficulty,
+        category: createProblemForm.categories.map((category) => ({
+          category,
+        })),
+        test_cases: testCases.map((testCase) => ({
+          input: normalizeNewLines(testCase.input),
+          output: normalizeNewLines(testCase.output),
+        })),
+      };
+      const response = await problemService.create(createProblemDto);
+      console.log(response);
+      openNotificationWithIcon(
+        "success",
+        "Success!",
+        "Problem created successfully",
+      );
+    } catch (e) {
+      openNotificationWithIcon(
+        "error",
+        "Error",
+        axios.isAxiosError(e) ? e.response?.data.message : "Unknown Error",
+      );
+    } finally {
+      setLoadingCreate(false);
+    }
+  };
+
   return (
     <div>
       <HomeHeader setText={() => {}} handleSearch={() => {}} text="" />
@@ -78,6 +156,24 @@ export const CreateProblem = () => {
           <h1>Create New Problem</h1>
           <p>Fill in the fields below to create a new programming problem</p>
         </div>
+
+        <ConfigProvider
+          theme={{
+            algorithm: theme.darkAlgorithm,
+            token: {
+              colorBgElevated: "rgba(0, 0, 0, 0.8)",
+              colorBorder: "#30363d",
+              borderRadiusLG: 6,
+            },
+            components: {
+              Notification: {
+                colorBgElevated: "rgba(0, 0, 0, 0.8)",
+              },
+            },
+          }}
+        >
+          {contextHolder}
+        </ConfigProvider>
 
         <CreateProblemCard title="Basic Info">
           <CreateProblemInput
@@ -310,6 +406,24 @@ export const CreateProblem = () => {
             </div>
           </div>
         </CreateProblemCard>
+
+        <div className="create-button-row">
+          <Button
+            background="rgba(0, 0, 0, 0.5)"
+            loading={false}
+            onClick={() => ""}
+            text="Cancel"
+            border="1px solid #374151"
+            height={40}
+          />
+          <Button
+            background="linear-gradient(to right, #9333EA, #2563EB)"
+            loading={loadingCreate}
+            onClick={handleCreateProblem}
+            text="Create Problem"
+            height={40}
+          />
+        </div>
       </div>
     </div>
   );

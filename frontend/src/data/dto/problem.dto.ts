@@ -1,5 +1,3 @@
-import type { ReturnTestCaseDto } from "./test-case.dto";
-
 export type Problem = {
   id: number;
   title: string;
@@ -33,13 +31,52 @@ export type CreateProblemForm = {
   testCaseOutput: string;
 };
 
+export type CreateProblemDto = {
+  title: string;
+  points: number;
+  author: string;
+  description: string;
+  input_description: string;
+  output_description: string;
+  input_example: string;
+  output_example: string;
+  difficulty: string;
+  category: CreateCategoryDto[];
+  test_cases: CreateTestCaseDto[];
+};
+
 export type Category = {
   id: number;
   id_problem: number;
   category: string;
 };
 
+export type CreateCategoryDto = {
+  category: string;
+};
+
 export type CategoryDto = {
   value: string;
   label: string;
+};
+
+export type TestCase = {
+  id_test_case: number;
+  id_problem: number;
+  input: string;
+  output: string;
+  memory_usage_MB: number;
+};
+
+export type ReturnTestCaseDto = {
+  id: string;
+  id_problem: number;
+  input: string;
+  output: string;
+};
+
+export type CreateTestCaseDto = {
+  id_problem?: number;
+  input: string;
+  output: string;
 };
