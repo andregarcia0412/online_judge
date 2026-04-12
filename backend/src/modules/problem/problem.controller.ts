@@ -7,7 +7,7 @@ import {
   Patch,
   Post,
 } from '@nestjs/common';
-import { ApiCreatedResponse } from '@nestjs/swagger';
+import { ApiCreatedResponse, ApiOkResponse } from '@nestjs/swagger';
 import { UpdateResult } from 'typeorm';
 import { DeleteResult } from 'typeorm';
 import { ReturnTestCaseDto } from './dto/test-case/return-test-case.dto';
@@ -41,19 +41,19 @@ export class ProblemController {
   }
 
   @Get('/problem')
-  @ApiCreatedResponse({ type: [ReturnProblemDto] })
+  @ApiOkResponse({ type: [ReturnProblemDto] })
   findAll(): Promise<ReturnProblemDto[]> {
     return this.problemService.findAll();
   }
 
   @Get('/problem/:id')
-  @ApiCreatedResponse({ type: ReturnProblemDto })
+  @ApiOkResponse({ type: ReturnProblemDto })
   findOne(@Param('id') id: string): Promise<ReturnProblemDto> {
     return this.problemService.findOneById(+id);
   }
 
   @Get('/problem/:id/test-case')
-  @ApiCreatedResponse({ type: [ReturnTestCaseDto] })
+  @ApiOkResponse({ type: [ReturnTestCaseDto] })
   async findAllTestCaseById(
     @Param('id') id: string,
   ): Promise<ReturnTestCaseDto[]> {
@@ -61,6 +61,7 @@ export class ProblemController {
   }
 
   @Patch('/problem/:id')
+  @ApiOkResponse({ type: UpdateResult })
   update(
     @Param('id') id: string,
     @Body() updateProblemDto: UpdateProblemDto,
@@ -69,6 +70,7 @@ export class ProblemController {
   }
 
   @Delete('/problem/:id')
+  @ApiOkResponse({ type: DeleteResult })
   remove(@Param('id') id: string): Promise<DeleteResult> {
     return this.problemService.remove(+id);
   }
@@ -83,7 +85,7 @@ export class ProblemController {
   }
 
   @Get('/problem/:id/category')
-  @ApiCreatedResponse({ type: [ReturnCategoryDto] })
+  @ApiOkResponse({ type: [ReturnCategoryDto] })
   async findCategoriesByProblemId(
     @Param('id') id: string,
   ): Promise<ReturnCategoryDto[]> {
@@ -91,19 +93,19 @@ export class ProblemController {
   }
 
   @Get('/category')
-  @ApiCreatedResponse({ type: [ReturnCategoriesDto] })
+  @ApiOkResponse({ type: [ReturnCategoriesDto] })
   getAllAvailableCategories(): ReturnCategoriesDto[] {
     return this.categoryService.getAvailableCategories();
   }
 
   @Get('/category/:id')
-  @ApiCreatedResponse({ type: ReturnCategoryDto })
+  @ApiOkResponse({ type: ReturnCategoryDto })
   async findCategoryById(@Param('id') id: string): Promise<ReturnCategoryDto> {
     return await this.categoryService.findOneById(+id);
   }
 
   @Patch('/category/:id')
-  @ApiCreatedResponse({ type: UpdateResult })
+  @ApiOkResponse({ type: UpdateResult })
   async updateCategory(
     @Param('id') id: string,
     @Body() updateCategoryDto: UpdateCategoryDto,
@@ -112,7 +114,7 @@ export class ProblemController {
   }
 
   @Delete('/category/:id')
-  @ApiCreatedResponse({ type: DeleteResult })
+  @ApiOkResponse({ type: DeleteResult })
   async removeCategory(@Param('id') id: string): Promise<DeleteResult> {
     return await this.categoryService.remove(+id);
   }
@@ -126,18 +128,19 @@ export class ProblemController {
   }
 
   @Get('/test-case')
-  @ApiCreatedResponse({ type: [ReturnTestCaseDto] })
+  @ApiOkResponse({ type: [ReturnTestCaseDto] })
   findAllTestCases(): Promise<ReturnTestCaseDto[]> {
     return this.testCaseService.findAll();
   }
 
   @Get('/test-case/:id')
-  @ApiCreatedResponse({ type: ReturnTestCaseDto })
+  @ApiOkResponse({ type: ReturnTestCaseDto })
   findOneTestCase(@Param('id') id: string): Promise<ReturnTestCaseDto> {
     return this.testCaseService.findOneById(id);
   }
 
   @Patch('/test-case/:id')
+  @ApiOkResponse({ type: UpdateResult })
   updateTestCase(
     @Param('id') id: string,
     @Body() updateTestCaseDto: UpdateTestCaseDto,
@@ -146,6 +149,7 @@ export class ProblemController {
   }
 
   @Delete('/test-case/:id')
+  @ApiOkResponse({ type: DeleteResult })
   removeTestCase(@Param('id') id: string): Promise<DeleteResult> {
     return this.testCaseService.remove(id);
   }

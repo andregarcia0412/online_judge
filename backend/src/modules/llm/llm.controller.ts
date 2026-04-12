@@ -1,34 +1,34 @@
 import {
-  Controller,
-  Get,
-  Post,
   Body,
-  Patch,
-  Param,
-  Delete,
+  Controller,
+  HttpCode,
+  HttpStatus,
+  Post,
   UseGuards,
 } from '@nestjs/common';
-import { LlmService } from './llm.service';
-import { AnalyzeRequestDto } from './dto/analyze-request.dto';
-import { AskRequestDto } from './dto/ask-request.dto';
-import { ApiCreatedResponse } from '@nestjs/swagger';
-import { AnalyzeResponseDto } from './dto/analyze-response.dto';
-import { AskResponseDto } from './dto/ask-response.dto';
+import { ApiCreatedResponse, ApiOkResponse } from '@nestjs/swagger';
 import { JwtAuthGuard } from 'src/modules/auth/jwt-auth.guard';
+import { AnalyzeRequestDto } from './dto/analyze-request.dto';
+import { AnalyzeResponseDto } from './dto/analyze-response.dto';
+import { AskRequestDto } from './dto/ask-request.dto';
+import { AskResponseDto } from './dto/ask-response.dto';
+import { LlmService } from './llm.service';
 
 @Controller('llm')
 export class LlmController {
   constructor(private readonly llmService: LlmService) {}
 
+  @HttpCode(HttpStatus.OK)
   @Post('/analyze')
-  @ApiCreatedResponse({ type: AnalyzeResponseDto })
+  @ApiOkResponse({ type: AnalyzeResponseDto })
   @UseGuards(JwtAuthGuard)
   analyze(@Body() analyzeRequestDto: AnalyzeRequestDto) {
     return this.llmService.analyze(analyzeRequestDto);
   }
 
+  @HttpCode(HttpStatus.OK)
   @Post('/ask')
-  @ApiCreatedResponse({ type: AskResponseDto })
+  @ApiOkResponse({ type: AskResponseDto })
   @UseGuards(JwtAuthGuard)
   ask(@Body() askRequestDto: AskRequestDto) {
     return this.llmService.ask(askRequestDto);

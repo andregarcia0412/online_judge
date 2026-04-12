@@ -10,7 +10,7 @@ import {
 import { UserService } from './user.service';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
-import { ApiCreatedResponse } from '@nestjs/swagger';
+import { ApiCreatedResponse, ApiOkResponse } from '@nestjs/swagger';
 import { ReturnUserDto } from './dto/return-user.dto';
 import { DeleteResult, UpdateResult } from 'typeorm';
 import { ReturnSubmissionDto } from 'src/modules/submission/dto/return-submission.dto';
@@ -26,7 +26,7 @@ export class UserController {
   }
 
   @Get(':id/submission')
-  @ApiCreatedResponse({ type: [ReturnSubmissionDto] })
+  @ApiOkResponse({ type: [ReturnSubmissionDto] })
   findAllSubmissionsById(
     @Param('id') id: string,
   ): Promise<ReturnSubmissionDto[]> {
@@ -34,13 +34,13 @@ export class UserController {
   }
 
   @Get(':id')
-  @ApiCreatedResponse({ type: ReturnUserDto })
+  @ApiOkResponse({ type: ReturnUserDto })
   findOne(@Param('id') id: string): Promise<ReturnUserDto> {
     return this.userService.findOneById(id);
   }
 
   @Patch(':id')
-  @ApiCreatedResponse({ type: UpdateResult })
+  @ApiOkResponse({ type: UpdateResult })
   update(
     @Param('id') id: string,
     @Body() updateUserDto: UpdateUserDto,
@@ -49,7 +49,7 @@ export class UserController {
   }
 
   @Delete(':id')
-  @ApiCreatedResponse({ type: UpdateResult })
+  @ApiOkResponse({ type: UpdateResult })
   remove(@Param('id') id: string): Promise<DeleteResult> {
     return this.userService.remove(id);
   }

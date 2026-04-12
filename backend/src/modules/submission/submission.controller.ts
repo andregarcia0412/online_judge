@@ -7,7 +7,7 @@ import {
   Patch,
   Post,
 } from '@nestjs/common';
-import { ApiCreatedResponse } from '@nestjs/swagger';
+import { ApiCreatedResponse, ApiOkResponse } from '@nestjs/swagger';
 import { DeleteResult, UpdateResult } from 'typeorm';
 import { TestResult } from '../test-runner/dto/test-result.dto';
 import { CreateSubmissionDto } from './dto/create-submission.dto';
@@ -38,19 +38,19 @@ export class SubmissionController {
   }
 
   @Get()
-  @ApiCreatedResponse({ type: [ReturnSubmissionDto] })
+  @ApiOkResponse({ type: [ReturnSubmissionDto] })
   findAll(): Promise<ReturnSubmissionDto[]> {
     return this.submissionService.findAll();
   }
 
   @Get(':id')
-  @ApiCreatedResponse({ type: ReturnSubmissionDto })
+  @ApiOkResponse({ type: ReturnSubmissionDto })
   findOne(@Param('id') id: string): Promise<ReturnSubmissionDto> {
     return this.submissionService.findOneById(id);
   }
 
   @Patch(':id')
-  @ApiCreatedResponse({ type: UpdateResult })
+  @ApiOkResponse({ type: UpdateResult })
   update(
     @Param('id') id: string,
     @Body() updateSubmissionDto: UpdateSubmissionDto,
@@ -59,7 +59,7 @@ export class SubmissionController {
   }
 
   @Delete(':id')
-  @ApiCreatedResponse({ type: DeleteResult })
+  @ApiOkResponse({ type: DeleteResult })
   remove(@Param('id') id: string): Promise<DeleteResult> {
     return this.submissionService.remove(id);
   }

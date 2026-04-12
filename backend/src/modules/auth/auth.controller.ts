@@ -1,5 +1,9 @@
 import { Body, Controller, HttpCode, HttpStatus, Post } from '@nestjs/common';
-import { ApiBearerAuth, ApiCreatedResponse } from '@nestjs/swagger';
+import {
+  ApiBearerAuth,
+  ApiCreatedResponse,
+  ApiOkResponse,
+} from '@nestjs/swagger';
 import { CreateUserDto } from 'src/modules/user/dto/create-user.dto';
 import { ReturnUserDto } from 'src/modules/user/dto/return-user.dto';
 import { AuthService } from './auth.service';
@@ -13,14 +17,14 @@ export class AuthController {
 
   @HttpCode(HttpStatus.OK)
   @Post('/login')
-  @ApiCreatedResponse({ type: AuthResponseDto })
+  @ApiOkResponse({ type: AuthResponseDto })
   login(@Body() LoginDto: LoginDto): Promise<AuthResponseDto> {
     return this.authService.login(LoginDto);
   }
 
   @HttpCode(HttpStatus.OK)
   @Post('/refresh')
-  @ApiCreatedResponse({ type: RefreshResponseDto })
+  @ApiOkResponse({ type: RefreshResponseDto })
   @ApiBearerAuth('refresh-token')
   refresh(
     @Body('refresh_token') refreshToken: string,
