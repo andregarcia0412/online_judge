@@ -25,4 +25,8 @@ export class ReturnCategoryDto {
       category.category,
     );
   }
+
+  static fromEntityList(categories: Category[]): ReturnCategoryDto[] {
+    return categories.map((category) => ReturnCategoryDto.fromEntity(category));
+  }
 }

@@ -29,4 +29,8 @@ export class ReturnTestCaseDto {
       testCase.output,
     );
   }
+
+  static fromEntityList(testCases: TestCase[]): ReturnTestCaseDto[] {
+    return testCases.map((testCase) => ReturnTestCaseDto.fromEntity(testCase));
+  }
 }
