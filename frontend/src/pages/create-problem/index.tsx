@@ -1,13 +1,17 @@
 import { ConfigProvider, Select, theme } from "antd";
 import React from "react";
+import { problemService } from "../../api/services/problem.service";
 import { CreateProblemCard } from "../../components/card/create-problem-card/CreateProblemCard";
-import { HomeHeader } from "../../components/home-header/HomeHeader";
-import { CreateProblemInput } from "../../components/input/create-problem-input/CreateProblemInput";
-import type { CreateProblemForm } from "../../data/dto/problem.dto";
-import "./style.css";
-import { TestCaseWarningCard } from "../../components/card/test-case-warning-card/TestCaseWarningCard";
-import Button from "../../components/input/button/Button";
 import { TestCaseCard } from "../../components/card/test-case-card/TestCaseCard";
+import { TestCaseWarningCard } from "../../components/card/test-case-warning-card/TestCaseWarningCard";
+import { HomeHeader } from "../../components/home-header/HomeHeader";
+import Button from "../../components/input/button/Button";
+import { CreateProblemInput } from "../../components/input/create-problem-input/CreateProblemInput";
+import type {
+  CategoryDto,
+  CreateProblemForm,
+} from "../../data/dto/problem.dto";
+import "./style.css";
 
 type TestCase = {
   input: string;
@@ -31,6 +35,25 @@ export const CreateProblem = () => {
       testCaseOutput: "",
     });
   const [testCases, setTestCases] = React.useState<TestCase[]>([]);
+  const [availableCategories, setAvailableCategories] = React.useState<
+    CategoryDto[]
+  >([]);
+  const [categoryLoadingFailed, setCategoryLoadingFailed] =
+    React.useState<boolean>(false);
+
+  React.useEffect(() => {
+    const loadCategories = async () => {
+      try {
+        const response = await problemService.findAllCategories();
+        console.log(response);
+        setAvailableCategories(response);
+      } catch (e) {
+        setCategoryLoadingFailed(true);
+      }
+    };
+
+    loadCategories();
+  }, []);
 
   const handleCreateTestCase = () => {
     setTestCases((prev) => [
@@ -137,6 +160,8 @@ export const CreateProblem = () => {
               />
             </ConfigProvider>
           </div>
+
+          <div className="create-categories"></div>
         </CreateProblemCard>
 
         <CreateProblemCard title="Problem Description">

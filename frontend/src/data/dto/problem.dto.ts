@@ -28,3 +28,8 @@ export type CreateProblemForm = {
   testCaseInput: string;
   testCaseOutput: string;
 };
+
+export type CategoryDto = {
+  value: string;
+  label: string;
+};

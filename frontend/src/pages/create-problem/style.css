@@ -75,3 +75,15 @@
   border-radius: 12px;
   gap: 16px;
 }
+
+.create-categories {
+  background-color: #000;
+  border: 1px solid #30363d;
+  padding: 12px;
+
+  & p {
+    color: #4ade80;
+    font-size: 16px;
+    opacity: 1;
+  }
+}
