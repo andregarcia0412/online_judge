@@ -17,6 +17,11 @@
   opacity: 0.8;
 }
 
+.button.disabled {
+  opacity: 0.5;
+  cursor: auto;
+}
+
 .button-icon {
   display: flex;
   justify-content: center;

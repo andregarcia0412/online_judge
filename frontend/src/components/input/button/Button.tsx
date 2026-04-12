@@ -10,6 +10,7 @@ interface ButtonProps {
   icon?: string;
   border?: string;
   fontSize?: number;
+  disabled?: boolean;
 }
 
 const Button = ({
@@ -21,13 +22,15 @@ const Button = ({
   icon,
   border,
   fontSize,
+  disabled,
 }: ButtonProps) => {
   return (
     <button
       type="button"
-      className="button"
+      className={`button ${disabled && "disabled"}`}
       onClick={onClick}
       style={{ background, height, border, fontSize }}
+      disabled={disabled}
     >
       <div className="button-icon">
         {!loading && icon && <img src={icon} />}
