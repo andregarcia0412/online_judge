@@ -1,10 +1,10 @@
+import { ConfigProvider, Select, theme } from "antd";
 import React from "react";
+import { CreateProblemCard } from "../../components/card/create-problem-card/CreateProblemCard";
 import { HomeHeader } from "../../components/home-header/HomeHeader";
 import { CreateProblemInput } from "../../components/input/create-problem-input/CreateProblemInput";
 import type { CreateProblemForm } from "../../data/dto/problem.dto";
 import "./style.css";
-import { ConfigProvider, Select, theme } from "antd";
-import { CategoryBadge } from "../../components/card/category-badge/CategoryBadge";
 
 export const CreateProblem = () => {
   const [createProblemForm, setCreateProblemForm] =
@@ -31,9 +31,7 @@ export const CreateProblem = () => {
           <p>Fill in the fields below to create a new programming problem</p>
         </div>
 
-        <div className="create-card">
-          <h2>Basic Info</h2>
-
+        <CreateProblemCard title="Basic Info">
           <CreateProblemInput
             placeholder="E.g: Hello World!"
             text={createProblemForm.title}
@@ -47,7 +45,7 @@ export const CreateProblem = () => {
             title="Problem Title"
           />
 
-          <div className="autor-points-row">
+          <div className="inputs-row">
             <CreateProblemInput
               placeholder="Your name or username"
               text={createProblemForm.author}
@@ -87,6 +85,13 @@ export const CreateProblem = () => {
             >
               <Select
                 style={{ width: "100%" }}
+                styles={{
+                  popup: {
+                    root: {
+                      backgroundColor: "rgba(17, 24, 39, 1)",
+                    },
+                  },
+                }}
                 placeholder="Choose a difficulty"
                 options={[
                   { value: "easy", label: "Easy" },
@@ -107,9 +112,93 @@ export const CreateProblem = () => {
               />
             </ConfigProvider>
           </div>
+        </CreateProblemCard>
 
-          <CategoryBadge title="Grafos" onClick={() => console.log("Clicou")} />
-        </div>
+        <CreateProblemCard title="Problem Description">
+          <CreateProblemInput
+            title="Description"
+            text={createProblemForm.description}
+            setText={(text) =>
+              setCreateProblemForm((prev) => ({
+                ...prev,
+                description: text,
+              }))
+            }
+            placeholder="Describe the problem clearly and objectively"
+            maxLength={1024}
+            type="textarea"
+            height={150}
+          />
+
+          <CreateProblemInput
+            title="Input Description"
+            text={createProblemForm.inputDescription}
+            setText={(text) =>
+              setCreateProblemForm((prev) => ({
+                ...prev,
+                inputDescription: text,
+              }))
+            }
+            placeholder="Explain the input formatting"
+            height={100}
+            type="textarea"
+            maxLength={512}
+          />
+
+          <CreateProblemInput
+            title="Output Description"
+            text={createProblemForm.outputDescription}
+            setText={(text) =>
+              setCreateProblemForm((prev) => ({
+                ...prev,
+                outputDescription: text,
+              }))
+            }
+            placeholder="Explain the output formatting"
+            height={100}
+            type="textarea"
+            maxLength={512}
+          />
+        </CreateProblemCard>
+
+        <CreateProblemCard title="Examples">
+          <div className="inputs-row">
+            <CreateProblemInput
+              placeholder="5\n10\n"
+              setText={(text) =>
+                setCreateProblemForm((prev) => ({
+                  ...prev,
+                  inputExample: text,
+                }))
+              }
+              text={createProblemForm.inputExample}
+              title="Input Example"
+              height={100}
+              maxLength={512}
+              type="textarea"
+            />
+
+            <CreateProblemInput
+              placeholder="15\n"
+              setText={(text) =>
+                setCreateProblemForm((prev) => ({
+                  ...prev,
+                  outputExample: text,
+                }))
+              }
+              text={createProblemForm.outputExample}
+              title="Output Example"
+              height={100}
+              maxLength={512}
+              type="textarea"
+            />
+          </div>
+        </CreateProblemCard>
+
+        <CreateProblemCard
+          title="Test Cases"
+          subtitle="Add the test cases that will be used to validate the submissions"
+        ></CreateProblemCard>
       </div>
     </div>
   );
