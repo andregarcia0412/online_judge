@@ -1,0 +1,33 @@
+.test-case-warning-card {
+  display: flex;
+  flex-direction: column;
+  background: rgba(59, 130, 246, 0.1);
+  border: 1px solid #1f2937;
+  border-left: 4px solid #3b82f6;
+  border-top-right-radius: 12px;
+  border-bottom-right-radius: 12px;
+  padding: 20px;
+  gap: 8px;
+}
+
+.test-case-warning-card-title {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+
+  & p {
+    color: #93c5fd;
+  }
+}
+
+.test-case-warning-card-code {
+  background-color: #1f2937;
+  color: #e5e7eb;
+  padding: 2px 6px;
+  border-radius: 4px;
+}
+
+.test-case-warning-card-description {
+  font-size: 14px;
+  margin-left: 32px;
+}
