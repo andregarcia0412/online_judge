@@ -68,7 +68,7 @@ export class SubmissionService {
 
     await this.userService.updateUserStreakOnSubmission(user);
     await this.userRepository.save(user);
-    await this.problemRepository.createAndSave(problem);
+    await this.problemRepository.saveExistingEntity(problem);
 
     const returnSubmissionDto = ReturnSubmissionDto.fromEntity(
       await this.submissionRepository.createAndSave(

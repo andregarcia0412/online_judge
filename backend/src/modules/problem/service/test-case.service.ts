@@ -1,9 +1,13 @@
-import { Inject, Injectable, NotFoundException } from '@nestjs/common';
+import {
+  BadRequestException,
+  Inject,
+  Injectable,
+  NotFoundException,
+} from '@nestjs/common';
 import { DeleteResult, UpdateResult } from 'typeorm';
 import { CreateTestCaseDto } from '../dto/test-case/create-test-case.dto';
 import { ReturnTestCaseDto } from '../dto/test-case/return-test-case.dto';
 import { UpdateTestCaseDto } from '../dto/test-case/update-test-case.dto';
-import { TestCase } from '../entities/test-case.entity';
 import { ProblemRepositoryPort } from '../interface/problem.repository.port';
 import { TestCaseRepositoryPort } from '../interface/test-case.repository.port';
 
@@ -19,6 +23,9 @@ export class TestCaseService {
   async create(
     createTestCaseDto: CreateTestCaseDto,
   ): Promise<ReturnTestCaseDto> {
+    if (!createTestCaseDto.id_problem) {
+      throw new BadRequestException('Problem Id is missing');
+    }
     if (
       !(await this.problemRepository.findById(createTestCaseDto.id_problem))
     ) {
@@ -31,8 +38,8 @@ export class TestCaseService {
   }
 
   async findAll(): Promise<ReturnTestCaseDto[]> {
-    return (await this.testCaseRepository.findAll()).map((testCase: TestCase) =>
-      ReturnTestCaseDto.fromEntity(testCase),
+    return ReturnTestCaseDto.fromEntityList(
+      await this.testCaseRepository.findAll(),
     );
   }
 
@@ -46,8 +53,8 @@ export class TestCaseService {
   }
 
   async findAllByProblemId(id_problem: number): Promise<ReturnTestCaseDto[]> {
-    return (await this.testCaseRepository.findByProblemId(id_problem)).map(
-      (testCase: TestCase) => ReturnTestCaseDto.fromEntity(testCase),
+    return ReturnTestCaseDto.fromEntityList(
+      await this.testCaseRepository.findByProblemId(id_problem),
     );
   }
 

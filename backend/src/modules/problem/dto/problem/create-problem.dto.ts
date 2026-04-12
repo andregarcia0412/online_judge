@@ -1,13 +1,17 @@
 import { ApiProperty } from '@nestjs/swagger';
+import { Type } from 'class-transformer';
 import {
+  IsArray,
   IsEnum,
   IsNotEmpty,
   IsNumber,
   IsString,
   MaxLength,
+  ValidateNested
 } from 'class-validator';
 import { ProblemDifficultyEnum } from '../../enum/problem-difficulty.enum';
-import { Type } from 'class-transformer';
+import { CreateCategoryDto } from '../category/create-category.dto';
+import { CreateTestCaseDto } from '../test-case/create-test-case.dto';
 
 export class CreateProblemDto {
   @IsString()
@@ -61,6 +65,18 @@ export class CreateProblemDto {
   @ApiProperty({ enum: ProblemDifficultyEnum })
   difficulty: ProblemDifficultyEnum;
 
+  @IsArray()
+  @ValidateNested({ each: true })
+  @Type(() => CreateCategoryDto)
+  @ApiProperty({ type: [CreateCategoryDto] })
+  category: CreateCategoryDto[];
+
+  @IsArray()
+  @ValidateNested({ each: true })
+  @Type(() => CreateTestCaseDto)
+  @ApiProperty({ type: [CreateTestCaseDto] })
+  test_cases: CreateTestCaseDto[];
+
   constructor(
     title: string,
     points: number,
@@ -71,6 +87,8 @@ export class CreateProblemDto {
     input_example: string,
     output_example: string,
     difficulty: ProblemDifficultyEnum,
+    category: CreateCategoryDto[],
+    test_cases: CreateTestCaseDto[],
   ) {
     this.title = title;
     this.points = points;
@@ -81,5 +99,7 @@ export class CreateProblemDto {
     this.input_example = input_example;
     this.output_example = output_example;
     this.difficulty = difficulty;
+    this.category = category;
+    this.test_cases = test_cases;
   }
 }

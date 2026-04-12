@@ -3,7 +3,7 @@ import { CategoryEnum } from '../enum/category.enum';
 
 @Entity('Category')
 export class Category {
-  @PrimaryGeneratedColumn({type: 'integer'})
+  @PrimaryGeneratedColumn({ type: 'integer' })
   id: number;
 
   @Column({ type: 'integer' })

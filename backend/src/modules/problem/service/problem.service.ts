@@ -6,6 +6,8 @@ import {
 } from '@nestjs/common';
 import { TestCaseRepositoryPort } from 'src/modules/problem/interface/test-case.repository.port';
 import { DeleteResult, UpdateResult } from 'typeorm';
+import { DataSource } from 'typeorm';
+import { ReturnCategoryDto } from '../dto/category/return-category.dto';
 import { CreateProblemDto } from '../dto/problem/create-problem.dto';
 import { ReturnProblemDto } from '../dto/problem/return-problem.dto';
 import { UpdateProblemDto } from '../dto/problem/update-problem.dto';
@@ -24,15 +26,46 @@ export class ProblemService {
     private readonly testCaseRepository: TestCaseRepositoryPort,
     @Inject(CategoryRepositoryPort)
     private readonly categoryRepository: CategoryRepositoryPort,
+    private readonly dataSource: DataSource,
   ) {}
 
   async create(createProblemDto: CreateProblemDto): Promise<ReturnProblemDto> {
-    if (await this.problemRepository.findByTitle(createProblemDto.title)) {
-      throw new ConflictException('A problem with this title already exists');
-    }
-    return ReturnProblemDto.fromEntity(
-      await this.problemRepository.createAndSave(createProblemDto),
-    );
+    return await this.dataSource.transaction(async (manager) => {
+      if (
+        await this.problemRepository.findByTitle(
+          createProblemDto.title,
+          manager,
+        )
+      ) {
+        throw new ConflictException('A problem with this title already exists');
+      }
+
+      const savedProblem = await this.problemRepository.createAndSave(
+        createProblemDto,
+        manager,
+      );
+
+      const savedCategories = await this.categoryRepository.createAndSaveMany(
+        createProblemDto.category,
+        savedProblem.id,
+        manager,
+      );
+
+      createProblemDto.test_cases.map(
+        (testCase) => (testCase.id_problem = savedProblem.id),
+      );
+
+      const savedTestCases = await this.testCaseRepository.createAndSaveMany(
+        createProblemDto.test_cases,
+        manager,
+      );
+
+      return ReturnProblemDto.fromEntity(
+        savedProblem,
+        ReturnCategoryDto.fromEntityList(savedCategories),
+        ReturnTestCaseDto.fromEntityList(savedTestCases),
+      );
+    });
   }
 
   async findAll(): Promise<ReturnProblemDto[]> {
@@ -43,7 +76,10 @@ export class ProblemService {
         const categories = await this.categoryRepository.findByProblemId(
           problem.id,
         );
-        return ReturnProblemDto.fromEntity(problem, categories);
+        const testCases = await this.testCaseRepository.findByProblemId(
+          problem.id,
+        );
+        return ReturnProblemDto.fromEntity(problem, categories, testCases);
       }),
     );
   }
@@ -58,7 +94,9 @@ export class ProblemService {
       problem.id,
     );
 
-    return ReturnProblemDto.fromEntity(problem, categories);
+    const testCases = await this.testCaseRepository.findByProblemId(problem.id);
+
+    return ReturnProblemDto.fromEntity(problem, categories, testCases);
   }
 
   async findOneByTitle(title: string): Promise<ReturnProblemDto> {
@@ -88,6 +126,6 @@ export class ProblemService {
   }
 
   async remove(id: number): Promise<DeleteResult> {
-    return await this.problemRepository.deleteProblemAndChildren(id);
+    return await this.problemRepository.delete(id);
   }
 }

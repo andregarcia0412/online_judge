@@ -34,8 +34,8 @@ export class CategoryService {
   }
 
   async findAll(): Promise<ReturnCategoryDto[]> {
-    return (await this.categoryRepository.findAll()).map((entity) =>
-      ReturnCategoryDto.fromEntity(entity),
+    return ReturnCategoryDto.fromEntityList(
+      await this.categoryRepository.findAll(),
     );
   }
 
@@ -64,8 +64,8 @@ export class CategoryService {
       throw new NotFoundException('Problem not found');
     }
 
-    return (await this.categoryRepository.findByProblemId(problemId)).map(
-      (entity) => ReturnCategoryDto.fromEntity(entity),
+    return ReturnCategoryDto.fromEntityList(
+      await this.categoryRepository.findByProblemId(problemId),
     );
   }
 

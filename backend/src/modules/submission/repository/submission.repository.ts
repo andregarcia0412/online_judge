@@ -28,9 +28,7 @@ export class SubmissionRepository implements SubmissionRepositoryPort {
       },
     });
   }
-  async findLastUserSubmission(
-    id_user: string,
-  ): Promise<Submission | null> {
+  async findLastUserSubmission(id_user: string): Promise<Submission | null> {
     return await this.submissionRepository.findOne({
       where: {
         id_user,
