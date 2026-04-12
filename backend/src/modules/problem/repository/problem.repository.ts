@@ -1,16 +1,10 @@
-import { Inject, Injectable } from '@nestjs/common';
-import { TestCase } from 'src/modules/problem/entities/test-case.entity';
-import { DeleteResult, Repository, UpdateResult } from 'typeorm';
+import { Injectable } from '@nestjs/common';
+import { InjectRepository } from '@nestjs/typeorm';
+import { DeleteResult, EntityManager, Repository, UpdateResult } from 'typeorm';
 import { CreateProblemDto } from '../dto/problem/create-problem.dto';
 import { UpdateProblemDto } from '../dto/problem/update-problem.dto';
 import { Problem } from '../entities/problem.entity';
 import { ProblemRepositoryPort } from '../interface/problem.repository.port';
-import { CategoryRepository } from './category.repository';
-import { TestCaseRepository } from 'src/modules/problem/repository/test-case.repository';
-import { CategoryRepositoryPort } from '../interface/category.repository.port';
-import { Category } from '../entities/category.entity';
-import { TestCaseRepositoryPort } from 'src/modules/problem/interface/test-case.repository.port';
-import { InjectRepository } from '@nestjs/typeorm';
 
 @Injectable()
 export class ProblemRepository implements ProblemRepositoryPort {
@@ -18,30 +12,54 @@ export class ProblemRepository implements ProblemRepositoryPort {
     @InjectRepository(Problem)
     private readonly problemRepository: Repository<Problem>,
   ) {}
-  async findByTitle(title: string): Promise<Problem | null> {
-    return await this.problemRepository.findOneBy({ title });
+  async findByTitle(
+    title: string,
+    manager?: EntityManager,
+  ): Promise<Problem | null> {
+    const repository = this.getRepository(manager);
+    return await repository.findOneBy({ title });
   }
-  async createAndSave(createProblemDto: CreateProblemDto): Promise<Problem> {
-    const createdProblem = this.problemRepository.create(createProblemDto);
-    return await this.problemRepository.save(createdProblem);
+  async createAndSave(
+    createProblemDto: CreateProblemDto,
+    manager?: EntityManager,
+  ): Promise<Problem> {
+    const repository = this.getRepository(manager);
+    const createdProblem = repository.create(createProblemDto);
+    return await repository.save(createdProblem);
   }
-  async findAllOrdered(): Promise<Problem[]> {
-    return await this.problemRepository.find({
+  async saveExistingEntity(
+    problem: Problem,
+    manager?: EntityManager,
+  ): Promise<Problem> {
+    const repository = this.getRepository(manager);
+    return await repository.save(problem);
+  }
+  async findAllOrdered(manager?: EntityManager): Promise<Problem[]> {
+    const repository = this.getRepository(manager);
+    return await repository.find({
       order: {
         id: 'ASC',
       },
     });
   }
-  async findById(id: number): Promise<Problem | null> {
-    return await this.problemRepository.findOneBy({ id });
+  async findById(id: number, manager?: EntityManager): Promise<Problem | null> {
+    const repository = this.getRepository(manager);
+    return await repository.findOneBy({ id });
   }
   async updateById(
     id: number,
     updateProblemDto: UpdateProblemDto,
+    manager?: EntityManager,
   ): Promise<UpdateResult> {
-    return await this.problemRepository.update(id, updateProblemDto);
+    const repository = this.getRepository(manager);
+    return await repository.update(id, updateProblemDto);
   }
-  async deleteProblemAndChildren(id: number): Promise<DeleteResult> {
-    return await this.problemRepository.delete(id);
+  async delete(id: number, manager?: EntityManager): Promise<DeleteResult> {
+    const repository = this.getRepository(manager);
+    return await repository.delete(id);
+  }
+
+  private getRepository(manager?: EntityManager): Repository<Problem> {
+    return manager ? manager.getRepository(Problem) : this.problemRepository;
   }
 }

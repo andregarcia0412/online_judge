@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { TestCaseRepositoryPort } from '../interface/test-case.repository.port';
-import { UpdateResult, DeleteResult, Repository } from 'typeorm';
+import { UpdateResult, DeleteResult, Repository, EntityManager } from 'typeorm';
 import { CreateTestCaseDto } from '../dto/test-case/create-test-case.dto';
 import { UpdateTestCaseDto } from '../dto/test-case/update-test-case.dto';
 import { TestCase } from '../entities/test-case.entity';
@@ -12,29 +12,60 @@ export class TestCaseRepository implements TestCaseRepositoryPort {
     @InjectRepository(TestCase)
     private readonly testCaseRepository: Repository<TestCase>,
   ) {}
-  async findByProblemId(id_problem: number): Promise<TestCase[]> {
-    return await this.testCaseRepository.findBy({ id_problem });
+  async findByProblemId(
+    id_problem: number,
+    manager?: EntityManager,
+  ): Promise<TestCase[]> {
+    const repository = this.getRepository(manager);
+    return await repository.findBy({ id_problem });
   }
-  async createAndSave(createTestCaseDto: CreateTestCaseDto): Promise<TestCase> {
-    const createdTestCase = this.testCaseRepository.create(createTestCaseDto);
-    return await this.testCaseRepository.save(createdTestCase);
+  async createAndSave(
+    createTestCaseDto: CreateTestCaseDto,
+    manager?: EntityManager,
+  ): Promise<TestCase> {
+    const repository = this.getRepository(manager);
+    const createdTestCase = repository.create(createTestCaseDto);
+    return await repository.save(createdTestCase);
   }
-  async findAll(): Promise<TestCase[]> {
-    return await this.testCaseRepository.find();
+  async createAndSaveMany(
+    createTestCaseDtos: CreateTestCaseDto[],
+    manager?: EntityManager,
+  ): Promise<TestCase[]> {
+    const repository = this.getRepository(manager);
+    const createdTestCases = repository.create(createTestCaseDtos);
+    return await repository.save(createdTestCases);
   }
-  async findOneById(id: string): Promise<TestCase | null> {
-    return await this.testCaseRepository.findOneBy({ id });
+  async findAll(manager?: EntityManager): Promise<TestCase[]> {
+    const repository = this.getRepository(manager);
+    return await repository.find();
+  }
+  async findOneById(
+    id: string,
+    manager?: EntityManager,
+  ): Promise<TestCase | null> {
+    const repository = this.getRepository(manager);
+    return await repository.findOneBy({ id });
   }
   async updateById(
     id: string,
     updateTestCaseDto: UpdateTestCaseDto,
+    manager?: EntityManager,
   ): Promise<UpdateResult> {
-    return await this.testCaseRepository.update(id, updateTestCaseDto);
+    const repository = this.getRepository(manager);
+    return await repository.update(id, updateTestCaseDto);
   }
-  async delete(id: string): Promise<DeleteResult> {
-    return this.testCaseRepository.delete(id);
+  async delete(id: string, manager?: EntityManager): Promise<DeleteResult> {
+    const repository = this.getRepository(manager);
+    return repository.delete(id);
   }
-  async deleteByProblemId(id_problem: number): Promise<DeleteResult> {
-    return this.testCaseRepository.delete({ id_problem });
+  async deleteByProblemId(
+    id_problem: number,
+    manager?: EntityManager,
+  ): Promise<DeleteResult> {
+    const repository = this.getRepository(manager);
+    return repository.delete({ id_problem });
+  }
+  private getRepository(manager?: EntityManager): Repository<TestCase> {
+    return manager ? manager.getRepository(TestCase) : this.testCaseRepository;
   }
 }
