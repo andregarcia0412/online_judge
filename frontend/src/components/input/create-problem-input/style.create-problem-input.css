@@ -7,6 +7,7 @@
   padding: 8px 12px;
   border-radius: 8px;
   transition: border 0.15s ease-in;
+  resize: none;
 }
 
 .create-problem-input:focus {
