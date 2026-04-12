@@ -1,8 +1,11 @@
 import { Inject, Injectable, NotFoundException } from '@nestjs/common';
 import { DeleteResult, UpdateResult } from 'typeorm';
+import { CategoryLabels } from '../constants/category.labels';
 import { CreateCategoryDto } from '../dto/category/create-category.dto';
+import { ReturnCategoriesDto } from '../dto/category/return-categories.dto';
 import { ReturnCategoryDto } from '../dto/category/return-category.dto';
 import { UpdateCategoryDto } from '../dto/category/update-category.dto';
+import { CategoryEnum } from '../enum/category.enum';
 import { CategoryRepositoryPort } from '../interface/category.repository.port';
 import { ProblemRepositoryPort } from '../interface/problem.repository.port';
 
@@ -33,6 +36,12 @@ export class CategoryService {
   async findAll(): Promise<ReturnCategoryDto[]> {
     return (await this.categoryRepository.findAll()).map((entity) =>
       ReturnCategoryDto.fromEntity(entity),
+    );
+  }
+
+  getAvailableCategories(): ReturnCategoriesDto[] {
+    return (Object.entries(CategoryLabels) as [CategoryEnum, string][]).map(
+      ([value, label]) => new ReturnCategoriesDto(value, label),
     );
   }
 

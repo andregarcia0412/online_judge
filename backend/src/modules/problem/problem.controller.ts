@@ -22,6 +22,7 @@ import { UpdateCategoryDto } from './dto/category/update-category.dto';
 import { CreateTestCaseDto } from './dto/test-case/create-test-case.dto';
 import { TestCaseService } from './service/test-case.service';
 import { UpdateTestCaseDto } from './dto/test-case/update-test-case.dto';
+import { ReturnCategoriesDto } from './dto/category/return-categories.dto';
 
 @Controller()
 export class ProblemController {
@@ -90,9 +91,9 @@ export class ProblemController {
   }
 
   @Get('/category')
-  @ApiCreatedResponse({ type: [ReturnCategoryDto] })
-  async findAllCategory(): Promise<ReturnCategoryDto[]> {
-    return await this.categoryService.findAll();
+  @ApiCreatedResponse({ type: [ReturnCategoriesDto] })
+  getAllAvailableCategories(): ReturnCategoriesDto[] {
+    return this.categoryService.getAvailableCategories();
   }
 
   @Get('/category/:id')
