@@ -1,4 +1,6 @@
 import { NotFoundException } from '@nestjs/common';
+import { CategoryLabels } from 'src/modules/problem/constants/category.labels';
+import { ReturnCategoriesDto } from 'src/modules/problem/dto/category/return-categories.dto';
 import { ReturnCategoryDto } from 'src/modules/problem/dto/category/return-category.dto';
 import { CategoryEnum } from 'src/modules/problem/enum/category.enum';
 import { CategoryService } from 'src/modules/problem/service/category.service';
@@ -180,6 +182,21 @@ describe('CategoryService', () => {
       expect(categoryRepositoryMock.delete).toHaveBeenCalledWith(categoryId);
       expect(categoryRepositoryMock.delete).toHaveBeenCalledTimes(1);
       expect(result).toEqual(deleteResult);
+    });
+  });
+  describe('Get All Available Categories', () => {
+    it('should return a list of all the available categories', () => {
+      const result = service.getAvailableCategories();
+
+      const expected = (
+        Object.entries(CategoryLabels) as [CategoryEnum, string][]
+      ).map(([value, label]) => new ReturnCategoriesDto(value, label));
+
+      expect(result).toHaveLength(expected.length);
+      expect(result).toEqual(expected);
+      expect(result.every((item) => item instanceof ReturnCategoriesDto)).toBe(
+        true,
+      );
     });
   });
 });
