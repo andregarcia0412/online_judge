@@ -40,10 +40,10 @@ export class ReturnProblemDto {
   @ApiProperty()
   difficulty: string;
 
-  @ApiProperty()
+  @ApiProperty({ type: [ReturnCategoryDto] })
   categories: ReturnCategoryDto[];
 
-  @ApiProperty()
+  @ApiProperty({ type: [ReturnTestCaseDto] })
   test_cases: ReturnTestCaseDto[];
 
   @ApiProperty()
