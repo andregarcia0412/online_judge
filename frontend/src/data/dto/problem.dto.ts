@@ -25,8 +25,6 @@ export type CreateProblemForm = {
   outputDescription: string;
   inputExample: string;
   outputExample: string;
-  testCases: {
-    input: string;
-    output: string;
-  }[];
+  testCaseInput: string;
+  testCaseOutput: string;
 };

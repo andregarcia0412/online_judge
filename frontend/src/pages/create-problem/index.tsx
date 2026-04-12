@@ -5,6 +5,14 @@ import { HomeHeader } from "../../components/home-header/HomeHeader";
 import { CreateProblemInput } from "../../components/input/create-problem-input/CreateProblemInput";
 import type { CreateProblemForm } from "../../data/dto/problem.dto";
 import "./style.css";
+import { TestCaseWarningCard } from "../../components/card/test-case-warning-card/TestCaseWarningCard";
+import Button from "../../components/input/button/Button";
+import { TestCaseCard } from "../../components/card/test-case-card/TestCaseCard";
+
+type TestCase = {
+  input: string;
+  output: string;
+};
 
 export const CreateProblem = () => {
   const [createProblemForm, setCreateProblemForm] =
@@ -19,8 +27,25 @@ export const CreateProblem = () => {
       outputDescription: "",
       inputExample: "",
       outputExample: "",
-      testCases: [],
+      testCaseInput: "",
+      testCaseOutput: "",
     });
+  const [testCases, setTestCases] = React.useState<TestCase[]>([]);
+
+  const handleCreateTestCase = () => {
+    setTestCases((prev) => [
+      ...prev,
+      {
+        input: createProblemForm.testCaseInput,
+        output: createProblemForm.testCaseOutput,
+      },
+    ]);
+    setCreateProblemForm((prev) => ({
+      ...prev,
+      testCaseInput: "",
+      testCaseOutput: "",
+    }));
+  };
 
   return (
     <div>
@@ -198,7 +223,68 @@ export const CreateProblem = () => {
         <CreateProblemCard
           title="Test Cases"
           subtitle="Add the test cases that will be used to validate the submissions"
-        ></CreateProblemCard>
+        >
+          <div className="create-test-case-card-inner">
+            <TestCaseWarningCard />
+
+            {testCases.length > 0 &&
+              testCases.map((testCase, index) => {
+                return (
+                  <TestCaseCard
+                    onDelete={() =>
+                      setTestCases((prev) => prev.filter((_, i) => i !== index))
+                    }
+                    index={index + 1}
+                    input={testCase.input}
+                    output={testCase.output}
+                  />
+                );
+              })}
+
+            <div className="create-test-case-container">
+              <p>Add new test case</p>
+              <div className="inputs-row">
+                <CreateProblemInput
+                  text={createProblemForm.testCaseInput}
+                  setText={(text) =>
+                    setCreateProblemForm((prev) => ({
+                      ...prev,
+                      testCaseInput: text,
+                    }))
+                  }
+                  placeholder="10\n5\n"
+                  title="Input"
+                  type="textarea"
+                  height={100}
+                />
+                <CreateProblemInput
+                  text={createProblemForm.testCaseOutput}
+                  setText={(text) =>
+                    setCreateProblemForm((prev) => ({
+                      ...prev,
+                      testCaseOutput: text,
+                    }))
+                  }
+                  placeholder="15\n"
+                  title="Output"
+                  type="textarea"
+                  height={100}
+                />
+              </div>
+              <Button
+                background="linear-gradient(to right, #9333EA, #2563EB)"
+                loading={false}
+                onClick={handleCreateTestCase}
+                text="Add Test Case"
+                height={40}
+                disabled={
+                  !createProblemForm.testCaseInput ||
+                  !createProblemForm.testCaseOutput
+                }
+              />
+            </div>
+          </div>
+        </CreateProblemCard>
       </div>
     </div>
   );

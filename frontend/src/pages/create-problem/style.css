@@ -60,3 +60,18 @@
     font-size: 14px;
   }
 }
+
+.create-test-case-card-inner {
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+}
+
+.create-test-case-container {
+  display: flex;
+  flex-direction: column;
+  padding: 24px;
+  border: 2px dashed #30363d;
+  border-radius: 12px;
+  gap: 16px;
+}
