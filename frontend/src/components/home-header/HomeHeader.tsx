@@ -2,6 +2,7 @@ import { Logo } from "../logo/Logo";
 import { QuickSearch } from "../input/quick-search/QuickSearch";
 import "./style.home-header.css";
 import { useNavigate } from "react-router-dom";
+import Target from "../../assets/target.svg";
 
 type HomeHeaderProps = {
   setText: (text: string) => void;
@@ -26,6 +27,10 @@ export const HomeHeader = ({
         </div>
       </div>
 
+      <div className="header-item">
+        <img src={Target} />
+        <p>Problems</p>
+      </div>
       <QuickSearch setText={setText} handleSearch={handleSearch} text={text} />
     </header>
   );

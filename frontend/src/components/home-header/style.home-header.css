@@ -1,6 +1,7 @@
 .home-header {
   display: flex;
   align-items: center;
+  justify-content: space-between;
   width: 100%;
   padding: 12px 32px;
   background: rgba(0, 0, 0, 0.7);
@@ -26,4 +27,12 @@
   align-items: center;
   gap: 8px;
   cursor: pointer;
+}
+
+.header-item {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+  color: #fff;
+  opacity: 0.8;
 }
