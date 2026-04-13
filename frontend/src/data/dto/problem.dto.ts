@@ -21,7 +21,7 @@ export type CreateProblemForm = {
   author: string;
   points: string;
   difficulty: string;
-  categories: string[];
+  categories: CategoryDto[];
   description: string;
   inputDescription: string;
   outputDescription: string;

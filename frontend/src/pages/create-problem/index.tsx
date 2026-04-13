@@ -1,13 +1,17 @@
 import { ConfigProvider, notification, Select, theme } from "antd";
-import axios from "axios";
+import axios, { AxiosError } from "axios";
 import React from "react";
 import { problemService } from "../../api/services/problem.service";
+import Add from "../../assets/add.svg";
+import RingResize from "../../assets/ring-resize.svg";
+import { CategoryBadge } from "../../components/card/category-badge/CategoryBadge";
 import { CreateProblemCard } from "../../components/card/create-problem-card/CreateProblemCard";
 import { TestCaseCard } from "../../components/card/test-case-card/TestCaseCard";
 import { TestCaseWarningCard } from "../../components/card/test-case-warning-card/TestCaseWarningCard";
 import { HomeHeader } from "../../components/home-header/HomeHeader";
 import Button from "../../components/input/button/Button";
 import { CreateProblemInput } from "../../components/input/create-problem-input/CreateProblemInput";
+import { Popover } from "../../components/popover/Popover";
 import type {
   CategoryDto,
   CreateProblemDto,
@@ -53,9 +57,8 @@ export const CreateProblem = () => {
   const [availableCategories, setAvailableCategories] = React.useState<
     CategoryDto[]
   >([]);
-  const [categoryLoadingFailed, setCategoryLoadingFailed] =
-    React.useState<boolean>(false);
   const [loadingCreate, setLoadingCreate] = React.useState<boolean>(false);
+  const [visiblePopover, setVisiblePopover] = React.useState<boolean>(false);
 
   React.useEffect(() => {
     const loadCategories = async () => {
@@ -64,7 +67,14 @@ export const CreateProblem = () => {
         console.log(response);
         setAvailableCategories(response);
       } catch (e) {
-        setCategoryLoadingFailed(true);
+        openNotificationWithIcon(
+          "error",
+          "Error",
+          "Error fetching available categories: " +
+            (e instanceof AxiosError && e.response
+              ? e.response?.data.message
+              : "Unknown Error"),
+        );
       }
     };
 
@@ -123,7 +133,7 @@ export const CreateProblem = () => {
         output_example: createProblemForm.outputExample,
         difficulty: createProblemForm.difficulty,
         category: createProblemForm.categories.map((category) => ({
-          category,
+          category: category.value,
         })),
         test_cases: testCases.map((testCase) => ({
           input: normalizeNewLines(testCase.input),
@@ -257,7 +267,67 @@ export const CreateProblem = () => {
             </ConfigProvider>
           </div>
 
-          <div className="create-categories"></div>
+          <div className="create-categories-wrapper">
+            <div className="create-categories-title">
+              <p>Categories</p>
+
+              <button onClick={() => setVisiblePopover((prev) => !prev)}>
+                <img src={Add} />
+              </button>
+
+              {
+                <Popover open={visiblePopover}>
+                  {availableCategories.length > 0 ? (
+                    availableCategories.map((category) => {
+                      const isSelected = createProblemForm.categories.some(
+                        (value) => value.value === category.value,
+                      );
+
+                      return (
+                        <CategoryBadge
+                          title={category.label}
+                          highlighted={isSelected}
+                          onClick={() =>
+                            setCreateProblemForm((prev) => ({
+                              ...prev,
+                              categories: isSelected
+                                ? prev.categories
+                                : [...prev.categories, category],
+                            }))
+                          }
+                          onSelectedClick={() =>
+                            setCreateProblemForm((prev) => ({
+                              ...prev,
+                              categories: prev.categories.filter(
+                                (value) => value.value !== category.value,
+                              ),
+                            }))
+                          }
+                        />
+                      );
+                    })
+                  ) : (
+                    <img src={RingResize} />
+                  )}
+                </Popover>
+              }
+            </div>
+            <div className="create-categories">
+              {createProblemForm.categories.length <= 0 ? (
+                <p>No selected categories</p>
+              ) : (
+                createProblemForm.categories.map((category) => {
+                  return (
+                    <CategoryBadge
+                      title={category.label}
+                      highlighted
+                      readonly
+                    />
+                  );
+                })
+              )}
+            </div>
+          </div>
         </CreateProblemCard>
 
         <CreateProblemCard title="Problem Description">
