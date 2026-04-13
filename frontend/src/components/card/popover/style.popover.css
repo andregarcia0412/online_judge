@@ -1,0 +1,41 @@
+.popover {
+  position: absolute;
+  left: 5%;
+  top: calc(100% + 8px);
+  bottom: auto;
+  z-index: 15;
+  display: flex;
+  justify-content: flex-start;
+  align-items: flex-start;
+  flex-wrap: wrap;
+  gap: 8px;
+  padding: 16px;
+  width: min(420px, calc(100vw - 48px));
+  max-height: min(280px, 45vh);
+  overflow-y: auto;
+  background: rgba(17, 24, 39, 1);
+  border: 1px solid #30363d;
+  border-radius: 10px;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.25);
+
+  opacity: 0;
+  transform: translateY(8px) scale(0.98);
+  transition:
+    opacity 220ms ease,
+    transform 220ms ease;
+  pointer-events: none;
+}
+
+.popover.visible {
+  opacity: 1;
+  transform: translateY(0) scale(1);
+  pointer-events: auto;
+}
+
+@media (max-width: 640px) {
+  .popover {
+    right: 0;
+    width: min(320px, calc(100vw - 24px));
+    padding: 12px;
+  }
+}
