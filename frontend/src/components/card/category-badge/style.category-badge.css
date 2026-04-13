@@ -29,3 +29,10 @@
     width: 16px;
   }
 }
+
+.category-badge.readonly {
+  cursor: auto;
+  & p {
+    color: #fff;
+  }
+}
