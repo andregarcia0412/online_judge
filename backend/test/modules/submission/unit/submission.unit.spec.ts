@@ -26,6 +26,9 @@ describe('SubmissionService', () => {
   let userServiceMock: {
     updateUserStreakOnSubmission: jest.Mock;
   };
+  let dataSourceMock: {
+    transaction: jest.Mock;
+  };
   let service: SubmissionService;
 
   beforeEach(() => {
@@ -37,6 +40,12 @@ describe('SubmissionService', () => {
     userServiceMock = {
       updateUserStreakOnSubmission: jest.fn(),
     };
+    dataSourceMock = {
+      transaction: jest.fn(),
+    };
+    dataSourceMock.transaction.mockImplementation(async (callback) =>
+      callback({}),
+    );
 
     service = new SubmissionService(
       submissionRepositoryMock as any,
@@ -45,6 +54,7 @@ describe('SubmissionService', () => {
       testCaseRepositoryMock as any,
       testRunnerServiceMock as any,
       userServiceMock as any,
+      dataSourceMock as any,
     );
   });
 
@@ -79,14 +89,18 @@ describe('SubmissionService', () => {
 
       const result = await service.create(createSubmissionDto);
 
+      expect(dataSourceMock.transaction).toHaveBeenCalledTimes(1);
       expect(userRepositoryMock.findOneById).toHaveBeenCalledWith(
         createSubmissionDto.id_user,
+        expect.any(Object),
       );
       expect(problemRepositoryMock.findById).toHaveBeenCalledWith(
         createSubmissionDto.id_problem,
+        expect.any(Object),
       );
       expect(testCaseRepositoryMock.findByProblemId).toHaveBeenCalledWith(
         createSubmissionDto.id_problem,
+        expect.any(Object),
       );
       expect(testRunnerServiceMock.runTests).toHaveBeenCalledWith(
         [savedTestCase],
@@ -95,6 +109,7 @@ describe('SubmissionService', () => {
       );
       expect(userServiceMock.updateUserStreakOnSubmission).toHaveBeenCalledWith(
         savedUser,
+        expect.any(Object),
       );
 
       expect(
@@ -103,10 +118,12 @@ describe('SubmissionService', () => {
         savedUser.id,
         createSubmissionDto.language,
         createSubmissionDto.id_problem,
+        expect.any(Object),
       );
       expect(submissionRepositoryMock.createAndSave).toHaveBeenCalledWith(
         createSubmissionDto,
         testResult,
+        expect.any(Object),
       );
       expect(userRepositoryMock.save).toHaveBeenCalledWith(
         expect.objectContaining({
@@ -114,12 +131,14 @@ describe('SubmissionService', () => {
           total_submissions: 4,
           total_resolved: 1,
         }),
+        expect.any(Object),
       );
       expect(problemRepositoryMock.saveExistingEntity).toHaveBeenCalledWith(
         expect.objectContaining({
           total_submitted: 4,
           total_accepted: 2,
         }),
+        expect.any(Object),
       );
 
       expect(result).toMatchObject({
@@ -212,6 +231,7 @@ describe('SubmissionService', () => {
         savedUser.id,
         createSubmissionDto.language,
         createSubmissionDto.id_problem,
+        expect.any(Object),
       );
       expect(userRepositoryMock.save).toHaveBeenCalledWith(
         expect.objectContaining({
@@ -219,15 +239,18 @@ describe('SubmissionService', () => {
           total_submissions: 6,
           total_resolved: 3,
         }),
+        expect.any(Object),
       );
       expect(problemRepositoryMock.saveExistingEntity).toHaveBeenCalledWith(
         expect.objectContaining({
           total_submitted: 9,
           total_accepted: 5,
         }),
+        expect.any(Object),
       );
       expect(userServiceMock.updateUserStreakOnSubmission).toHaveBeenCalledWith(
         savedUser,
+        expect.any(Object),
       );
     });
 
@@ -270,15 +293,18 @@ describe('SubmissionService', () => {
           total_submissions: 4,
           total_resolved: 1,
         }),
+        expect.any(Object),
       );
       expect(problemRepositoryMock.saveExistingEntity).toHaveBeenCalledWith(
         expect.objectContaining({
           total_submitted: 3,
           total_accepted: 1,
         }),
+        expect.any(Object),
       );
       expect(userServiceMock.updateUserStreakOnSubmission).toHaveBeenCalledWith(
         savedUser,
+        expect.any(Object),
       );
     });
 
@@ -315,10 +341,12 @@ describe('SubmissionService', () => {
 
       expect(problemRepositoryMock.findById).toHaveBeenCalledWith(
         createSubmissionDto.id_problem,
+        undefined,
       );
 
       expect(testCaseRepositoryMock.findByProblemId).toHaveBeenLastCalledWith(
         createSubmissionDto.id_problem,
+        undefined,
       );
 
       expect(testRunnerServiceMock.runTests).toHaveBeenCalledWith(
