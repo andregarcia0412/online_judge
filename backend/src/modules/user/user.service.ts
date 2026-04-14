@@ -7,7 +7,7 @@ import {
 import * as bcrypt from 'bcrypt';
 import { ReturnSubmissionDto } from 'src/modules/submission/dto/return-submission.dto';
 import { Submission } from 'src/modules/submission/entities/submission.entity';
-import { DeleteResult, UpdateResult } from 'typeorm';
+import { DeleteResult, EntityManager, UpdateResult } from 'typeorm';
 import { SubmissionRepositoryPort } from '../submission/interface/submission.repository.port';
 import { CreateUserDto } from './dto/create-user.dto';
 import { ReturnUserDto } from './dto/return-user.dto';
@@ -110,9 +110,9 @@ export class UserService {
     }
   }
 
-  async updateUserStreakOnSubmission(user: User) {
+  async updateUserStreakOnSubmission(user: User, manager?: EntityManager) {
     const lastUserSubmission =
-      await this.submissionRepository.findLastUserSubmission(user.id);
+      await this.submissionRepository.findLastUserSubmission(user.id, manager);
 
     if (!lastUserSubmission) {
       user.streak = 1;

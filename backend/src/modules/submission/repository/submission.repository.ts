@@ -1,7 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { SubmissionRepositoryPort } from '../interface/submission.repository.port';
 import { TestResult } from 'src/modules/test-runner/dto/test-result.dto';
-import { UpdateResult, DeleteResult, Repository } from 'typeorm';
+import { UpdateResult, DeleteResult, Repository, EntityManager } from 'typeorm';
 import { CreateSubmissionDto } from '../dto/create-submission.dto';
 import { Submission } from '../entities/submission.entity';
 import { InjectRepository } from '@nestjs/typeorm';
@@ -18,8 +18,10 @@ export class SubmissionRepository implements SubmissionRepositoryPort {
     id_user: string,
     language: string,
     id_problem: number,
+    manager?: EntityManager,
   ): Promise<Submission | null> {
-    return await this.submissionRepository.findOne({
+    const repository = this.getRepository(manager);
+    return await repository.findOne({
       where: {
         id_user,
         status: StatusEnum.ACCEPTED,
@@ -28,8 +30,12 @@ export class SubmissionRepository implements SubmissionRepositoryPort {
       },
     });
   }
-  async findLastUserSubmission(id_user: string): Promise<Submission | null> {
-    return await this.submissionRepository.findOne({
+  async findLastUserSubmission(
+    id_user: string,
+    manager?: EntityManager,
+  ): Promise<Submission | null> {
+    const repository = this.getRepository(manager);
+    return await repository.findOne({
       where: {
         id_user,
       },
@@ -41,8 +47,10 @@ export class SubmissionRepository implements SubmissionRepositoryPort {
   async createAndSave(
     createSubmissionDto: CreateSubmissionDto,
     testResult: TestResult,
+    manager?: EntityManager,
   ): Promise<Submission> {
-    const createdSubmission = this.submissionRepository.create({
+    const repository = this.getRepository(manager);
+    const createdSubmission = repository.create({
       ...createSubmissionDto,
       status: testResult.status,
       execution_time: testResult.execution_time,
@@ -50,24 +58,42 @@ export class SubmissionRepository implements SubmissionRepositoryPort {
       memory_usage_MB: testResult.memory_usage_MB,
       test_cases_passed: testResult.test_cases_passed,
     });
-    return await this.submissionRepository.save(createdSubmission);
+    return await repository.save(createdSubmission);
   }
-  async findAll(): Promise<Submission[]> {
-    return await this.submissionRepository.find();
+  async findAll(manager?: EntityManager): Promise<Submission[]> {
+    const repository = this.getRepository(manager);
+    return await repository.find();
   }
-  async findOneById(id: string): Promise<Submission | null> {
-    return await this.submissionRepository.findOneBy({ id });
+  async findOneById(
+    id: string,
+    manager?: EntityManager,
+  ): Promise<Submission | null> {
+    const repository = this.getRepository(manager);
+    return await repository.findOneBy({ id });
   }
-  async findAllByUserId(id_user: string): Promise<Submission[]> {
-    return await this.submissionRepository.findBy({ id_user });
+  async findAllByUserId(
+    id_user: string,
+    manager?: EntityManager,
+  ): Promise<Submission[]> {
+    const repository = this.getRepository(manager);
+    return await repository.findBy({ id_user });
   }
   async updateById(
     id: string,
     updateSubmissionDto: UpdateSubmissionDto,
+    manager?: EntityManager,
   ): Promise<UpdateResult> {
-    return await this.submissionRepository.update(id, updateSubmissionDto);
+    const repository = this.getRepository(manager);
+    return await repository.update(id, updateSubmissionDto);
   }
-  async delete(id: string): Promise<DeleteResult> {
-    return await this.submissionRepository.delete(id);
+  async delete(id: string, manager?: EntityManager): Promise<DeleteResult> {
+    const repository = this.getRepository(manager);
+    return await repository.delete(id);
+  }
+
+  private getRepository(manager?: EntityManager): Repository<Submission> {
+    return manager
+      ? manager.getRepository(Submission)
+      : this.submissionRepository;
   }
 }

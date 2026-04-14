@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { UserRepositoryPort } from '../interface/user.repository.port';
-import { UpdateResult, DeleteResult, Repository } from 'typeorm';
+import { UpdateResult, DeleteResult, Repository, EntityManager } from 'typeorm';
 import { CreateUserDto } from '../dto/create-user.dto';
 import { UpdateUserDto } from '../dto/update-user.dto';
 import { User } from '../entities/user.entity';
@@ -13,31 +13,53 @@ export class UserRepository implements UserRepositoryPort {
     private readonly userRepository: Repository<User>,
   ) {}
 
-  async findOneByEmail(email: string): Promise<User | null> {
-    return await this.userRepository.findOneBy({ email });
+  async findOneByEmail(
+    email: string,
+    manager?: EntityManager,
+  ): Promise<User | null> {
+    const repository = this.getRepository(manager);
+    return await repository.findOneBy({ email });
   }
-  async findOneByUsername(username: string): Promise<User | null> {
-    return await this.userRepository.findOneBy({ username });
+  async findOneByUsername(
+    username: string,
+    manager?: EntityManager,
+  ): Promise<User | null> {
+    const repository = this.getRepository(manager);
+    return await repository.findOneBy({ username });
   }
-  async findOneById(id: string): Promise<User | null> {
-    return await this.userRepository.findOneBy({ id });
+  async findOneById(id: string, manager?: EntityManager): Promise<User | null> {
+    const repository = this.getRepository(manager);
+    return await repository.findOneBy({ id });
   }
-  async save(createUserDto: CreateUserDto): Promise<User> {
-    return await this.userRepository.save(createUserDto);
+  async save(
+    createUserDto: CreateUserDto,
+    manager?: EntityManager,
+  ): Promise<User> {
+    const repository = this.getRepository(manager);
+    return await repository.save(createUserDto);
   }
-  async saveExistingEntity(user: User): Promise<User> {
-    return await this.userRepository.save(user);
+  async saveExistingEntity(user: User, manager?: EntityManager): Promise<User> {
+    const repository = this.getRepository(manager);
+    return await repository.save(user);
   }
-  async findAll(): Promise<User[]> {
-    return await this.userRepository.find();
+  async findAll(manager?: EntityManager): Promise<User[]> {
+    const repository = this.getRepository(manager);
+    return await repository.find();
   }
   async updateById(
     id: string,
     updateUserDto: UpdateUserDto,
+    manager?: EntityManager,
   ): Promise<UpdateResult> {
-    return await this.userRepository.update(id, updateUserDto);
+    const repository = this.getRepository(manager);
+    return await repository.update(id, updateUserDto);
   }
-  async delete(id: string): Promise<DeleteResult> {
-    return await this.userRepository.delete(id);
+  async delete(id: string, manager?: EntityManager): Promise<DeleteResult> {
+    const repository = this.getRepository(manager);
+    return await repository.delete(id);
+  }
+
+  private getRepository(manager?: EntityManager): Repository<User> {
+    return manager ? manager.getRepository(User) : this.userRepository;
   }
 }
