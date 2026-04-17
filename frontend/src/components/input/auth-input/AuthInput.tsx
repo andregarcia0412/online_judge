@@ -1,4 +1,3 @@
-import "./style.auth-input.css";
 import Visibility from "../../../assets/visibility.svg";
 import VisibilityOff from "../../../assets/visibility_off.svg";
 import React from "react";
@@ -17,12 +16,14 @@ const AuthInput = ({
   onKeyDown,
 }: AuthInputProps) => {
   const [visible, setVisible] = React.useState<boolean>(false);
+  const authInputStyles =
+    "text-white border border-solid border-[#afafaf] rounded-xl outline-none bg-transparent placeholder-white py-3.5 px-4 w-full h-13.75 text-base";
 
   return (
-    <div style={{ width: "100%" }}>
+    <div className="w-full">
       {!isPassword && (
         <input
-          className="auth-input"
+          className={authInputStyles}
           placeholder={placeholder}
           type="text"
           onChange={(e) => setText(e.target.value)}
@@ -32,9 +33,9 @@ const AuthInput = ({
       )}
 
       {isPassword && (
-        <div className="password-input">
+        <div className="relative flex items-center">
           <input
-            className="auth-input"
+            className={authInputStyles}
             style={{ paddingRight: "60px" }}
             placeholder={placeholder}
             type={visible ? "text" : "password"}
@@ -43,6 +44,7 @@ const AuthInput = ({
             onKeyDown={onKeyDown}
           />
           <img
+            className="absolute left-[88%] cursor-pointer"
             src={visible ? VisibilityOff : Visibility}
             onClick={() => setVisible(!visible)}
           />
