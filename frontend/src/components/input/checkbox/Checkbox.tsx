@@ -1,5 +1,4 @@
 import Check from "../../../assets/check.svg";
-import "./style.checkbox.css";
 
 interface CheckboxProps {
   label: string | null;
@@ -15,12 +14,15 @@ const Checkbox = ({
   checkedColor,
 }: CheckboxProps) => {
   return (
-    <div className="checkbox-container" onClick={() => setChecked(!checked)}>
+    <div
+      className="flex items-center text-white gap-2.5 w-fit"
+      onClick={() => setChecked(!checked)}
+    >
       <div
-        className={`checkbox ${checked ? "checked" : ""}`}
+        className={`flex justify-center items-center w-4 h-4 bg-white rounded-sm ${checked ? "bg-linear-to-b from-[#7cc1f3] to-[#d27eef]" : ""}`}
         style={checkedColor && checked ? { background: checkedColor } : {}}
       >
-        {checked && <img src={Check} />}
+        {checked && <img src={Check} className="w-4 h-4" />}
       </div>
       {label && <label>{label}</label>}
     </div>

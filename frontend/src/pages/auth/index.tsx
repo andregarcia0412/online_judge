@@ -1,6 +1,5 @@
 import React from "react";
 import { LoginCard } from "../../components/card/auth-card/LoginCard";
-import "./style.css";
 import { LoginSchema } from "../../validations/login.schema";
 import { useAuthContext } from "../../contexts/AuthContext";
 import { AxiosError } from "axios";
