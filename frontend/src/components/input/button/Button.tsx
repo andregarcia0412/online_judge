@@ -1,4 +1,3 @@
-import "./style.button.css";
 import Spinner from "../../../assets/ring-resize.svg";
 
 interface ButtonProps {
@@ -27,15 +26,15 @@ const Button = ({
   return (
     <button
       type="button"
-      className={`button ${disabled && "disabled"}`}
+      className={`relative flex justify-center items-center w-full h-13.75 text-base font-bold rounded-xl border-none text-white ${!disabled && "hover:opacity-[0.8] cursor-pointer"} ${disabled && "opacity-[0.5] cursor-auto"}`}
       onClick={onClick}
       style={{ background, height, border, fontSize }}
       disabled={disabled}
     >
-      <div className="button-icon">
-        {!loading && icon && <img src={icon} />}
+      <div className="flex justify-center items-center w-full gap-3">
+        {!loading && icon && <img src={icon} className="w-6 h-6" />}
         {loading ? (
-          <img src={Spinner} height={24} width={24} />
+          <img src={Spinner} className="w-6 h-6" />
         ) : (
           <span>{text}</span>
         )}
