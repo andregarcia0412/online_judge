@@ -96,8 +96,8 @@ export const Auth = () => {
 
   if (isRegister) {
     return (
-      <div className="auth-container">
-        <h1 className="auth-title">Roll the Carpet!</h1>
+      <div className="flex justify-between items-center p-10 bg-[#0f0f0f] w-full min-h-screen">
+        <h1 className="text-white text-[84px] font-normal">Roll the Carpet!</h1>
         <RegisterCard
           register={handleRegister}
           setUsername={setUsername}
@@ -110,15 +110,15 @@ export const Auth = () => {
           setChecked={setChecked}
           switchCard={switchCard}
         />
-        <div className="top-circle color3" />
-        <div className="bottom-circle color4" />
+        <div className="absolute left-[60%] top-[3%] h-75.5 w-75.5 rounded-full bg-linear-to-b from-[#190061] to-[#0a1b30]" />
+        <div className="absolute left-[85%] top-[75%] h-55 w-55 rounded-full bg-[linear-gradient(60deg,#190061,#0a1b30)]" />
       </div>
     );
   }
 
   return (
-    <div className="auth-container">
-      <h1 className="auth-title">Welcome Back!</h1>
+    <div className="flex justify-between items-center p-10 bg-[#0f0f0f] w-full min-h-screen">
+      <h1 className="text-white text-[84px] font-normal">Welcome Back!</h1>
       <LoginCard
         login={handleLogin}
         setEmail={setEmail}
@@ -129,8 +129,8 @@ export const Auth = () => {
         setChecked={setChecked}
         switchCard={switchCard}
       />
-      <div className="top-circle color1" />
-      <div className="bottom-circle color2" />
+      <div className="absolute left-[60%] top-[3%] h-75.5 w-75.5 rounded-full bg-linear-to-b from-[#530061] to-[#0d0a30]" />
+      <div className="absolute left-[85%] top-[75%] h-55 w-55 rounded-full bg-[linear-gradient(60deg,#300061,#0a1030)]" />
     </div>
   );
 };
