@@ -1,5 +1,4 @@
 import type React from "react";
-import "./style.create-problem-card.css";
 
 type CreateProblemCardProps = {
   title: string;
@@ -13,10 +12,10 @@ export const CreateProblemCard = ({
   children,
 }: CreateProblemCardProps) => {
   return (
-    <div className="create-card">
-      <div className="create-card-title">
-        <h2>{title}</h2>
-        {subtitle && <p>{subtitle}</p>}
+    <div className="relative flex flex-col w-full bg-[rgba(17,24,39,0.4)] border border-[#30363d] text-white py-6 px-8 rounded-xl gap-6">
+      <div className="flex flex-col gap-2">
+        <h2 className="font-normal">{title}</h2>
+        {subtitle && <p className="opacity-70">{subtitle}</p>}
       </div>
 
       {children}
