@@ -1,5 +1,7 @@
 import { forwardRef, Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
+import { BcryptProvider } from 'src/shared/provider/bcrypt.provider';
+import { HashProviderPort } from 'src/shared/provider/hash.provider.port';
 import { SubmissionModule } from '../submission/submission.module';
 import { User } from './entities/user.entity';
 import { UserRepositoryPort } from './interface/user.repository.port';
@@ -16,6 +18,7 @@ import { UserService } from './user.service';
   providers: [
     UserService,
     { provide: UserRepositoryPort, useClass: UserRepository },
+    { provide: HashProviderPort, useClass: BcryptProvider },
   ],
   exports: [UserService, UserRepositoryPort],
 })

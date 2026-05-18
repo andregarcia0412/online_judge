@@ -4,9 +4,9 @@ import {
   Injectable,
   NotFoundException,
 } from '@nestjs/common';
-import * as bcrypt from 'bcrypt';
 import { ReturnSubmissionDto } from 'src/modules/submission/dto/return-submission.dto';
 import { Submission } from 'src/modules/submission/entities/submission.entity';
+import { HashProviderPort } from 'src/shared/provider/hash.provider.port';
 import { DeleteResult, EntityManager, UpdateResult } from 'typeorm';
 import { SubmissionRepositoryPort } from '../submission/interface/submission.repository.port';
 import { CreateUserDto } from './dto/create-user.dto';
@@ -19,9 +19,11 @@ import { UserRepositoryPort } from './interface/user.repository.port';
 export class UserService {
   constructor(
     @Inject(UserRepositoryPort)
-    private userRepository: UserRepositoryPort,
+    private readonly userRepository: UserRepositoryPort,
     @Inject(SubmissionRepositoryPort)
-    private submissionRepository: SubmissionRepositoryPort,
+    private readonly submissionRepository: SubmissionRepositoryPort,
+    @Inject(HashProviderPort)
+    private readonly hashProvider: HashProviderPort,
   ) {}
 
   async create(createUserDto: CreateUserDto): Promise<ReturnUserDto> {
@@ -33,7 +35,7 @@ export class UserService {
       throw new ConflictException('This username is already in use');
     }
 
-    const hash = await bcrypt.hash(createUserDto.password, 10);
+    const hash = await this.hashProvider.generateHash(createUserDto.password);
 
     createUserDto.password = hash;
     const newUser = await this.userRepository.save(createUserDto);

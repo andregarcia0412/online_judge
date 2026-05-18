@@ -6,6 +6,8 @@ import { UserModule } from 'src/modules/user/user.module';
 import { AuthController } from './auth.controller';
 import { AuthService } from './auth.service';
 import { JwtStrategy } from './jwt.strategy';
+import { HashProviderPort } from 'src/shared/provider/hash.provider.port';
+import { BcryptProvider } from 'src/shared/provider/bcrypt.provider';
 
 @Module({
   imports: [
@@ -14,6 +16,10 @@ import { JwtStrategy } from './jwt.strategy';
     UserModule,
   ],
   controllers: [AuthController],
-  providers: [AuthService, JwtStrategy],
+  providers: [
+    AuthService,
+    JwtStrategy,
+    { provide: HashProviderPort, useClass: BcryptProvider },
+  ],
 })
 export class AuthModule {}

@@ -14,15 +14,18 @@ import { UserRepositoryPort } from '../user/interface/user.repository.port';
 import { AuthResponseDto } from './dto/auth.dto';
 import { LoginDto } from './dto/login.dto';
 import { RefreshResponseDto } from './dto/refresh-response.dto';
+import { HashProviderPort } from 'src/shared/provider/hash.provider.port';
 
 @Injectable()
 export class AuthService {
   constructor(
     @Inject(UserRepositoryPort)
-    private userRepository: UserRepositoryPort,
-    private userService: UserService,
-    private jwtService: JwtService,
-    private configService: ConfigService,
+    private readonly userRepository: UserRepositoryPort,
+    @Inject(HashProviderPort)
+    private readonly hashProvider: HashProviderPort,
+    private readonly userService: UserService,
+    private readonly jwtService: JwtService,
+    private readonly configService: ConfigService,
   ) {}
 
   private async getTokens(
@@ -68,7 +71,10 @@ export class AuthService {
   async login(loginDto: LoginDto): Promise<AuthResponseDto> {
     const user = await this.userRepository.findOneByEmail(loginDto.email);
 
-    if (!user || !(await bcrypt.compare(loginDto.password, user.password))) {
+    if (
+      !user ||
+      !(await this.hashProvider.compare(loginDto.password, user.password))
+    ) {
       throw new BadRequestException('Incorrect email or password');
     }
 
