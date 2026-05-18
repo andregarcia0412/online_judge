@@ -8,6 +8,15 @@ import { UserRepositoryPort } from './interface/user.repository.port';
 import { UserRepository } from './repository/user.repository';
 import { UserController } from './user.controller';
 import { UserService } from './user.service';
+import { CreateUserUseCase } from './use-case/create.use-case';
+import { FindAllUserUseCase } from './use-case/find-all.use-case';
+import { FindOneUserByIdUseCase } from './use-case/find-one-by-id.use-case';
+import { UpdateUserStreakUseCase } from './use-case/update-streak.use-case';
+import { FindOneByEmailUseCase } from './use-case/find-one-by-email.use-case';
+import { FindAllSubmissionsUseCase } from './use-case/find-all-submissions.use-case';
+import { UpdateUserUseCase } from './use-case/update.use-case';
+import { UpdateUserStreakOnSubmissionUseCase } from './use-case/update-streak-on-submission.use-case';
+import { DeleteUserUseCase } from './use-case/delete.use-case';
 
 @Module({
   imports: [
@@ -19,6 +28,15 @@ import { UserService } from './user.service';
     UserService,
     { provide: UserRepositoryPort, useClass: UserRepository },
     { provide: HashProviderPort, useClass: BcryptProvider },
+    CreateUserUseCase,
+    FindAllUserUseCase,
+    FindOneUserByIdUseCase,
+    UpdateUserStreakUseCase,
+    FindOneByEmailUseCase,
+    FindAllSubmissionsUseCase,
+    UpdateUserUseCase,
+    DeleteUserUseCase,
+    UpdateUserStreakOnSubmissionUseCase,
   ],
   exports: [UserService, UserRepositoryPort],
 })
