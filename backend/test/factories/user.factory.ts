@@ -72,4 +72,11 @@ export class UserFactory {
       updateUserStreakOnSubmissionUseCase,
     };
   }
+
+  static makeHashProviderMock() {
+    return {
+      generateHash: jest.fn(),
+      compare: jest.fn(),
+    };
+  }
 }
