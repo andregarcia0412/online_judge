@@ -6,14 +6,14 @@ import { TestRunnerService } from 'src/modules/test-runner/test-runner.service';
 
 describe('TestRunnerService', () => {
   let codeRunnerServiceMock: {
-    ensureImageExists: jest.Mock;
+    getAllowedLanguages: jest.Mock;
     executeCode: jest.Mock;
   };
   let service: TestRunnerService;
 
   beforeEach(() => {
     codeRunnerServiceMock = {
-      ensureImageExists: jest.fn().mockResolvedValue(undefined),
+      getAllowedLanguages: jest.fn().mockReturnValue(['python']),
       executeCode: jest.fn(),
     };
 
@@ -29,7 +29,8 @@ describe('TestRunnerService', () => {
 
     await expect(runPromise).rejects.toThrow(BadRequestException);
     await expect(runPromise).rejects.toThrow('Invalid language name');
-    expect(codeRunnerServiceMock.ensureImageExists).not.toHaveBeenCalled();
+    expect(codeRunnerServiceMock.getAllowedLanguages).toHaveBeenCalledTimes(1);
+    expect(codeRunnerServiceMock.executeCode).not.toHaveBeenCalled();
   });
 
   it('should throw BadRequestException when there are no test cases', async () => {
@@ -39,7 +40,8 @@ describe('TestRunnerService', () => {
     await expect(runPromise).rejects.toThrow(
       'No test cases found for this problem',
     );
-    expect(codeRunnerServiceMock.ensureImageExists).toHaveBeenCalledTimes(1);
+    expect(codeRunnerServiceMock.getAllowedLanguages).toHaveBeenCalledTimes(1);
+    expect(codeRunnerServiceMock.executeCode).not.toHaveBeenCalled();
   });
 
   it('should return REJECTED when execution result is malformed', async () => {
@@ -96,7 +98,7 @@ describe('TestRunnerService', () => {
       'python',
     );
 
-    expect(codeRunnerServiceMock.ensureImageExists).toHaveBeenCalledTimes(1);
+    expect(codeRunnerServiceMock.getAllowedLanguages).toHaveBeenCalledTimes(1);
     expect(codeRunnerServiceMock.executeCode).toHaveBeenCalledTimes(2);
     expect(result.status).toBe(StatusEnum.ACCEPTED);
     expect(result.execution_time).toBe(10);
