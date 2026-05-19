@@ -56,7 +56,10 @@ services:
     command: python -m fastapi dev src/main.py --host 0.0.0.0 --port 8000
     environment:
       - PYTHONUNBUFFERED=1
+      - OLLAMA_HOST=http://ollama:11434
     restart: unless-stopped
+    networks:
+      - app_network
 
   ollama:
     image: ollama/ollama:latest

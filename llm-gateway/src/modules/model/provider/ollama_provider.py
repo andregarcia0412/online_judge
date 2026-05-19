@@ -1,11 +1,13 @@
 from ollama import AsyncClient
 from fastapi import HTTPException
+import os
 from src.modules.model.provider.model_provider_port import ModelProviderPort
 
 class OllamaProvider(ModelProviderPort):
     
     def __init__(self):
-        self.client = AsyncClient()
+        host = os.getenv("OLLAMA_HOST", "http://localhost:11434")
+        self.client = AsyncClient(host=host)
     
     async def send_chat_message(self, message: str) -> str:
         try:
