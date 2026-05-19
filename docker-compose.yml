@@ -44,6 +44,20 @@ services:
       - ./frontend:/app
       - /app/node_modules
 
+  microservice:
+    build:
+      context: ./llm-gateway
+      dockerfile: Dockerfile
+    container_name: online_judge_llm_gateway
+    ports:
+    - "8000:8000"
+    volumes: 
+      - ./llm-gateway:/app
+    command: python -m fastapi dev src/main.py --host 0.0.0.0 --port 8000
+    environment:
+      - PYTHONUNBUFFERED=1
+    restart: unless-stopped
+
   ollama:
     image: ollama/ollama:latest
     container_name: ollama
