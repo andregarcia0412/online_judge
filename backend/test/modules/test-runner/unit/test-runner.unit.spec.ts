@@ -1,5 +1,5 @@
 import { BadRequestException } from '@nestjs/common';
-import { ExecuteCodeDto } from 'src/modules/code-runner/dto/execute-code.dto';
+import { ExecuteCodeDto } from 'src/shared/provider/code-runner/dto/execute-code.dto';
 import { StatusEnum } from 'src/modules/submission/enum/submission-status';
 import { TestCase } from 'src/modules/problem/entities/test-case.entity';
 import { TestRunnerService } from 'src/modules/test-runner/test-runner.service';

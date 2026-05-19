@@ -1,6 +1,5 @@
 import { forwardRef, Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
-import { CodeRunnerModule } from 'src/modules/code-runner/code-runner.module';
 import { TestRunnerModule } from 'src/modules/test-runner/test-runner.module';
 import { ProblemModule } from '../problem/problem.module';
 import { UserModule } from '../user/user.module';
@@ -20,7 +19,6 @@ import { UpdateSubmissionUseCase } from './use-case/update.use-case';
 @Module({
   imports: [
     TypeOrmModule.forFeature([Submission]),
-    CodeRunnerModule,
     TestRunnerModule,
     forwardRef(() => UserModule),
     ProblemModule,

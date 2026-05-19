@@ -1,7 +1,7 @@
 import { BadRequestException } from '@nestjs/common';
 import { EventEmitter } from 'events';
 import { CodeRunnerService } from 'src/modules/code-runner/code-runner.service';
-import { LanguageConfig } from 'src/modules/test-runner/language-config.interface';
+import { LanguageConfig } from 'src/shared/provider/code-runner/infra/languages/language-config.interface';
 
 describe('CodeRunnerService', () => {
   let service: CodeRunnerService;
