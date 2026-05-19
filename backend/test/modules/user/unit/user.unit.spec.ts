@@ -1,4 +1,3 @@
-import * as bcrypt from 'bcrypt';
 import { ConflictException, NotFoundException } from '@nestjs/common';
 import { UserService } from 'src/modules/user/user.service';
 import { UserFactory } from 'test/factories/user.factory';
@@ -7,19 +6,22 @@ import { SubmissionFactory } from 'test/factories/submission.factory';
 import { ReturnSubmissionDto } from 'src/modules/submission/dto/return-submission.dto';
 
 describe('UserService', () => {
-  let userRepositoryMock: ReturnType<typeof UserFactory.makeUserRepositoryMock>;
-  let submissionRepositoryMock: ReturnType<
-    typeof SubmissionFactory.makeSubmissionRepositoryMock
-  >;
+  let useCaseMocks: ReturnType<typeof UserFactory.makeUserUseCaseMocks>;
   let service: UserService;
 
   beforeEach(() => {
-    userRepositoryMock = UserFactory.makeUserRepositoryMock();
-    submissionRepositoryMock = SubmissionFactory.makeSubmissionRepositoryMock();
+    useCaseMocks = UserFactory.makeUserUseCaseMocks();
 
     service = new UserService(
-      userRepositoryMock as any,
-      submissionRepositoryMock as any,
+      useCaseMocks.createUserUseCase as any,
+      useCaseMocks.findAllUseCase as any,
+      useCaseMocks.findOneUserByIdUseCase as any,
+      useCaseMocks.updateUserStreakUseCase as any,
+      useCaseMocks.findOneByEmailUseCase as any,
+      useCaseMocks.findAllSubmissionsUseCase as any,
+      useCaseMocks.updateUserUseCase as any,
+      useCaseMocks.deleteUserUseCase as any,
+      useCaseMocks.updateUserStreakOnSubmissionUseCase as any,
     );
   });
 
@@ -27,61 +29,28 @@ describe('UserService', () => {
     jest.restoreAllMocks();
   });
   describe('Create User', () => {
-    it('should create a user with hashed password', async () => {
-      const userRepositoryMock = UserFactory.makeUserRepositoryMock();
-
-      const submissionRepositoryMock =
-        SubmissionFactory.makeSubmissionRepositoryMock();
-
-      const service = new UserService(
-        userRepositoryMock as any,
-        submissionRepositoryMock as any,
-      );
-
+    it('should delegate creation and return ReturnUserDto', async () => {
       const createUserDto = UserFactory.makeCreateUserDto();
+      const userEntity = UserFactory.makeUserEntity();
 
-      userRepositoryMock.findOneByEmail.mockResolvedValueOnce(null);
-      userRepositoryMock.findOneByUsername.mockResolvedValueOnce(null);
-
-      userRepositoryMock.save.mockResolvedValue(UserFactory.makeUserEntity());
+      useCaseMocks.createUserUseCase.execute.mockResolvedValue(userEntity);
 
       const result = await service.create({ ...createUserDto });
 
-      expect(userRepositoryMock.findOneByEmail).toHaveBeenCalledWith(
-        createUserDto.email,
+      expect(useCaseMocks.createUserUseCase.execute).toHaveBeenCalledWith(
+        createUserDto,
       );
-
-      expect(userRepositoryMock.findOneByUsername).toHaveBeenCalledWith(
-        createUserDto.username,
-      );
-
-      const savedPayload = userRepositoryMock.save.mock.calls[0][0];
-      expect(savedPayload.password).not.toBe(createUserDto.password);
-      expect(
-        await bcrypt.compare(createUserDto.password, savedPayload.password),
-      ).toBe(true);
-
+      expect(result).toBeInstanceOf(ReturnUserDto);
       expect(result).toMatchObject(UserFactory.makeReturnUserDto());
-
       expect(result).not.toHaveProperty('password');
     });
 
-    it('should return conflict exception when user email is already in use', async () => {
-      const userRepositoryMock = UserFactory.makeUserRepositoryMock();
-
-      const submissionRepositoryMock =
-        SubmissionFactory.makeSubmissionRepositoryMock();
-
-      const service = new UserService(
-        userRepositoryMock as any,
-        submissionRepositoryMock as any,
-      );
-
+    it('should propagate conflict exception when user email is already in use', async () => {
       const createUserDto = UserFactory.makeCreateUserDto();
 
-      const foundUser = UserFactory.makeUserEntity();
-
-      userRepositoryMock.findOneByEmail.mockResolvedValueOnce(foundUser);
+      useCaseMocks.createUserUseCase.execute.mockRejectedValue(
+        new ConflictException('This email is already in use'),
+      );
 
       const createPromise = service.create({ ...createUserDto });
 
@@ -90,30 +59,17 @@ describe('UserService', () => {
         'This email is already in use',
       );
 
-      expect(userRepositoryMock.findOneByEmail).toHaveBeenCalledWith(
-        createUserDto.email,
+      expect(useCaseMocks.createUserUseCase.execute).toHaveBeenCalledWith(
+        createUserDto,
       );
-      expect(userRepositoryMock.findOneByEmail).toHaveBeenCalledTimes(1);
-      expect(userRepositoryMock.save).not.toHaveBeenCalled();
     });
 
-    it('should return conflict exception when username is already in use', async () => {
-      const userRepositoryMock = UserFactory.makeUserRepositoryMock();
-
-      const submissionRepositoryMock =
-        SubmissionFactory.makeSubmissionRepositoryMock();
-
-      const service = new UserService(
-        userRepositoryMock as any,
-        submissionRepositoryMock as any,
-      );
-
+    it('should propagate conflict exception when username is already in use', async () => {
       const createUserDto = UserFactory.makeCreateUserDto();
 
-      const foundUser = UserFactory.makeUserEntity();
-
-      userRepositoryMock.findOneByEmail.mockResolvedValueOnce(null);
-      userRepositoryMock.findOneByUsername.mockResolvedValueOnce(foundUser);
+      useCaseMocks.createUserUseCase.execute.mockRejectedValue(
+        new ConflictException('This username is already in use'),
+      );
 
       const createPromise = service.create({ ...createUserDto });
 
@@ -122,32 +78,22 @@ describe('UserService', () => {
         'This username is already in use',
       );
 
-      expect(userRepositoryMock.findOneByUsername).toHaveBeenCalledWith(
-        createUserDto.username,
+      expect(useCaseMocks.createUserUseCase.execute).toHaveBeenCalledWith(
+        createUserDto,
       );
-      expect(userRepositoryMock.save).not.toHaveBeenCalled();
     });
   });
 
   describe('Get All User', () => {
     it('should return a list of ReturnUserDto', async () => {
-      const userRepositoryMock = UserFactory.makeUserRepositoryMock();
-      const submissionRepositoryMock =
-        SubmissionFactory.makeSubmissionRepositoryMock();
-
       const userEntity = UserFactory.makeUserEntity();
-      userRepositoryMock.findAll.mockResolvedValue([userEntity]);
-
-      const service = new UserService(
-        userRepositoryMock as any,
-        submissionRepositoryMock as any,
-      );
+      useCaseMocks.findAllUseCase.execute.mockResolvedValue([userEntity]);
 
       const result = await service.findAll();
 
       expect(result).toHaveLength(1);
       expect(result[0]).toBeInstanceOf(ReturnUserDto);
-      expect(userRepositoryMock.findAll).toHaveBeenCalled();
+      expect(useCaseMocks.findAllUseCase.execute).toHaveBeenCalled();
 
       expect(result[0]).toMatchObject({
         id: userEntity.id,
@@ -166,86 +112,56 @@ describe('UserService', () => {
 
   describe('Get User By Id', () => {
     it('should return user entity and check user streak when id matches', async () => {
-      const userRepositoryMock = UserFactory.makeUserRepositoryMock();
-      const submissionRepositoryMock =
-        SubmissionFactory.makeSubmissionRepositoryMock();
-
       const userEntity = UserFactory.makeUserEntity();
-      userRepositoryMock.findOneById.mockResolvedValue(userEntity);
-
-      const service = new UserService(
-        userRepositoryMock as any,
-        submissionRepositoryMock as any,
-      );
-
-      const updateUserStreakSpy = jest
-        .spyOn(service, 'updateUserStreak')
-        .mockResolvedValue(undefined);
+      useCaseMocks.findOneUserByIdUseCase.execute.mockResolvedValue(userEntity);
+      useCaseMocks.updateUserStreakUseCase.execute.mockResolvedValue(undefined);
 
       const result = await service.findOneById(userEntity.id);
 
       expect(result).toBeInstanceOf(ReturnUserDto);
       expect(result.email).toMatch(userEntity.email);
-      expect(userRepositoryMock.findOneById).toHaveBeenCalledWith(
+      expect(useCaseMocks.findOneUserByIdUseCase.execute).toHaveBeenCalledWith(
         userEntity.id,
       );
       expect(result).not.toHaveProperty('password');
-      expect(updateUserStreakSpy).toHaveBeenCalled();
+      expect(useCaseMocks.updateUserStreakUseCase.execute).toHaveBeenCalledWith(
+        userEntity,
+      );
     });
 
     it('should throw not found exception when id does not match', async () => {
-      const userRepositoryMock = UserFactory.makeUserRepositoryMock();
-      const submissionRepositoryMock =
-        SubmissionFactory.makeSubmissionRepositoryMock();
-
-      userRepositoryMock.findOneById.mockResolvedValue(null);
-
-      const service = new UserService(
-        userRepositoryMock as any,
-        submissionRepositoryMock as any,
+      useCaseMocks.findOneUserByIdUseCase.execute.mockRejectedValue(
+        new NotFoundException('User not found'),
       );
 
       const getPromise = service.findOneById('123');
 
       await expect(getPromise).rejects.toThrow(NotFoundException);
       await expect(getPromise).rejects.toThrow('User not found');
+      expect(
+        useCaseMocks.updateUserStreakUseCase.execute,
+      ).not.toHaveBeenCalled();
     });
   });
 
   describe('Get User By Email', () => {
     it('should return user entity when email matches', async () => {
-      const userRepositoryMock = UserFactory.makeUserRepositoryMock();
-      const submissionRepositoryMock =
-        SubmissionFactory.makeSubmissionRepositoryMock();
-
       const userEntity = UserFactory.makeUserEntity();
-      userRepositoryMock.findOneByEmail.mockResolvedValue(userEntity);
-
-      const service = new UserService(
-        userRepositoryMock as any,
-        submissionRepositoryMock as any,
-      );
+      useCaseMocks.findOneByEmailUseCase.execute.mockResolvedValue(userEntity);
 
       const result = await service.findOneByEmail(userEntity.email);
 
       expect(result).toBeInstanceOf(ReturnUserDto);
       expect(result.id).toMatch(userEntity.id);
-      expect(userRepositoryMock.findOneByEmail).toHaveBeenCalledWith(
+      expect(useCaseMocks.findOneByEmailUseCase.execute).toHaveBeenCalledWith(
         userEntity.email,
       );
       expect(result).not.toHaveProperty('password');
     });
 
     it('should throw not found exception when email does not matches', async () => {
-      const userRepositoryMock = UserFactory.makeUserRepositoryMock();
-      const submissionRepositoryMock =
-        SubmissionFactory.makeSubmissionRepositoryMock();
-
-      userRepositoryMock.findOneByEmail.mockResolvedValue(null);
-
-      const service = new UserService(
-        userRepositoryMock as any,
-        submissionRepositoryMock as any,
+      useCaseMocks.findOneByEmailUseCase.execute.mockRejectedValue(
+        new NotFoundException('User not found'),
       );
 
       const getPromise = service.findOneByEmail('user@example');
@@ -257,17 +173,10 @@ describe('UserService', () => {
 
   describe('Find Submission By User Id', () => {
     it('should return a list of ReturnSubmissionDto', async () => {
-      const userRepositoryMock = UserFactory.makeUserRepositoryMock();
-      const submissionRepositoryMock =
-        SubmissionFactory.makeSubmissionRepositoryMock();
-
       const savedEntity = SubmissionFactory.makeSubmissionEntity();
-      submissionRepositoryMock.findAllByUserId.mockResolvedValue([savedEntity]);
-
-      const service = new UserService(
-        userRepositoryMock as any,
-        submissionRepositoryMock as any,
-      );
+      useCaseMocks.findAllSubmissionsUseCase.execute.mockResolvedValue([
+        savedEntity,
+      ]);
 
       const id_user = '123';
 
@@ -275,9 +184,9 @@ describe('UserService', () => {
 
       expect(result.length).toBe(1);
       expect(result[0]).toBeInstanceOf(ReturnSubmissionDto);
-      expect(submissionRepositoryMock.findAllByUserId).toHaveBeenCalledWith(
-        id_user,
-      );
+      expect(
+        useCaseMocks.findAllSubmissionsUseCase.execute,
+      ).toHaveBeenCalledWith(id_user);
 
       expect(result[0].id).toMatch(savedEntity.id);
     });
@@ -285,15 +194,6 @@ describe('UserService', () => {
 
   describe('Update User', () => {
     it('should update a user and return update result', async () => {
-      const userRepositoryMock = UserFactory.makeUserRepositoryMock();
-      const submissionRepositoryMock =
-        SubmissionFactory.makeSubmissionRepositoryMock();
-
-      const service = new UserService(
-        userRepositoryMock as any,
-        submissionRepositoryMock as any,
-      );
-
       const userId = '123';
       const updateUserDto = {
         username: 'newusername',
@@ -306,43 +206,81 @@ describe('UserService', () => {
         raw: [],
       };
 
-      userRepositoryMock.updateById.mockResolvedValue(updateResult);
+      useCaseMocks.updateUserUseCase.execute.mockResolvedValue(updateResult);
 
       const result = await service.update(userId, updateUserDto);
 
-      expect(userRepositoryMock.updateById).toHaveBeenCalledWith(
+      expect(useCaseMocks.updateUserUseCase.execute).toHaveBeenCalledWith(
         userId,
         updateUserDto,
       );
-      expect(userRepositoryMock.updateById).toHaveBeenCalledTimes(1);
+      expect(useCaseMocks.updateUserUseCase.execute).toHaveBeenCalledTimes(1);
       expect(result).toEqual(updateResult);
     });
   });
 
   describe('Delete User', () => {
     it('should delete a user and return delete result', async () => {
-      const userRepositoryMock = UserFactory.makeUserRepositoryMock();
-      const submissionRepositoryMock =
-        SubmissionFactory.makeSubmissionRepositoryMock();
-
-      const service = new UserService(
-        userRepositoryMock as any,
-        submissionRepositoryMock as any,
-      );
-
       const userId = '123';
       const deleteResult = {
         affected: 1,
         raw: [],
       };
 
-      userRepositoryMock.delete.mockResolvedValue(deleteResult);
+      useCaseMocks.deleteUserUseCase.execute.mockResolvedValue(deleteResult);
 
       const result = await service.remove(userId);
 
-      expect(userRepositoryMock.delete).toHaveBeenCalledWith(userId);
-      expect(userRepositoryMock.delete).toHaveBeenCalledTimes(1);
+      expect(useCaseMocks.deleteUserUseCase.execute).toHaveBeenCalledWith(
+        userId,
+      );
+      expect(useCaseMocks.deleteUserUseCase.execute).toHaveBeenCalledTimes(1);
       expect(result).toEqual(deleteResult);
+    });
+  });
+
+  describe('Update User Streak', () => {
+    it('should delegate updateUserStreak to use-case', async () => {
+      const userEntity = UserFactory.makeUserEntity();
+
+      useCaseMocks.updateUserStreakUseCase.execute.mockResolvedValue(undefined);
+
+      await service.updateUserStreak(userEntity);
+
+      expect(useCaseMocks.updateUserStreakUseCase.execute).toHaveBeenCalledWith(
+        userEntity,
+      );
+    });
+  });
+
+  describe('Update User Streak On Submission', () => {
+    it('should delegate updateUserStreakOnSubmission without manager', async () => {
+      const userEntity = UserFactory.makeUserEntity();
+
+      useCaseMocks.updateUserStreakOnSubmissionUseCase.execute.mockResolvedValue(
+        undefined,
+      );
+
+      await service.updateUserStreakOnSubmission(userEntity);
+
+      expect(
+        useCaseMocks.updateUserStreakOnSubmissionUseCase.execute,
+      ).toHaveBeenCalledWith(userEntity, undefined);
+    });
+
+    it('should delegate updateUserStreakOnSubmission with manager', async () => {
+      const userEntity = UserFactory.makeUserEntity();
+      const manager = {} as any;
+
+      useCaseMocks.updateUserStreakOnSubmissionUseCase.execute.mockResolvedValue(
+        undefined,
+      );
+
+      await service.updateUserStreakOnSubmission(userEntity, manager);
+
+      expect(
+        useCaseMocks.updateUserStreakOnSubmissionUseCase.execute,
+      ).toHaveBeenCalledWith(userEntity, manager);
     });
   });
 });
