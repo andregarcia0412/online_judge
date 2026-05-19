@@ -6,15 +6,14 @@ import {
 } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { JwtService } from '@nestjs/jwt';
-import * as bcrypt from 'bcrypt';
 import { CreateUserDto } from 'src/modules/user/dto/create-user.dto';
 import { ReturnUserDto } from 'src/modules/user/dto/return-user.dto';
 import { UserService } from 'src/modules/user/user.service';
+import { HashProviderPort } from 'src/shared/provider/hash/hash.provider.port';
 import { UserRepositoryPort } from '../user/interface/user.repository.port';
 import { AuthResponseDto } from './dto/auth.dto';
 import { LoginDto } from './dto/login.dto';
 import { RefreshResponseDto } from './dto/refresh-response.dto';
-import { HashProviderPort } from 'src/shared/provider/hash.provider.port';
 
 @Injectable()
 export class AuthService {

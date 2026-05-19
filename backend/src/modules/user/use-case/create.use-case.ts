@@ -1,5 +1,5 @@
 import { ConflictException, Inject, Injectable } from '@nestjs/common';
-import { HashProviderPort } from 'src/shared/provider/hash.provider.port';
+import { HashProviderPort } from 'src/shared/provider/hash/hash.provider.port';
 import { CreateUserDto } from '../dto/create-user.dto';
 import { User } from '../entities/user.entity';
 import { UserRepositoryPort } from '../interface/user.repository.port';
