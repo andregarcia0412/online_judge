@@ -3,7 +3,6 @@ import {
   ConflictException,
   UnauthorizedException,
 } from '@nestjs/common';
-import * as bcrypt from 'bcrypt';
 import { AuthService } from 'src/modules/auth/auth.service';
 import { AuthResponseDto } from 'src/modules/auth/dto/auth.dto';
 import { RefreshResponseDto } from 'src/modules/auth/dto/refresh-response.dto';
@@ -13,6 +12,7 @@ import { UserFactory } from 'test/factories/user.factory';
 
 describe('AuthService', () => {
   let userRepositoryMock: ReturnType<typeof UserFactory.makeUserRepositoryMock>;
+  let hashProviderMock: ReturnType<typeof AuthFactory.makeHashProviderMock>;
   let userServiceMock: ReturnType<typeof AuthFactory.makeUserServiceMock>;
   let jwtServiceMock: ReturnType<typeof AuthFactory.makeJwtServiceMock>;
   let configServiceMock: ReturnType<typeof AuthFactory.makeConfigServiceMock>;
@@ -20,12 +20,14 @@ describe('AuthService', () => {
 
   beforeEach(() => {
     userRepositoryMock = UserFactory.makeUserRepositoryMock();
+    hashProviderMock = AuthFactory.makeHashProviderMock();
     userServiceMock = AuthFactory.makeUserServiceMock();
     jwtServiceMock = AuthFactory.makeJwtServiceMock();
     configServiceMock = AuthFactory.makeConfigServiceMock();
 
     service = new AuthService(
       userRepositoryMock as any,
+      hashProviderMock as any,
       userServiceMock as any,
       jwtServiceMock as any,
       configServiceMock as any,
@@ -39,11 +41,11 @@ describe('AuthService', () => {
   describe('Login', () => {
     it('should return AuthResponseDto when email and password are valid', async () => {
       const plainPassword = '123123123';
-      const hashedPassword = await bcrypt.hash(plainPassword, 10);
-      const user = AuthFactory.makeAuthUserEntity({ password: hashedPassword });
+      const user = AuthFactory.makeAuthUserEntity({ password: 'hashed-pass' });
       const loginDto = AuthFactory.makeLoginDto(user.email, plainPassword);
 
       userRepositoryMock.findOneByEmail.mockResolvedValue(user);
+      hashProviderMock.compare.mockResolvedValue(true);
       jwtServiceMock.signAsync
         .mockResolvedValueOnce('access-token')
         .mockResolvedValueOnce('refresh-token');
@@ -53,6 +55,11 @@ describe('AuthService', () => {
       expect(userRepositoryMock.findOneByEmail).toHaveBeenCalledWith(
         loginDto.email,
       );
+      expect(hashProviderMock.compare).toHaveBeenCalledWith(
+        plainPassword,
+        user.password,
+      );
+      expect(userServiceMock.updateUserStreak).toHaveBeenCalledWith(user);
 
       expect(jwtServiceMock.signAsync).toHaveBeenNthCalledWith(
         1,
@@ -95,32 +102,42 @@ describe('AuthService', () => {
 
       await expect(loginPromise).rejects.toThrow(BadRequestException);
       await expect(loginPromise).rejects.toThrow('Incorrect email or password');
+      expect(hashProviderMock.compare).not.toHaveBeenCalled();
       expect(jwtServiceMock.signAsync).not.toHaveBeenCalled();
     });
 
     it('should throw BadRequestException when password does not match', async () => {
-      const hashedPassword = await bcrypt.hash('different-password', 10);
-      const user = AuthFactory.makeAuthUserEntity({ password: hashedPassword });
+      const user = AuthFactory.makeAuthUserEntity({ password: 'hashed-pass' });
       const loginDto = AuthFactory.makeLoginDto(user.email, '123123123');
 
       userRepositoryMock.findOneByEmail.mockResolvedValue(user);
+      hashProviderMock.compare.mockResolvedValue(false);
 
       const loginPromise = service.login(loginDto);
 
       await expect(loginPromise).rejects.toThrow(BadRequestException);
       await expect(loginPromise).rejects.toThrow('Incorrect email or password');
+      expect(hashProviderMock.compare).toHaveBeenCalledWith(
+        loginDto.password,
+        user.password,
+      );
       expect(jwtServiceMock.signAsync).not.toHaveBeenCalled();
     });
 
-    it('should propagate error when bcrypt comparison fails', async () => {
+    it('should propagate error when hash comparison fails', async () => {
       const user = AuthFactory.makeAuthUserEntity({
         password: undefined as unknown as string,
       });
       const loginDto = AuthFactory.makeLoginDto(user.email, '123123123');
 
       userRepositoryMock.findOneByEmail.mockResolvedValue(user);
+      hashProviderMock.compare.mockRejectedValue(new Error('compare failed'));
 
       await expect(service.login(loginDto)).rejects.toThrow();
+      expect(hashProviderMock.compare).toHaveBeenCalledWith(
+        loginDto.password,
+        user.password,
+      );
       expect(jwtServiceMock.signAsync).not.toHaveBeenCalled();
     });
   });
@@ -268,6 +285,7 @@ describe('AuthService', () => {
 
       service = new AuthService(
         userRepositoryMock as any,
+        hashProviderMock as any,
         userServiceMock as any,
         jwtServiceMock as any,
         configServiceMock as any,

@@ -89,4 +89,11 @@ export class AuthFactory {
       updateUserStreak: jest.fn(),
     };
   }
+
+  static makeHashProviderMock() {
+    return {
+      generateHash: jest.fn(),
+      compare: jest.fn(),
+    };
+  }
 }
