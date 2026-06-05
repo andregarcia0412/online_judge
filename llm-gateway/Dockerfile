@@ -1,15 +1,31 @@
-FROM maven:3.9.8-eclipse-temurin-21 AS build
+FROM python:3.12-slim
+
+ENV PYTHONDONTWRITEBYTECODE=1
+ENV PYTHONUNBUFFERED=1
 
 WORKDIR /app
-COPY pom.xml .
-COPY src ./src
 
-RUN mvn clean package spring-boot:repackage -DskipTests
+COPY requirements.txt .
 
-FROM eclipse-temurin:21-jre-jammy
+RUN apt-get update && apt-get install -y \
+    build-essential \
+    gcc \
+    python3-dev \
+    libjpeg-dev \
+    zlib1g-dev \
+    libpng-dev \
+    libfreetype6-dev \
+    libwebp-dev \
+    && rm -rf /var/lib/apt/lists/*
 
-WORKDIR /app
-COPY --from=build /app/target/llm-gateway-0.0.1-SNAPSHOT.jar ./app.jar
+RUN pip install --upgrade pip && \
+    pip install --no-cache-dir -r requirements.txt
 
-EXPOSE 8081
-CMD ["java", "-jar", "app.jar"]
+COPY . .
+
+RUN useradd -m appuser && chown -R appuser /app
+USER appuser
+
+EXPOSE 8000
+
+CMD ["python", "-m", "fastapi", "run", "src/main.py", "--host", "0.0.0.0", "--port", "8000"]
