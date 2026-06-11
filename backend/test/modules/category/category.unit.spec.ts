@@ -5,23 +5,24 @@ import { ReturnCategoryDto } from 'src/modules/problem/dto/category/return-categ
 import { CategoryEnum } from 'src/modules/problem/enum/category.enum';
 import { CategoryService } from 'src/modules/problem/service/category.service';
 import { CategoryFactory } from 'test/factories/category.factory';
-import { ProblemFactory } from 'test/factories/problem.factory';
 
 describe('CategoryService', () => {
-  let categoryRepositoryMock: ReturnType<
-    typeof CategoryFactory.makeCategoryRepositoryMock
-  >;
-  let problemRepositoryMock: ReturnType<
-    typeof ProblemFactory.makeProblemRepositoryMock
+  let useCaseMocks: ReturnType<
+    typeof CategoryFactory.makeCategoryUseCaseMocks
   >;
   let service: CategoryService;
 
   beforeEach(() => {
-    categoryRepositoryMock = CategoryFactory.makeCategoryRepositoryMock();
-    problemRepositoryMock = ProblemFactory.makeProblemRepositoryMock();
+    useCaseMocks = CategoryFactory.makeCategoryUseCaseMocks();
+
     service = new CategoryService(
-      categoryRepositoryMock as any,
-      problemRepositoryMock as any,
+      useCaseMocks.createCategoryUseCase as any,
+      useCaseMocks.findAllCategoriesUseCase as any,
+      useCaseMocks.findCategoryByIdUseCase as any,
+      useCaseMocks.findAllCategoriesByProblemIdUseCase as any,
+      useCaseMocks.updateCategoryUseCase as any,
+      useCaseMocks.removeCategoryUseCase as any,
+      useCaseMocks.removeCategoryByProblemIdUseCase as any,
     );
   });
 
@@ -30,47 +31,49 @@ describe('CategoryService', () => {
   });
 
   describe('Create Category', () => {
-    it('should create a category for a problem when problem id matches', async () => {
+    it('should delegate to CreateCategoryUseCase and map to ReturnCategoryDto', async () => {
       const createCategoryDto = CategoryFactory.makeCreateCategoryDto();
-      const savedProblem = ProblemFactory.makeProblemEntity();
       const savedCategory = CategoryFactory.makeCategoryEntity();
 
-      problemRepositoryMock.findById.mockResolvedValue(savedProblem);
-      categoryRepositoryMock.createAndSave.mockResolvedValue(savedCategory);
-
-      const result = await service.create(createCategoryDto, savedProblem.id);
-
-      expect(problemRepositoryMock.findById).toHaveBeenCalledWith(
-        savedProblem.id,
+      useCaseMocks.createCategoryUseCase.execute.mockResolvedValue(
+        savedCategory,
       );
-      expect(categoryRepositoryMock.createAndSave).toHaveBeenCalledWith(
+
+      const result = await service.create(createCategoryDto, savedCategory.id);
+
+      expect(useCaseMocks.createCategoryUseCase.execute).toHaveBeenCalledWith(
         createCategoryDto,
-        savedProblem.id,
+        savedCategory.id,
       );
-
       expect(result).toBeInstanceOf(ReturnCategoryDto);
       expect(result).toMatchObject(CategoryFactory.makeReturnCategoryDto());
     });
 
-    it('should throw NotFoundException when problem id does not match', async () => {
+    it('should propagate errors from CreateCategoryUseCase', async () => {
       const createCategoryDto = CategoryFactory.makeCreateCategoryDto();
+      const error = new NotFoundException('Problem not found');
 
-      const createPromise = service.create(createCategoryDto, 123);
+      useCaseMocks.createCategoryUseCase.execute.mockRejectedValue(error);
 
-      await expect(createPromise).rejects.toThrow(NotFoundException);
-      await expect(createPromise).rejects.toThrow('Problem not found');
+      await expect(service.create(createCategoryDto, 123)).rejects.toThrow(
+        error,
+      );
     });
   });
 
   describe('Find All Categories', () => {
-    it('should return a list of categories', async () => {
+    it('should map entities to ReturnCategoryDto', async () => {
       const savedCategory = CategoryFactory.makeCategoryEntity();
 
-      categoryRepositoryMock.findAll.mockResolvedValue([savedCategory]);
+      useCaseMocks.findAllCategoriesUseCase.execute.mockResolvedValue([
+        savedCategory,
+      ]);
 
       const result = await service.findAll();
 
-      expect(categoryRepositoryMock.findAll).toHaveBeenCalled();
+      expect(
+        useCaseMocks.findAllCategoriesUseCase.execute,
+      ).toHaveBeenCalledWith();
       expect(result).toHaveLength(1);
       expect(result[0]).toBeInstanceOf(ReturnCategoryDto);
       expect(result[0]).toMatchObject({
@@ -82,17 +85,19 @@ describe('CategoryService', () => {
   });
 
   describe('Find Category By Id', () => {
-    it('should return ReturnCategoryDto when id matches', async () => {
+    it('should delegate to FindCategoryByIdUseCase and map to ReturnCategoryDto', async () => {
       const savedCategory = CategoryFactory.makeCategoryEntity();
 
-      categoryRepositoryMock.findById.mockResolvedValue(savedCategory);
+      useCaseMocks.findCategoryByIdUseCase.execute.mockResolvedValue(
+        savedCategory,
+      );
 
       const result = await service.findOneById(savedCategory.id);
 
-      expect(categoryRepositoryMock.findById).toHaveBeenCalledWith(
+      expect(useCaseMocks.findCategoryByIdUseCase.execute).toHaveBeenCalledWith(
         savedCategory.id,
       );
-
+      expect(result).toBeInstanceOf(ReturnCategoryDto);
       expect(result).toMatchObject({
         id: savedCategory.id,
         id_problem: savedCategory.id_problem,
@@ -100,30 +105,30 @@ describe('CategoryService', () => {
       });
     });
 
-    it('should throw NotFoundException when id does not match', async () => {
-      const findPromise = service.findOneById(123);
+    it('should propagate errors from FindCategoryByIdUseCase', async () => {
+      const error = new NotFoundException('Category not found');
 
-      await expect(findPromise).rejects.toThrow(NotFoundException);
-      await expect(findPromise).rejects.toThrow('Category not found');
+      useCaseMocks.findCategoryByIdUseCase.execute.mockRejectedValue(error);
+
+      await expect(service.findOneById(123)).rejects.toThrow(error);
     });
   });
 
   describe('Find Categories By Problem Id', () => {
-    it('should return a list of ReturnCategoryDto when problem id matches', async () => {
-      const savedProblem = ProblemFactory.makeProblemEntity();
+    it('should delegate to FindAllCategoriesByProblemIdUseCase and map entities', async () => {
       const savedCategory = CategoryFactory.makeCategoryEntity();
 
-      problemRepositoryMock.findById.mockResolvedValue(savedProblem);
-      categoryRepositoryMock.findByProblemId.mockResolvedValue([savedCategory]);
-
-      const result = await service.findCategoriesByProblemId(savedCategory.id);
-
-      expect(problemRepositoryMock.findById).toHaveBeenCalledWith(
-        savedProblem.id,
+      useCaseMocks.findAllCategoriesByProblemIdUseCase.execute.mockResolvedValue(
+        [savedCategory],
       );
-      expect(categoryRepositoryMock.findByProblemId).toHaveBeenCalledWith(
-        savedProblem.id,
+
+      const result = await service.findCategoriesByProblemId(
+        savedCategory.id_problem,
       );
+
+      expect(
+        useCaseMocks.findAllCategoriesByProblemIdUseCase.execute,
+      ).toHaveBeenCalledWith(savedCategory.id_problem);
       expect(result).toHaveLength(1);
       expect(result[0]).toBeInstanceOf(ReturnCategoryDto);
       expect(result[0]).toMatchObject({
@@ -133,57 +138,96 @@ describe('CategoryService', () => {
       });
     });
 
-    it('should throw NotFoundException when problem id does not match', async () => {
-      const findPromise = service.findCategoriesByProblemId(123);
+    it('should propagate errors from FindAllCategoriesByProblemIdUseCase', async () => {
+      const error = new NotFoundException('Problem not found');
 
-      await expect(findPromise).rejects.toThrow(NotFoundException);
-      await expect(findPromise).rejects.toThrow('Problem not found');
+      useCaseMocks.findAllCategoriesByProblemIdUseCase.execute.mockRejectedValue(
+        error,
+      );
+
+      await expect(service.findCategoriesByProblemId(123)).rejects.toThrow(
+        error,
+      );
     });
   });
 
   describe('Update Category', () => {
-    it('should update a category and return update result', async () => {
+    it('should delegate to UpdateCategoryUseCase and return update result', async () => {
       const categoryId = 1;
       const updateCategoryDto = {
-        category: CategoryEnum.BFS,
+        category: CategoryEnum.GRAPH,
       };
-
       const updateResult = {
         affected: 1,
         generatedMaps: [],
         raw: [],
       };
 
-      categoryRepositoryMock.updateById.mockResolvedValue(updateResult);
+      useCaseMocks.updateCategoryUseCase.execute.mockResolvedValue(
+        updateResult,
+      );
 
       const result = await service.update(categoryId, updateCategoryDto);
 
-      expect(categoryRepositoryMock.updateById).toHaveBeenCalledWith(
+      expect(useCaseMocks.updateCategoryUseCase.execute).toHaveBeenCalledWith(
         categoryId,
         updateCategoryDto,
       );
-      expect(categoryRepositoryMock.updateById).toHaveBeenCalledTimes(1);
+      expect(useCaseMocks.updateCategoryUseCase.execute).toHaveBeenCalledTimes(
+        1,
+      );
       expect(result).toEqual(updateResult);
     });
   });
 
-  describe('Delete category', () => {
-    it('should delete a category and return delete result', async () => {
+  describe('Delete Category', () => {
+    it('should delegate to RemoveCategoryUseCase and return delete result', async () => {
       const categoryId = 1;
       const deleteResult = {
         affected: 1,
         raw: [],
       };
 
-      categoryRepositoryMock.delete.mockResolvedValue(deleteResult);
+      useCaseMocks.removeCategoryUseCase.execute.mockResolvedValue(
+        deleteResult,
+      );
 
       const result = await service.remove(categoryId);
 
-      expect(categoryRepositoryMock.delete).toHaveBeenCalledWith(categoryId);
-      expect(categoryRepositoryMock.delete).toHaveBeenCalledTimes(1);
+      expect(useCaseMocks.removeCategoryUseCase.execute).toHaveBeenCalledWith(
+        categoryId,
+      );
+      expect(useCaseMocks.removeCategoryUseCase.execute).toHaveBeenCalledTimes(
+        1,
+      );
       expect(result).toEqual(deleteResult);
     });
   });
+
+  describe('Delete Categories By Problem Id', () => {
+    it('should delegate to RemoveCategoryByProblemIdUseCase and return delete result', async () => {
+      const problemId = 1;
+      const deleteResult = {
+        affected: 2,
+        raw: [],
+      };
+
+      useCaseMocks.removeCategoryByProblemIdUseCase.execute.mockResolvedValue(
+        deleteResult,
+      );
+
+      const result = await service.removeByProblemId(problemId);
+
+      expect(
+        useCaseMocks.removeCategoryByProblemIdUseCase.execute,
+      ).toHaveBeenCalledWith(problemId);
+      expect(
+        useCaseMocks.removeCategoryByProblemIdUseCase.execute,
+      ).toHaveBeenCalledTimes(1);
+      expect(result).toEqual(deleteResult);
+    });
+  });
+
   describe('Get All Available Categories', () => {
     it('should return a list of all the available categories', () => {
       const result = service.getAvailableCategories();

@@ -16,15 +16,35 @@ export class CategoryFactory {
     };
   }
 
+  static makeCategoryUseCaseMocks() {
+    const createCategoryUseCase = { execute: jest.fn() };
+    const findAllCategoriesUseCase = { execute: jest.fn() };
+    const findCategoryByIdUseCase = { execute: jest.fn() };
+    const findAllCategoriesByProblemIdUseCase = { execute: jest.fn() };
+    const updateCategoryUseCase = { execute: jest.fn() };
+    const removeCategoryUseCase = { execute: jest.fn() };
+    const removeCategoryByProblemIdUseCase = { execute: jest.fn() };
+
+    return {
+      createCategoryUseCase,
+      findAllCategoriesUseCase,
+      findCategoryByIdUseCase,
+      findAllCategoriesByProblemIdUseCase,
+      updateCategoryUseCase,
+      removeCategoryUseCase,
+      removeCategoryByProblemIdUseCase,
+    };
+  }
+
   static makeCreateCategoryDto() {
-    return new CreateCategoryDto(CategoryEnum.BASIC_MATH);
+    return new CreateCategoryDto(CategoryEnum.MATH);
   }
 
   static makeCategoryEntity() {
-    return new Category(1, 1, CategoryEnum.BASIC_MATH);
+    return new Category(1, 1, CategoryEnum.MATH);
   }
 
   static makeReturnCategoryDto() {
-    return new ReturnCategoryDto(1, 1, CategoryEnum.BASIC_MATH);
+    return new ReturnCategoryDto(1, 1, CategoryEnum.MATH);
   }
 }
