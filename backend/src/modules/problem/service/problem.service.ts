@@ -61,8 +61,8 @@ export class ProblemService {
 
     return ReturnProblemDto.fromEntity(
       problemResponse.problem,
-      problemResponse.categories,
-      problemResponse.testCases,
+      ReturnCategoryDto.fromEntityList(problemResponse.categories),
+      ReturnTestCaseDto.fromEntityList(problemResponse.testCases),
     );
   }
 
@@ -71,8 +71,8 @@ export class ProblemService {
 
     return ReturnProblemDto.fromEntity(
       problemResponse.problem,
-      problemResponse.categories,
-      problemResponse.testCases,
+      ReturnCategoryDto.fromEntityList(problemResponse.categories),
+      ReturnTestCaseDto.fromEntityList(problemResponse.testCases),
     );
   }
 
