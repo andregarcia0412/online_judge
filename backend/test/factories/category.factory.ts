@@ -7,6 +7,7 @@ export class CategoryFactory {
   static makeCategoryRepositoryMock() {
     return {
       createAndSave: jest.fn(),
+      createAndSaveMany: jest.fn(),
       findAll: jest.fn(),
       findById: jest.fn(),
       findByProblemId: jest.fn(),
