@@ -1,60 +1,55 @@
-import {
-  BadRequestException,
-  Inject,
-  Injectable,
-  NotFoundException,
-} from '@nestjs/common';
+import { Inject, Injectable } from '@nestjs/common';
 import { DeleteResult, UpdateResult } from 'typeorm';
 import { CreateTestCaseDto } from '../dto/test-case/create-test-case.dto';
 import { ReturnTestCaseDto } from '../dto/test-case/return-test-case.dto';
 import { UpdateTestCaseDto } from '../dto/test-case/update-test-case.dto';
-import { ProblemRepositoryPort } from '../interface/problem.repository.port';
-import { TestCaseRepositoryPort } from '../interface/test-case.repository.port';
+import { FindAllTestCasesByProblemIdUseCase } from '../use-case/test-case/find-all-by-problem-id.use-case';
+import { CreateTestCaseUseCase } from '../use-case/test-case/create.use-case';
+import { FindAllTestCasesUseCase } from '../use-case/test-case/find-all.use-case';
+import { FindTestCaseByIdUseCase } from '../use-case/test-case/find-one.use-case';
+import { RemoveTestCaseUseCase } from '../use-case/test-case/remove.use-case';
+import { UpdateTestCaseUseCase } from '../use-case/test-case/update.use-case';
 
 @Injectable()
 export class TestCaseService {
   constructor(
-    @Inject(TestCaseRepositoryPort)
-    private testCaseRepository: TestCaseRepositoryPort,
-    @Inject(ProblemRepositoryPort)
-    private problemRepository: ProblemRepositoryPort,
+    @Inject(CreateTestCaseUseCase)
+    private readonly createTestCaseUseCase: CreateTestCaseUseCase,
+    @Inject(FindAllTestCasesByProblemIdUseCase)
+    private readonly findAllTestCasesByProblemIdUseCase: FindAllTestCasesByProblemIdUseCase,
+    @Inject(FindAllTestCasesUseCase)
+    private readonly findAllTestCasesUseCase: FindAllTestCasesUseCase,
+    @Inject(FindTestCaseByIdUseCase)
+    private readonly findTestCaseByIdUseCase: FindTestCaseByIdUseCase,
+    @Inject(RemoveTestCaseUseCase)
+    private readonly removeTestCaseUseCase: RemoveTestCaseUseCase,
+    @Inject(UpdateTestCaseUseCase)
+    private readonly updateTestCaseUseCase: UpdateTestCaseUseCase,
   ) {}
 
   async create(
     createTestCaseDto: CreateTestCaseDto,
   ): Promise<ReturnTestCaseDto> {
-    if (!createTestCaseDto.id_problem) {
-      throw new BadRequestException('Problem Id is missing');
-    }
-    if (
-      !(await this.problemRepository.findById(createTestCaseDto.id_problem))
-    ) {
-      throw new NotFoundException('Problem not found');
-    }
-
     return ReturnTestCaseDto.fromEntity(
-      await this.testCaseRepository.createAndSave(createTestCaseDto),
+      await this.createTestCaseUseCase.execute(createTestCaseDto),
     );
   }
 
   async findAll(): Promise<ReturnTestCaseDto[]> {
     return ReturnTestCaseDto.fromEntityList(
-      await this.testCaseRepository.findAll(),
+      await this.findAllTestCasesUseCase.execute(),
     );
   }
 
   async findOneById(id: string): Promise<ReturnTestCaseDto> {
-    const testCase = await this.testCaseRepository.findOneById(id);
-    if (!testCase) {
-      throw new NotFoundException('Test case not found');
-    }
-
-    return ReturnTestCaseDto.fromEntity(testCase);
+    return ReturnTestCaseDto.fromEntity(
+      await this.findTestCaseByIdUseCase.execute(id),
+    );
   }
 
   async findAllByProblemId(id_problem: number): Promise<ReturnTestCaseDto[]> {
     return ReturnTestCaseDto.fromEntityList(
-      await this.testCaseRepository.findByProblemId(id_problem),
+      await this.findAllTestCasesByProblemIdUseCase.execute(id_problem),
     );
   }
 
@@ -62,10 +57,10 @@ export class TestCaseService {
     id: string,
     updateTestCaseDto: UpdateTestCaseDto,
   ): Promise<UpdateResult> {
-    return await this.testCaseRepository.updateById(id, updateTestCaseDto);
+    return await this.updateTestCaseUseCase.execute(id, updateTestCaseDto);
   }
 
   async remove(id: string): Promise<DeleteResult> {
-    return await this.testCaseRepository.delete(id);
+    return await this.removeTestCaseUseCase.execute(id);
   }
 }

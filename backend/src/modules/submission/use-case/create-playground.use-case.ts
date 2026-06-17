@@ -1,0 +1,64 @@
+import { Inject, Injectable, NotFoundException } from '@nestjs/common';
+import { TestResult } from 'src/modules/test-runner/dto/test-result.dto';
+import { CreateSubmissionDto } from '../dto/create-submission.dto';
+import { Problem } from 'src/modules/problem/entities/problem.entity';
+import { TestCase } from 'src/modules/problem/entities/test-case.entity';
+import { EntityManager } from 'typeorm';
+import { ProblemRepositoryPort } from 'src/modules/problem/interface/problem.repository.port';
+import { TestCaseRepositoryPort } from 'src/modules/problem/interface/test-case.repository.port';
+import { TestRunnerService } from 'src/modules/test-runner/test-runner.service';
+
+@Injectable()
+export class CreatePlaygroundSubmissionUseCase {
+  constructor(
+    @Inject(ProblemRepositoryPort)
+    private readonly problemRepository: ProblemRepositoryPort,
+    @Inject(TestCaseRepositoryPort)
+    private readonly testCaseRepository: TestCaseRepositoryPort,
+    private readonly testRunnerService: TestRunnerService,
+  ) {}
+
+  async execute(createSubmissionDto: CreateSubmissionDto): Promise<TestResult> {
+    await this.getProblemOrThrow(createSubmissionDto.id_problem);
+
+    const testCases = await this.getTestCasesOrThrow(
+      createSubmissionDto.id_problem,
+    );
+
+    const testResults = await this.testRunnerService.runTests(
+      testCases,
+      createSubmissionDto.text,
+      createSubmissionDto.language,
+    );
+
+    return testResults;
+  }
+
+  private async getProblemOrThrow(
+    id: number,
+    manager?: EntityManager,
+  ): Promise<Problem> {
+    const problem = await this.problemRepository.findById(id, manager);
+    if (!problem) {
+      throw new NotFoundException('Problem not found');
+    }
+
+    return problem;
+  }
+
+  private async getTestCasesOrThrow(
+    id_problem: number,
+    manager?: EntityManager,
+  ): Promise<TestCase[]> {
+    const testCases = await this.testCaseRepository.findByProblemId(
+      id_problem,
+      manager,
+    );
+
+    if (!testCases || testCases.length === 0) {
+      throw new NotFoundException('There are no test cases for this problem');
+    }
+
+    return testCases;
+  }
+}

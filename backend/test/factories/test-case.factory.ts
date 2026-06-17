@@ -23,6 +23,24 @@ export class TestCaseFactory {
     };
   }
 
+  static makeTestCaseUseCaseMocks() {
+    const createTestCaseUseCase = { execute: jest.fn() };
+    const findAllTestCasesByProblemIdUseCase = { execute: jest.fn() };
+    const findAllTestCasesUseCase = { execute: jest.fn() };
+    const findTestCaseByIdUseCase = { execute: jest.fn() };
+    const removeTestCaseUseCase = { execute: jest.fn() };
+    const updateTestCaseUseCase = { execute: jest.fn() };
+
+    return {
+      createTestCaseUseCase,
+      findAllTestCasesByProblemIdUseCase,
+      findAllTestCasesUseCase,
+      findTestCaseByIdUseCase,
+      removeTestCaseUseCase,
+      updateTestCaseUseCase,
+    };
+  }
+
   static makeCreateTestCaseDto() {
     return new CreateTestCaseDto('10\n', '55\n', 1);
   }

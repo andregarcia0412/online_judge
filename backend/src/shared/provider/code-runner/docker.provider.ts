@@ -1,31 +1,44 @@
-import { BadRequestException, Injectable, Logger } from '@nestjs/common';
+import {
+  BadRequestException,
+  Inject,
+  Injectable,
+  Logger,
+  NotFoundException,
+} from '@nestjs/common';
 import Docker from 'dockerode';
-import { LanguageConfig } from 'src/modules/test-runner/language-config.interface';
-import tar from 'tar-stream';
-import { ExecuteCodeDto } from './dto/execute-code.dto';
-
-const MAX_OUTPUT = 10000;
+import { ExecuteCodeDto } from 'src/shared/provider/code-runner/dto/execute-code.dto';
+import { TarPackProviderPort } from '../tar-pack/tar-pack.provider.port';
+import { CodeRunnerProviderPort } from './code-runner.provider.port';
+import { LANGUAGES } from './infra/languages/languages';
 
 @Injectable()
-export class CodeRunnerService {
-  createSourceCodePack(fileName: string, fileContent: string) {
-    const pack = tar.pack();
-    pack.entry({ name: fileName }, fileContent);
-    pack.finalize();
+export class DockerProvider implements CodeRunnerProviderPort {
+  private docker = new Docker();
+  private verifiedImages = new Set<string>();
+  private readonly logger = new Logger(DockerProvider.name);
+  private readonly maxOutput = 10000;
 
-    return pack;
+  constructor(
+    @Inject(TarPackProviderPort)
+    private readonly tarPack: TarPackProviderPort,
+  ) {}
+
+  getAllowedLanguages(): string[] {
+    const languages: string[] = [];
+    Object.entries(LANGUAGES).map(([key, _]) => {
+      languages.push(key);
+    });
+
+    return languages;
   }
 
-  private readonly logger = new Logger(CodeRunnerService.name);
-  private verifiedImages = new Set<string>();
-
-  async ensureImageExists(imageName: string, docker: Docker) {
+  async ensureImageExists(imageName: string) {
     if (this.verifiedImages.has(imageName)) {
       return;
     }
 
     try {
-      await docker.getImage(imageName).inspect();
+      await this.docker.getImage(imageName).inspect();
       this.verifiedImages.add(imageName);
       this.logger.log(`Image ${imageName} is already available locally`);
       return;
@@ -35,7 +48,7 @@ export class CodeRunnerService {
 
     try {
       await new Promise((resolve, reject) => {
-        docker.pull(imageName, (err, stream) => {
+        this.docker.pull(imageName, (err, stream) => {
           if (err) {
             return reject(err);
           }
@@ -47,7 +60,7 @@ export class CodeRunnerService {
             resolve(output);
           };
 
-          docker.modem.followProgress(stream, onFinished);
+          this.docker.modem.followProgress(stream, onFinished);
         });
       });
 
@@ -60,107 +73,20 @@ export class CodeRunnerService {
       );
     }
   }
-
-  private async runDockerExec(
-    container: Docker.Container,
-    cmd: string,
-    timeoutMs: number,
-    input?: string,
-  ) {
-    const exec = await container.exec({
-      Cmd: ['sh', '-c', cmd],
-      AttachStdin: true,
-      AttachStdout: true,
-      AttachStderr: true,
-      Tty: false,
-    });
-
-    const stream = (await exec.start({
-      detach: false,
-      hijack: true,
-      Tty: false,
-      stdin: true,
-    })) as any;
-
-    let stdout = '';
-    let stderr = '';
-    let timedOut = false;
-
-    return new Promise<{
-      stdout: string;
-      stderr: string;
-      exitCode: number;
-      timedOut: boolean;
-    }>((resolve, reject) => {
-      let finished = false;
-
-      const timeout = setTimeout(() => {
-        if (finished) {
-          return;
-        }
-
-        finished = true;
-        timedOut = true;
-
-        resolve({ stdout, stderr, exitCode: -1, timedOut: true });
-      }, timeoutMs);
-
-      stream.on('data', (chunk: Buffer) => {
-        const streamType = chunk[0];
-        const cleaned = chunk.slice(8).toString('utf8');
-
-        if (streamType == 2) {
-          stderr += cleaned;
-          if (stderr.length > MAX_OUTPUT) {
-            stderr = stderr.slice(0, MAX_OUTPUT);
-          }
-        } else {
-          stdout += cleaned;
-          if (stdout.length > MAX_OUTPUT) {
-            stdout = stdout.slice(0, MAX_OUTPUT);
-          }
-        }
-      });
-
-      stream.on('end', async () => {
-        if (finished) {
-          return;
-        }
-
-        finished = true;
-        clearTimeout(timeout);
-        const inspectData = await exec.inspect();
-        resolve({
-          stdout,
-          stderr,
-          exitCode: inspectData.ExitCode || 0,
-          timedOut: false,
-        });
-      });
-
-      stream.on('error', (err: any) => {
-        if (finished) {
-          return;
-        }
-        finished = true;
-        clearTimeout(timeout);
-        reject(err);
-      });
-
-      if (input) {
-        stream.write(input);
-        stream.end();
-      }
-    });
-  }
-
   async executeCode(
     userCode: string,
-    docker: Docker,
-    language: LanguageConfig,
+    languageName: string,
     input: string,
   ): Promise<ExecuteCodeDto> {
-    const container = await docker.createContainer({
+    const language = LANGUAGES[languageName];
+
+    if (!language) {
+      throw new BadRequestException('Invalid language name');
+    }
+
+    await this.ensureImageExists(language.imageName);
+
+    const container = await this.docker.createContainer({
       Image: language.imageName,
       Cmd: ['tail', '-f', '/dev/null'],
       Tty: false,
@@ -175,7 +101,7 @@ export class CodeRunnerService {
     });
 
     try {
-      const codeTarStream = this.createSourceCodePack(
+      const codeTarStream = this.tarPack.createSourceCodePack(
         language.fileName,
         userCode,
       );
@@ -270,5 +196,98 @@ export class CodeRunnerService {
         );
       }
     }
+  }
+
+  private async runDockerExec(
+    container: Docker.Container,
+    cmd: string,
+    timeoutMs: number,
+    input?: string,
+  ) {
+    const exec = await container.exec({
+      Cmd: ['sh', '-c', cmd],
+      AttachStdin: true,
+      AttachStdout: true,
+      AttachStderr: true,
+      Tty: false,
+    });
+
+    const stream = (await exec.start({
+      detach: false,
+      hijack: true,
+      Tty: false,
+      stdin: true,
+    })) as any;
+
+    let stdout = '';
+    let stderr = '';
+    let timedOut = false;
+
+    return new Promise<{
+      stdout: string;
+      stderr: string;
+      exitCode: number;
+      timedOut: boolean;
+    }>((resolve, reject) => {
+      let finished = false;
+
+      const timeout = setTimeout(() => {
+        if (finished) {
+          return;
+        }
+
+        finished = true;
+        timedOut = true;
+
+        resolve({ stdout, stderr, exitCode: -1, timedOut: true });
+      }, timeoutMs);
+
+      stream.on('data', (chunk: Buffer) => {
+        const streamType = chunk[0];
+        const cleaned = chunk.slice(8).toString('utf8');
+
+        if (streamType == 2) {
+          stderr += cleaned;
+          if (stderr.length > this.maxOutput) {
+            stderr = stderr.slice(0, this.maxOutput);
+          }
+        } else {
+          stdout += cleaned;
+          if (stdout.length > this.maxOutput) {
+            stdout = stdout.slice(0, this.maxOutput);
+          }
+        }
+      });
+
+      stream.on('end', async () => {
+        if (finished) {
+          return;
+        }
+
+        finished = true;
+        clearTimeout(timeout);
+        const inspectData = await exec.inspect();
+        resolve({
+          stdout,
+          stderr,
+          exitCode: inspectData.ExitCode || 0,
+          timedOut: false,
+        });
+      });
+
+      stream.on('error', (err: any) => {
+        if (finished) {
+          return;
+        }
+        finished = true;
+        clearTimeout(timeout);
+        reject(err);
+      });
+
+      if (input) {
+        stream.write(input);
+        stream.end();
+      }
+    });
   }
 }

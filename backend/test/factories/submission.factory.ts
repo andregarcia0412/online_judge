@@ -28,6 +28,26 @@ export class SubmissionFactory {
     };
   }
 
+  static makeSubmissionUseCaseMocks() {
+    const createSubmissionUseCase = { execute: jest.fn() };
+    const createPlaygroundSubmissionUseCase = { execute: jest.fn() };
+    const findAllSubmissionUseCase = { execute: jest.fn() };
+    const findOneSubmissionByIdUseCase = { execute: jest.fn() };
+    const findAllSubmissionByUserIdUseCase = { execute: jest.fn() };
+    const updateSubmissionUseCase = { execute: jest.fn() };
+    const deleteSubmissionUseCase = { execute: jest.fn() };
+
+    return {
+      createSubmissionUseCase,
+      createPlaygroundSubmissionUseCase,
+      findAllSubmissionUseCase,
+      findOneSubmissionByIdUseCase,
+      findAllSubmissionByUserIdUseCase,
+      updateSubmissionUseCase,
+      deleteSubmissionUseCase,
+    };
+  }
+
   static makeCreateSubmissionDto(): CreateSubmissionDto {
     return new CreateSubmissionDto('123', 1, 'print("Hello World!")', 'python');
   }

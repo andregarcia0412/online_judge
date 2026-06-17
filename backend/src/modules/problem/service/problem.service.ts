@@ -1,120 +1,74 @@
-import {
-  ConflictException,
-  Inject,
-  Injectable,
-  NotFoundException,
-} from '@nestjs/common';
-import { TestCaseRepositoryPort } from 'src/modules/problem/interface/test-case.repository.port';
+import { Inject, Injectable } from '@nestjs/common';
 import { DeleteResult, UpdateResult } from 'typeorm';
-import { DataSource } from 'typeorm';
 import { ReturnCategoryDto } from '../dto/category/return-category.dto';
 import { CreateProblemDto } from '../dto/problem/create-problem.dto';
 import { ReturnProblemDto } from '../dto/problem/return-problem.dto';
 import { UpdateProblemDto } from '../dto/problem/update-problem.dto';
 import { ReturnTestCaseDto } from '../dto/test-case/return-test-case.dto';
-import { Problem } from '../entities/problem.entity';
-import { TestCase } from '../entities/test-case.entity';
-import { CategoryRepositoryPort } from '../interface/category.repository.port';
-import { ProblemRepositoryPort } from '../interface/problem.repository.port';
+import { CreateProblemUseCase } from '../use-case/problem/create.use-case';
+import { FindAllProblemUseCase } from '../use-case/problem/find-all.use-case';
+import { FindProblemByIdUseCase } from '../use-case/problem/find-by-id.use-case';
+import { FindProblemByTitleUseCase } from '../use-case/problem/find-by-title.use-case';
+import { RemoveProblemUseCase } from '../use-case/problem/remove.use-case';
+import { UpdateProblemUseCase } from '../use-case/problem/update.use-case';
 
 @Injectable()
 export class ProblemService {
   constructor(
-    @Inject(ProblemRepositoryPort)
-    private readonly problemRepository: ProblemRepositoryPort,
-    @Inject(TestCaseRepositoryPort)
-    private readonly testCaseRepository: TestCaseRepositoryPort,
-    @Inject(CategoryRepositoryPort)
-    private readonly categoryRepository: CategoryRepositoryPort,
-    private readonly dataSource: DataSource,
+    @Inject(CreateProblemUseCase)
+    private readonly createProblemUseCase: CreateProblemUseCase,
+    @Inject(FindAllProblemUseCase)
+    private readonly findAllProblemUseCase: FindAllProblemUseCase,
+    @Inject(FindProblemByIdUseCase)
+    private readonly findProblemByIdUseCase: FindProblemByIdUseCase,
+    @Inject(FindProblemByTitleUseCase)
+    private readonly findProblemByTitleUseCase: FindProblemByTitleUseCase,
+    @Inject(UpdateProblemUseCase)
+    private readonly updateProblemUseCase: UpdateProblemUseCase,
+    @Inject(RemoveProblemUseCase)
+    private readonly removeProblemUseCase: RemoveProblemUseCase,
   ) {}
 
   async create(createProblemDto: CreateProblemDto): Promise<ReturnProblemDto> {
-    return await this.dataSource.transaction(async (manager) => {
-      if (
-        await this.problemRepository.findByTitle(
-          createProblemDto.title,
-          manager,
-        )
-      ) {
-        throw new ConflictException('A problem with this title already exists');
-      }
+    const createResponse =
+      await this.createProblemUseCase.execute(createProblemDto);
 
-      const savedProblem = await this.problemRepository.createAndSave(
-        createProblemDto,
-        manager,
-      );
-
-      const savedCategories = await this.categoryRepository.createAndSaveMany(
-        createProblemDto.category,
-        savedProblem.id,
-        manager,
-      );
-
-      createProblemDto.test_cases.map(
-        (testCase) => (testCase.id_problem = savedProblem.id),
-      );
-
-      const savedTestCases = await this.testCaseRepository.createAndSaveMany(
-        createProblemDto.test_cases,
-        manager,
-      );
-
-      return ReturnProblemDto.fromEntity(
-        savedProblem,
-        ReturnCategoryDto.fromEntityList(savedCategories),
-        ReturnTestCaseDto.fromEntityList(savedTestCases),
-      );
-    });
+    return ReturnProblemDto.fromEntity(
+      createResponse.problem,
+      ReturnCategoryDto.fromEntityList(createResponse.categories),
+      ReturnTestCaseDto.fromEntityList(createResponse.testCases),
+    );
   }
 
   async findAll(): Promise<ReturnProblemDto[]> {
-    const problems = await this.problemRepository.findAllOrdered();
+    const problems = await this.findAllProblemUseCase.execute();
 
-    return await Promise.all(
-      problems.map(async (problem: Problem) => {
-        const categories = await this.categoryRepository.findByProblemId(
-          problem.id,
-        );
-        const testCases = await this.testCaseRepository.findByProblemId(
-          problem.id,
-        );
-        return ReturnProblemDto.fromEntity(problem, categories, testCases);
-      }),
+    return problems.map((problem) =>
+      ReturnProblemDto.fromEntity(
+        problem.problem,
+        ReturnCategoryDto.fromEntityList(problem.categories),
+        ReturnTestCaseDto.fromEntityList(problem.testCases),
+      ),
     );
   }
 
   async findOneById(id: number): Promise<ReturnProblemDto> {
-    const problem = await this.problemRepository.findById(id);
-    if (!problem) {
-      throw new NotFoundException('Problem not found');
-    }
+    const problemResponse = await this.findProblemByIdUseCase.execute(id);
 
-    const categories = await this.categoryRepository.findByProblemId(
-      problem.id,
+    return ReturnProblemDto.fromEntity(
+      problemResponse.problem,
+      ReturnCategoryDto.fromEntityList(problemResponse.categories),
+      ReturnTestCaseDto.fromEntityList(problemResponse.testCases),
     );
-
-    const testCases = await this.testCaseRepository.findByProblemId(problem.id);
-
-    return ReturnProblemDto.fromEntity(problem, categories, testCases);
   }
 
   async findOneByTitle(title: string): Promise<ReturnProblemDto> {
-    const problem = await this.problemRepository.findByTitle(title);
-    if (!problem) {
-      throw new NotFoundException('Problem not found');
-    }
+    const problemResponse = await this.findProblemByTitleUseCase.execute(title);
 
-    const categories = await this.categoryRepository.findByProblemId(
-      problem.id,
-    );
-
-    return ReturnProblemDto.fromEntity(problem, categories);
-  }
-
-  async findAllTestCasesById(id: number): Promise<ReturnTestCaseDto[]> {
-    return (await this.testCaseRepository.findByProblemId(id)).map(
-      (testCase: TestCase) => ReturnTestCaseDto.fromEntity(testCase),
+    return ReturnProblemDto.fromEntity(
+      problemResponse.problem,
+      ReturnCategoryDto.fromEntityList(problemResponse.categories),
+      ReturnTestCaseDto.fromEntityList(problemResponse.testCases),
     );
   }
 
@@ -122,10 +76,10 @@ export class ProblemService {
     id: number,
     updateProblemDto: UpdateProblemDto,
   ): Promise<UpdateResult> {
-    return await this.problemRepository.updateById(id, updateProblemDto);
+    return await this.updateProblemUseCase.execute(id, updateProblemDto);
   }
 
   async remove(id: number): Promise<DeleteResult> {
-    return await this.problemRepository.delete(id);
+    return await this.removeProblemUseCase.execute(id);
   }
 }

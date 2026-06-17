@@ -1,4 +1,4 @@
-import { LanguageConfig } from 'src/modules/test-runner/language-config.interface';
+import { LanguageConfig } from 'src/shared/provider/code-runner/infra/languages/language-config.interface';
 
 export const LANGUAGES: Record<string, LanguageConfig> = {
   python: {

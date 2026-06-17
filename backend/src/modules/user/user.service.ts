@@ -1,75 +1,69 @@
-import {
-  ConflictException,
-  Inject,
-  Injectable,
-  NotFoundException,
-} from '@nestjs/common';
-import * as bcrypt from 'bcrypt';
+import { Inject, Injectable } from '@nestjs/common';
 import { ReturnSubmissionDto } from 'src/modules/submission/dto/return-submission.dto';
-import { Submission } from 'src/modules/submission/entities/submission.entity';
 import { DeleteResult, EntityManager, UpdateResult } from 'typeorm';
-import { SubmissionRepositoryPort } from '../submission/interface/submission.repository.port';
 import { CreateUserDto } from './dto/create-user.dto';
 import { ReturnUserDto } from './dto/return-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
 import { User } from './entities/user.entity';
-import { UserRepositoryPort } from './interface/user.repository.port';
+import { CreateUserUseCase } from './use-case/create.use-case';
+import { DeleteUserUseCase } from './use-case/delete.use-case';
+import { FindAllSubmissionsUseCase } from './use-case/find-all-submissions.use-case';
+import { FindAllUserUseCase } from './use-case/find-all.use-case';
+import { FindOneByEmailUseCase } from './use-case/find-one-by-email.use-case';
+import { FindOneUserByIdUseCase } from './use-case/find-one-by-id.use-case';
+import { UpdateUserStreakOnSubmissionUseCase } from './use-case/update-streak-on-submission.use-case';
+import { UpdateUserStreakUseCase } from './use-case/update-streak.use-case';
+import { UpdateUserUseCase } from './use-case/update.use-case';
 
 @Injectable()
 export class UserService {
   constructor(
-    @Inject(UserRepositoryPort)
-    private userRepository: UserRepositoryPort,
-    @Inject(SubmissionRepositoryPort)
-    private submissionRepository: SubmissionRepositoryPort,
+    @Inject(CreateUserUseCase)
+    private readonly createUserUseCase: CreateUserUseCase,
+    @Inject(FindAllUserUseCase)
+    private readonly findAllUseCase: FindAllUserUseCase,
+    @Inject(FindOneUserByIdUseCase)
+    private readonly findOneUserByIdUseCase: FindOneUserByIdUseCase,
+    @Inject(UpdateUserStreakUseCase)
+    private readonly updateUserStreakUseCase: UpdateUserStreakUseCase,
+    @Inject(FindOneByEmailUseCase)
+    private readonly findOneByEmailUseCase: FindOneByEmailUseCase,
+    @Inject(FindAllSubmissionsUseCase)
+    private readonly findAllSubmissionsUseCase: FindAllSubmissionsUseCase,
+    @Inject(UpdateUserUseCase)
+    private readonly updateUserUseCase: UpdateUserUseCase,
+    @Inject(DeleteUserUseCase)
+    private readonly deleteUserUseCase: DeleteUserUseCase,
+    @Inject(UpdateUserStreakOnSubmissionUseCase)
+    private readonly updateUserStreakOnSubmissionUseCase: UpdateUserStreakOnSubmissionUseCase,
   ) {}
 
   async create(createUserDto: CreateUserDto): Promise<ReturnUserDto> {
-    if (await this.userRepository.findOneByEmail(createUserDto.email)) {
-      throw new ConflictException('This email is already in use');
-    }
-
-    if (await this.userRepository.findOneByUsername(createUserDto.username)) {
-      throw new ConflictException('This username is already in use');
-    }
-
-    const hash = await bcrypt.hash(createUserDto.password, 10);
-
-    createUserDto.password = hash;
-    const newUser = await this.userRepository.save(createUserDto);
-
-    return ReturnUserDto.fromEntity(newUser);
-  }
-
-  async findAll(): Promise<ReturnUserDto[]> {
-    return (await this.userRepository.findAll()).map((user: User) =>
-      ReturnUserDto.fromEntity(user),
+    return ReturnUserDto.fromEntity(
+      await this.createUserUseCase.execute(createUserDto),
     );
   }
 
-  async findOneById(id: string): Promise<ReturnUserDto> {
-    const user = await this.userRepository.findOneById(id);
-    if (!user) {
-      throw new NotFoundException('User not found');
-    }
+  async findAll(): Promise<ReturnUserDto[]> {
+    return (await this.findAllUseCase.execute()).map(ReturnUserDto.fromEntity);
+  }
 
-    await this.updateUserStreak(user);
+  async findOneById(id: string): Promise<ReturnUserDto> {
+    const user = await this.findOneUserByIdUseCase.execute(id);
+    await this.updateUserStreakUseCase.execute(user);
+
     return ReturnUserDto.fromEntity(user);
   }
 
   async findOneByEmail(email: string): Promise<ReturnUserDto> {
-    const user = await this.userRepository.findOneByEmail(email);
-
-    if (!user) {
-      throw new NotFoundException('User not found');
-    }
-
-    return ReturnUserDto.fromEntity(user);
+    return ReturnUserDto.fromEntity(
+      await this.findOneByEmailUseCase.execute(email),
+    );
   }
 
   async findAllSubmissionsById(id: string): Promise<ReturnSubmissionDto[]> {
-    return (await this.submissionRepository.findAllByUserId(id)).map(
-      (submission: Submission) => ReturnSubmissionDto.fromEntity(submission),
+    return (await this.findAllSubmissionsUseCase.execute(id)).map(
+      ReturnSubmissionDto.fromEntity,
     );
   }
 
@@ -77,66 +71,18 @@ export class UserService {
     id: string,
     updateUserDto: UpdateUserDto,
   ): Promise<UpdateResult> {
-    return await this.userRepository.updateById(id, updateUserDto);
+    return await this.updateUserUseCase.execute(id, updateUserDto);
   }
 
   async remove(id: string): Promise<DeleteResult> {
-    return await this.userRepository.delete(id);
+    return await this.deleteUserUseCase.execute(id);
   }
 
   async updateUserStreak(user: User) {
-    const lastUserSubmission =
-      await this.submissionRepository.findLastUserSubmission(user.id);
-    const oldUserStreak = user.streak;
-
-    if (!lastUserSubmission) {
-      user.streak = 0;
-    } else {
-      const lastDate = new Date(lastUserSubmission.submission_date);
-      const today = new Date();
-
-      lastDate.setUTCHours(0, 0, 0, 0);
-      today.setUTCHours(0, 0, 0, 0);
-
-      const diffDays = this.getDiffDays(today, lastDate);
-
-      if (diffDays > 1) {
-        user.streak = 0;
-      }
-    }
-    const newUserStreak = user.streak;
-    if (oldUserStreak !== newUserStreak) {
-      await this.userRepository.saveExistingEntity(user);
-    }
+    await this.updateUserStreakUseCase.execute(user);
   }
 
   async updateUserStreakOnSubmission(user: User, manager?: EntityManager) {
-    const lastUserSubmission =
-      await this.submissionRepository.findLastUserSubmission(user.id, manager);
-
-    if (!lastUserSubmission) {
-      user.streak = 1;
-    } else {
-      const lastDate = new Date(lastUserSubmission.submission_date);
-      const today = new Date();
-
-      lastDate.setUTCHours(0, 0, 0, 0);
-      today.setUTCHours(0, 0, 0, 0);
-
-      const diffDays = this.getDiffDays(today, lastDate);
-
-      if (diffDays === 0) return;
-
-      if (diffDays === 1) {
-        user.streak = Number(user.streak) + 1;
-      } else if (diffDays > 1) {
-        user.streak = 1;
-      }
-    }
-  }
-  private getDiffDays(today: Date, lastDate: Date): number {
-    return Math.floor(
-      (today.getTime() - lastDate.getTime()) / (1000 * 60 * 60 * 24),
-    );
+    await this.updateUserStreakOnSubmissionUseCase.execute(user, manager);
   }
 }

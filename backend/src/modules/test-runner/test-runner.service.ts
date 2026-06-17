@@ -1,25 +1,25 @@
-import { BadRequestException, Injectable } from '@nestjs/common';
-import { CodeRunnerService } from 'src/modules/code-runner/code-runner.service';
+import { BadRequestException, Inject, Injectable } from '@nestjs/common';
 import { TestCase } from 'src/modules/problem/entities/test-case.entity';
-import Docker from 'dockerode';
-import { TestResult } from './dto/test-result.dto';
-import { LANGUAGES } from 'src/modules/code-runner/languages';
+import { CodeRunnerProviderPort } from 'src/shared/provider/code-runner/code-runner.provider.port';
+import { ExecuteCodeDto } from '../../shared/provider/code-runner/dto/execute-code.dto';
 import { StatusEnum } from '../submission/enum/submission-status';
-import { ExecuteCodeDto } from '../code-runner/dto/execute-code.dto';
+import { TestResult } from './dto/test-result.dto';
 
 @Injectable()
 export class TestRunnerService {
-  private docker: Docker;
-  constructor(private codeRunnerService: CodeRunnerService) {
-    this.docker = new Docker();
-  }
+  constructor(
+    @Inject(CodeRunnerProviderPort)
+    private readonly codeRunnerProviderPort: CodeRunnerProviderPort,
+  ) {}
 
   async runTests(
     testCases: TestCase[],
     userCode: string,
     selectedLanguage: string,
   ): Promise<TestResult> {
-    const language = LANGUAGES[selectedLanguage];
+    const language = this.codeRunnerProviderPort
+      .getAllowedLanguages()
+      .find((value) => value == selectedLanguage);
     let biggestUsage = 0;
     let testCasesPassed = 0;
     let biggestRuntime = 0;
@@ -30,11 +30,6 @@ export class TestRunnerService {
 
     let result: ExecuteCodeDto | null = null;
 
-    await this.codeRunnerService.ensureImageExists(
-      language.imageName,
-      this.docker,
-    );
-
     if (!testCases || testCases.length === 0) {
       throw new BadRequestException('No test cases found for this problem');
     }
@@ -42,9 +37,8 @@ export class TestRunnerService {
     for (let i = 0; i < testCases.length; i++) {
       const testCase = testCases[i];
 
-      result = await this.codeRunnerService.executeCode(
+      result = await this.codeRunnerProviderPort.executeCode(
         userCode,
-        this.docker,
         language,
         testCase.input,
       );

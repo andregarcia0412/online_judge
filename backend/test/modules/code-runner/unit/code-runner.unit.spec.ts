@@ -1,27 +1,44 @@
 import { BadRequestException } from '@nestjs/common';
 import { EventEmitter } from 'events';
-import { CodeRunnerService } from 'src/modules/code-runner/code-runner.service';
-import { LanguageConfig } from 'src/modules/test-runner/language-config.interface';
+import { DockerProvider } from 'src/shared/provider/code-runner/docker.provider';
+import { LANGUAGES } from 'src/shared/provider/code-runner/infra/languages/languages';
+import { LanguageConfig } from 'src/shared/provider/code-runner/infra/languages/language-config.interface';
 
-describe('CodeRunnerService', () => {
-  let service: CodeRunnerService;
+describe('DockerProvider', () => {
+  let provider: DockerProvider;
+  let tarPackMock: { createSourceCodePack: jest.Mock };
 
   beforeEach(() => {
-    service = new CodeRunnerService();
+    tarPackMock = {
+      createSourceCodePack: jest.fn().mockReturnValue('tar-stream'),
+    };
+
+    provider = new DockerProvider(tarPackMock as any);
   });
 
   afterEach(() => {
     jest.restoreAllMocks();
   });
 
+  describe('getAllowedLanguages', () => {
+    it('should return language keys from config', () => {
+      const allowed = provider.getAllowedLanguages().sort();
+      const keys = Object.keys(LANGUAGES).sort();
+
+      expect(allowed).toEqual(keys);
+    });
+  });
+
   describe('ensureImageExists', () => {
     it('should skip verification when image was already verified', async () => {
-      (service as any).verifiedImages.add('node:24-alpine');
+      (provider as any).verifiedImages.add('node:24-alpine');
       const dockerMock = {
         getImage: jest.fn(),
       };
 
-      await service.ensureImageExists('node:24-alpine', dockerMock as any);
+      (provider as any).docker = dockerMock;
+
+      await provider.ensureImageExists('node:24-alpine');
 
       expect(dockerMock.getImage).not.toHaveBeenCalled();
     });
@@ -33,12 +50,14 @@ describe('CodeRunnerService', () => {
         pull: jest.fn(),
       };
 
-      await service.ensureImageExists('python:3.9-alpine', dockerMock as any);
+      (provider as any).docker = dockerMock;
+
+      await provider.ensureImageExists('python:3.9-alpine');
 
       expect(dockerMock.getImage).toHaveBeenCalledWith('python:3.9-alpine');
       expect(inspectMock).toHaveBeenCalledTimes(1);
       expect(dockerMock.pull).not.toHaveBeenCalled();
-      expect((service as any).verifiedImages.has('python:3.9-alpine')).toBe(
+      expect((provider as any).verifiedImages.has('python:3.9-alpine')).toBe(
         true,
       );
     });
@@ -54,14 +73,16 @@ describe('CodeRunnerService', () => {
         },
       };
 
-      await service.ensureImageExists('gcc:13', dockerMock as any);
+      (provider as any).docker = dockerMock;
+
+      await provider.ensureImageExists('gcc:13');
 
       expect(dockerMock.pull).toHaveBeenCalledWith(
         'gcc:13',
         expect.any(Function),
       );
       expect(dockerMock.modem.followProgress).toHaveBeenCalledTimes(1);
-      expect((service as any).verifiedImages.has('gcc:13')).toBe(true);
+      expect((provider as any).verifiedImages.has('gcc:13')).toBe(true);
     });
 
     it('should throw BadRequestException when image pull fails', async () => {
@@ -75,10 +96,9 @@ describe('CodeRunnerService', () => {
         },
       };
 
-      const ensurePromise = service.ensureImageExists(
-        'rust:1.76',
-        dockerMock as any,
-      );
+      (provider as any).docker = dockerMock;
+
+      const ensurePromise = provider.ensureImageExists('rust:1.76');
 
       await expect(ensurePromise).rejects.toThrow(BadRequestException);
       await expect(ensurePromise).rejects.toThrow(
@@ -104,36 +124,39 @@ describe('CodeRunnerService', () => {
       return stream;
     };
 
+    it('should throw BadRequestException when language is invalid', async () => {
+      const runPromise = provider.executeCode('print(1)', 'invalid', '');
+
+      await expect(runPromise).rejects.toThrow(BadRequestException);
+      await expect(runPromise).rejects.toThrow('Invalid language name');
+    });
+
     it('should return compilation error when compile command fails', async () => {
-      const statsStream = makeStatsStream();
       const containerMock = {
         putArchive: jest.fn().mockResolvedValue(undefined),
         start: jest.fn().mockResolvedValue(undefined),
-        stats: jest.fn().mockResolvedValue(statsStream),
         kill: jest.fn().mockResolvedValue(undefined),
       };
       const dockerMock = {
         createContainer: jest.fn().mockResolvedValue(containerMock),
       };
       const runDockerExecSpy = jest
-        .spyOn(service as any, 'runDockerExec')
+        .spyOn(provider as any, 'runDockerExec')
         .mockResolvedValueOnce({
           stdout: '',
           stderr: 'compilation error',
           exitCode: 1,
           timedOut: false,
         });
+      const ensureImageSpy = jest
+        .spyOn(provider, 'ensureImageExists')
+        .mockResolvedValue(undefined);
 
-      const result = await service.executeCode(
-        'print(1)',
-        dockerMock as any,
-        {
-          ...baseLanguage,
-          compileCommand: 'python -m py_compile main.py',
-        },
-        '',
-      );
+      (provider as any).docker = dockerMock;
 
+      const result = await provider.executeCode('print(1)', 'c', '');
+
+      expect(ensureImageSpy).toHaveBeenCalledWith(LANGUAGES.c.imageName);
       expect(runDockerExecSpy).toHaveBeenCalledTimes(1);
       expect(result.output).toBe('');
       expect(result.errOutput).toBe('compilation error');
@@ -154,8 +177,10 @@ describe('CodeRunnerService', () => {
         createContainer: jest.fn().mockResolvedValue(containerMock),
       };
 
+      jest.spyOn(provider, 'ensureImageExists').mockResolvedValue(undefined);
+
       jest
-        .spyOn(service as any, 'runDockerExec')
+        .spyOn(provider as any, 'runDockerExec')
         .mockImplementationOnce(async () => {
           statsStream.emit(
             'data',
@@ -170,14 +195,13 @@ describe('CodeRunnerService', () => {
           };
         });
 
-      const pendingResult = service.executeCode(
+      (provider as any).docker = dockerMock;
+
+      const result = await provider.executeCode(
         'print(input())',
-        dockerMock as any,
-        baseLanguage,
+        'python',
         '1\n',
       );
-
-      const result = await pendingResult;
 
       expect(result.output).toBe('partial output');
       expect(result.errOutput).toBe('Time limit exceeded');
@@ -199,8 +223,10 @@ describe('CodeRunnerService', () => {
         createContainer: jest.fn().mockResolvedValue(containerMock),
       };
 
+      jest.spyOn(provider, 'ensureImageExists').mockResolvedValue(undefined);
+
       jest
-        .spyOn(service as any, 'runDockerExec')
+        .spyOn(provider as any, 'runDockerExec')
         .mockImplementationOnce(async () => {
           statsStream.emit(
             'data',
@@ -219,14 +245,9 @@ describe('CodeRunnerService', () => {
           };
         });
 
-      const pendingResult = service.executeCode(
-        'print(42)',
-        dockerMock as any,
-        baseLanguage,
-        '',
-      );
+      (provider as any).docker = dockerMock;
 
-      const result = await pendingResult;
+      const result = await provider.executeCode('print(42)', 'python', '');
 
       expect(result.output).toBe('42\n');
       expect(result.errOutput).toBe('');

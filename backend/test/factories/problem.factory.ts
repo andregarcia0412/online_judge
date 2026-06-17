@@ -5,6 +5,9 @@ import { ReturnProblemDto } from 'src/modules/problem/dto/problem/return-problem
 import { Problem } from 'src/modules/problem/entities/problem.entity';
 import { CategoryEnum } from 'src/modules/problem/enum/category.enum';
 import { ProblemDifficultyEnum } from 'src/modules/problem/enum/problem-difficulty.enum';
+import { ProblemResponse } from 'src/modules/problem/use-case/problem/response/problem.response';
+import { CategoryFactory } from 'test/factories/category.factory';
+import { TestCaseFactory } from 'test/factories/test-case.factory';
 
 export class ProblemFactory {
   private static readonly fixedData = new Date('2026-01-01T00:00:00.000Z');
@@ -25,6 +28,32 @@ export class ProblemFactory {
       updateById: update,
       delete: deleteFn,
     };
+  }
+
+  static makeProblemUseCaseMocks() {
+    const createProblemUseCase = { execute: jest.fn() };
+    const findAllProblemUseCase = { execute: jest.fn() };
+    const findProblemByIdUseCase = { execute: jest.fn() };
+    const findProblemByTitleUseCase = { execute: jest.fn() };
+    const updateProblemUseCase = { execute: jest.fn() };
+    const removeProblemUseCase = { execute: jest.fn() };
+
+    return {
+      createProblemUseCase,
+      findAllProblemUseCase,
+      findProblemByIdUseCase,
+      findProblemByTitleUseCase,
+      updateProblemUseCase,
+      removeProblemUseCase,
+    };
+  }
+
+  static makeProblemResponse() {
+    return new ProblemResponse(
+      this.makeProblemEntity(),
+      [TestCaseFactory.makeTestCaseEntity()],
+      [CategoryFactory.makeCategoryEntity()],
+    );
   }
 
   static makeCreateProblemDto() {

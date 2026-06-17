@@ -57,7 +57,7 @@ export class ProblemController {
   async findAllTestCaseById(
     @Param('id') id: string,
   ): Promise<ReturnTestCaseDto[]> {
-    return this.problemService.findAllTestCasesById(+id);
+    return this.testCaseService.findAllByProblemId(+id);
   }
 
   @Patch('/problem/:id')
