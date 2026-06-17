@@ -1,25 +1,24 @@
 import { NotFoundException } from '@nestjs/common';
 import { ReturnTestCaseDto } from 'src/modules/problem/dto/test-case/return-test-case.dto';
 import { TestCaseService } from 'src/modules/problem/service/test-case.service';
-import { ProblemFactory } from 'test/factories/problem.factory';
 import { TestCaseFactory } from 'test/factories/test-case.factory';
 
 describe('TestCaseService', () => {
-  let testCaseRepositoryMock: ReturnType<
-    typeof TestCaseFactory.makeTestCaseRepositoryMock
-  >;
-  let problemRepositoryMock: ReturnType<
-    typeof ProblemFactory.makeProblemRepositoryMock
+  let useCaseMocks: ReturnType<
+    typeof TestCaseFactory.makeTestCaseUseCaseMocks
   >;
   let service: TestCaseService;
 
   beforeEach(() => {
-    testCaseRepositoryMock = TestCaseFactory.makeTestCaseRepositoryMock();
-    problemRepositoryMock = ProblemFactory.makeProblemRepositoryMock();
+    useCaseMocks = TestCaseFactory.makeTestCaseUseCaseMocks();
 
     service = new TestCaseService(
-      testCaseRepositoryMock as any,
-      problemRepositoryMock as any,
+      useCaseMocks.createTestCaseUseCase as any,
+      useCaseMocks.findAllTestCasesByProblemIdUseCase as any,
+      useCaseMocks.findAllTestCasesUseCase as any,
+      useCaseMocks.findTestCaseByIdUseCase as any,
+      useCaseMocks.removeTestCaseUseCase as any,
+      useCaseMocks.updateTestCaseUseCase as any,
     );
   });
 
@@ -28,60 +27,50 @@ describe('TestCaseService', () => {
   });
 
   describe('Create Test Case', () => {
-    it('should create a test case when problem exists', async () => {
+    it('should delegate to CreateTestCaseUseCase and map to ReturnTestCaseDto', async () => {
       const createTestCaseDto = TestCaseFactory.makeCreateTestCaseDto();
-      const savedProblem = ProblemFactory.makeProblemEntity();
       const savedTestCase = TestCaseFactory.makeTestCaseEntity();
 
-      problemRepositoryMock.findById.mockResolvedValue(savedProblem);
-      testCaseRepositoryMock.createAndSave.mockResolvedValue(savedTestCase);
+      useCaseMocks.createTestCaseUseCase.execute.mockResolvedValue(
+        savedTestCase,
+      );
 
       const result = await service.create({ ...createTestCaseDto });
 
-      expect(problemRepositoryMock.findById).toHaveBeenCalledWith(
-        createTestCaseDto.id_problem,
-      );
-
-      expect(problemRepositoryMock.findById).toHaveBeenCalledTimes(1);
-
-      expect(testCaseRepositoryMock.createAndSave).toHaveBeenCalledWith(
+      expect(useCaseMocks.createTestCaseUseCase.execute).toHaveBeenCalledWith(
         createTestCaseDto,
       );
-
+      expect(useCaseMocks.createTestCaseUseCase.execute).toHaveBeenCalledTimes(
+        1,
+      );
       expect(result).toBeInstanceOf(ReturnTestCaseDto);
       expect(result).toMatchObject(TestCaseFactory.makeReturnTestCaseDto());
     });
 
-    it('should throw not found exception when problem does not exist', async () => {
+    it('should propagate errors thrown by the use case', async () => {
       const createTestCaseDto = TestCaseFactory.makeCreateTestCaseDto();
+      const error = new NotFoundException('Problem not found');
 
-      problemRepositoryMock.findById.mockResolvedValue(null);
+      useCaseMocks.createTestCaseUseCase.execute.mockRejectedValue(error);
 
-      const createPromise = service.create({ ...createTestCaseDto });
-
-      await expect(createPromise).rejects.toThrow(NotFoundException);
-      await expect(createPromise).rejects.toThrow('Problem not found');
-
-      expect(problemRepositoryMock.findById).toHaveBeenCalledWith(
-        createTestCaseDto.id_problem,
+      await expect(service.create({ ...createTestCaseDto })).rejects.toThrow(
+        error,
       );
-
-      expect(problemRepositoryMock.findById).toHaveBeenCalledTimes(1);
-      expect(testCaseRepositoryMock.createAndSave).not.toHaveBeenCalled();
     });
   });
 
   describe('Find all Test Cases', () => {
-    it('should return a list of ReturnTestCaseDto', async () => {
+    it('should delegate to FindAllTestCasesUseCase and map to ReturnTestCaseDto', async () => {
       const testCaseEntity = TestCaseFactory.makeTestCaseEntity();
-      testCaseRepositoryMock.findAll.mockResolvedValue([testCaseEntity]);
+      useCaseMocks.findAllTestCasesUseCase.execute.mockResolvedValue([
+        testCaseEntity,
+      ]);
 
       const result = await service.findAll();
 
+      expect(useCaseMocks.findAllTestCasesUseCase.execute).toHaveBeenCalled();
       expect(result).toHaveLength(1);
       expect(result[0]).toBeInstanceOf(ReturnTestCaseDto);
-      expect(testCaseRepositoryMock.findAll).toHaveBeenCalled();
-
       expect(result[0]).toMatchObject({
         id: testCaseEntity.id,
         id_problem: testCaseEntity.id_problem,
@@ -92,9 +81,11 @@ describe('TestCaseService', () => {
   });
 
   describe('Get Test Case By Id', () => {
-    it('should return a test case entity when id matches', async () => {
+    it('should delegate to FindTestCaseByIdUseCase and map to ReturnTestCaseDto', async () => {
       const testCaseEntity = TestCaseFactory.makeTestCaseEntity();
-      testCaseRepositoryMock.findOneById.mockResolvedValue(testCaseEntity);
+      useCaseMocks.findTestCaseByIdUseCase.execute.mockResolvedValue(
+        testCaseEntity,
+      );
 
       const result = await service.findOneById(testCaseEntity.id);
 
@@ -105,25 +96,23 @@ describe('TestCaseService', () => {
         input: testCaseEntity.input,
         output: testCaseEntity.output,
       });
-      expect(testCaseRepositoryMock.findOneById).toHaveBeenCalledWith(
+      expect(useCaseMocks.findTestCaseByIdUseCase.execute).toHaveBeenCalledWith(
         testCaseEntity.id,
       );
     });
 
-    it('should throw not found exception when id does not match', async () => {
-      testCaseRepositoryMock.findOneById.mockResolvedValue(null);
+    it('should propagate not found exception thrown by the use case', async () => {
+      const error = new NotFoundException('Test case not found');
+      useCaseMocks.findTestCaseByIdUseCase.execute.mockRejectedValue(error);
 
-      const findPromise = service.findOneById('123');
-
-      await expect(findPromise).rejects.toThrow(NotFoundException);
-      await expect(findPromise).rejects.toThrow('Test case not found');
+      await expect(service.findOneById('123')).rejects.toThrow(error);
     });
   });
 
   describe('Get All Test Case By Problem Id', () => {
-    it('should return a list of ReturnTestCaseDto', async () => {
+    it('should delegate to FindAllTestCasesByProblemIdUseCase and map to ReturnTestCaseDto', async () => {
       const testCaseEntity = TestCaseFactory.makeTestCaseEntity();
-      testCaseRepositoryMock.findByProblemId.mockResolvedValue([
+      useCaseMocks.findAllTestCasesByProblemIdUseCase.execute.mockResolvedValue([
         testCaseEntity,
       ]);
 
@@ -131,7 +120,9 @@ describe('TestCaseService', () => {
 
       expect(result).toHaveLength(1);
       expect(result[0]).toBeInstanceOf(ReturnTestCaseDto);
-      expect(testCaseRepositoryMock.findByProblemId).toHaveBeenCalledWith(1);
+      expect(
+        useCaseMocks.findAllTestCasesByProblemIdUseCase.execute,
+      ).toHaveBeenCalledWith(1);
 
       expect(result[0]).toMatchObject({
         id: testCaseEntity.id,
@@ -143,7 +134,7 @@ describe('TestCaseService', () => {
   });
 
   describe('Update Test Case', () => {
-    it('should update a test case and return update result', async () => {
+    it('should delegate to UpdateTestCaseUseCase and return update result', async () => {
       const testCaseId = '123';
       const updateTestCaseDto = {
         input: '12',
@@ -156,33 +147,43 @@ describe('TestCaseService', () => {
         raw: [],
       };
 
-      testCaseRepositoryMock.updateById.mockResolvedValue(updateResult);
+      useCaseMocks.updateTestCaseUseCase.execute.mockResolvedValue(
+        updateResult,
+      );
 
       const result = await service.update(testCaseId, updateTestCaseDto);
 
-      expect(testCaseRepositoryMock.updateById).toHaveBeenCalledWith(
+      expect(useCaseMocks.updateTestCaseUseCase.execute).toHaveBeenCalledWith(
         testCaseId,
         updateTestCaseDto,
       );
-      expect(testCaseRepositoryMock.updateById).toHaveBeenCalledTimes(1);
+      expect(useCaseMocks.updateTestCaseUseCase.execute).toHaveBeenCalledTimes(
+        1,
+      );
       expect(result).toEqual(updateResult);
     });
   });
 
   describe('Delete Test Case', () => {
-    it('should delete a test case and return delete result', async () => {
+    it('should delegate to RemoveTestCaseUseCase and return delete result', async () => {
       const testCaseId = '123';
       const deleteResult = {
         affected: 1,
         raw: [],
       };
 
-      testCaseRepositoryMock.delete.mockResolvedValue(deleteResult);
+      useCaseMocks.removeTestCaseUseCase.execute.mockResolvedValue(
+        deleteResult,
+      );
 
       const result = await service.remove(testCaseId);
 
-      expect(testCaseRepositoryMock.delete).toHaveBeenCalledWith(testCaseId);
-      expect(testCaseRepositoryMock.delete).toHaveBeenCalledTimes(1);
+      expect(useCaseMocks.removeTestCaseUseCase.execute).toHaveBeenCalledWith(
+        testCaseId,
+      );
+      expect(useCaseMocks.removeTestCaseUseCase.execute).toHaveBeenCalledTimes(
+        1,
+      );
       expect(result).toEqual(deleteResult);
     });
   });

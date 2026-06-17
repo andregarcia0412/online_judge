@@ -1,4 +1,4 @@
-import { FindAllTestCasesByProblemIdUseCase } from 'src/modules/problem/use-case/problem/find-test-cases-by-id.use-case';
+import { FindAllTestCasesByProblemIdUseCase } from 'src/modules/problem/use-case/test-case/find-all-by-problem-id.use-case';
 import { TestCaseFactory } from 'test/factories/test-case.factory';
 
 describe('FindAllTestCasesByProblemIdUseCase', () => {

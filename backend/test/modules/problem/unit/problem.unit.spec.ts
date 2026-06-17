@@ -1,10 +1,8 @@
 import { ConflictException, NotFoundException } from '@nestjs/common';
 import { ReturnProblemDto } from 'src/modules/problem/dto/problem/return-problem.dto';
-import { ReturnTestCaseDto } from 'src/modules/problem/dto/test-case/return-test-case.dto';
 import { ProblemService } from 'src/modules/problem/service/problem.service';
 import { CategoryFactory } from 'test/factories/category.factory';
 import { ProblemFactory } from 'test/factories/problem.factory';
-import { TestCaseFactory } from 'test/factories/test-case.factory';
 
 describe('ProblemService', () => {
   let useCaseMocks: ReturnType<typeof ProblemFactory.makeProblemUseCaseMocks>;
@@ -18,7 +16,6 @@ describe('ProblemService', () => {
       useCaseMocks.findAllProblemUseCase as any,
       useCaseMocks.findProblemByIdUseCase as any,
       useCaseMocks.findProblemByTitleUseCase as any,
-      useCaseMocks.findAllTestCasesByProblemIdUseCase as any,
       useCaseMocks.updateProblemUseCase as any,
       useCaseMocks.removeProblemUseCase as any,
     );
@@ -154,31 +151,6 @@ describe('ProblemService', () => {
       useCaseMocks.findProblemByTitleUseCase.execute.mockRejectedValue(error);
 
       await expect(service.findOneByTitle('title')).rejects.toThrow(error);
-    });
-  });
-
-  describe('Find All Test Cases By Id', () => {
-    it('should delegate to FindAllTestCasesByProblemIdUseCase and map to ReturnTestCaseDto', async () => {
-      const problemId = 1;
-      const savedTestCase = TestCaseFactory.makeTestCaseEntity();
-
-      useCaseMocks.findAllTestCasesByProblemIdUseCase.execute.mockResolvedValue([
-        savedTestCase,
-      ]);
-
-      const result = await service.findAllTestCasesById(problemId);
-
-      expect(
-        useCaseMocks.findAllTestCasesByProblemIdUseCase.execute,
-      ).toHaveBeenCalledWith(problemId);
-      expect(result).toHaveLength(1);
-      expect(result[0]).toBeInstanceOf(ReturnTestCaseDto);
-      expect(result[0]).toMatchObject({
-        id: savedTestCase.id,
-        id_problem: savedTestCase.id_problem,
-        input: savedTestCase.input,
-        output: savedTestCase.output,
-      });
     });
   });
 

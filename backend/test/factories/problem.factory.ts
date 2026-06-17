@@ -35,7 +35,6 @@ export class ProblemFactory {
     const findAllProblemUseCase = { execute: jest.fn() };
     const findProblemByIdUseCase = { execute: jest.fn() };
     const findProblemByTitleUseCase = { execute: jest.fn() };
-    const findAllTestCasesByProblemIdUseCase = { execute: jest.fn() };
     const updateProblemUseCase = { execute: jest.fn() };
     const removeProblemUseCase = { execute: jest.fn() };
 
@@ -44,7 +43,6 @@ export class ProblemFactory {
       findAllProblemUseCase,
       findProblemByIdUseCase,
       findProblemByTitleUseCase,
-      findAllTestCasesByProblemIdUseCase,
       updateProblemUseCase,
       removeProblemUseCase,
     };
