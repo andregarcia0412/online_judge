@@ -24,9 +24,14 @@ import { CreateProblemUseCase } from './use-case/problem/create.use-case';
 import { FindAllProblemUseCase } from './use-case/problem/find-all.use-case';
 import { FindProblemByIdUseCase } from './use-case/problem/find-by-id.use-case';
 import { FindProblemByTitleUseCase } from './use-case/problem/find-by-title.use-case';
-import { FindAllTestCasesByProblemIdUseCase } from './use-case/problem/find-test-cases-by-id.use-case';
 import { RemoveProblemUseCase } from './use-case/problem/remove.use-case';
 import { UpdateProblemUseCase } from './use-case/problem/update.use-case';
+import { CreateTestCaseUseCase } from './use-case/test-case/create.use-case';
+import { FindAllTestCasesByProblemIdUseCase } from './use-case/test-case/find-all-by-problem-id.use-case';
+import { FindAllTestCasesUseCase } from './use-case/test-case/find-all.use-case';
+import { FindTestCaseByIdUseCase } from './use-case/test-case/find-one.use-case';
+import { RemoveTestCaseUseCase } from './use-case/test-case/remove.use-case';
+import { UpdateTestCaseUseCase } from './use-case/test-case/update.use-case';
 
 @Module({
   imports: [TypeOrmModule.forFeature([Problem, Category, TestCase])],
@@ -52,6 +57,11 @@ import { UpdateProblemUseCase } from './use-case/problem/update.use-case';
     FindAllTestCasesByProblemIdUseCase,
     RemoveProblemUseCase,
     UpdateProblemUseCase,
+    CreateTestCaseUseCase,
+    FindAllTestCasesUseCase,
+    FindTestCaseByIdUseCase,
+    RemoveTestCaseUseCase,
+    UpdateTestCaseUseCase,
   ],
   exports: [
     ProblemService,

@@ -5,12 +5,10 @@ import { CreateProblemDto } from '../dto/problem/create-problem.dto';
 import { ReturnProblemDto } from '../dto/problem/return-problem.dto';
 import { UpdateProblemDto } from '../dto/problem/update-problem.dto';
 import { ReturnTestCaseDto } from '../dto/test-case/return-test-case.dto';
-import { TestCase } from '../entities/test-case.entity';
 import { CreateProblemUseCase } from '../use-case/problem/create.use-case';
 import { FindAllProblemUseCase } from '../use-case/problem/find-all.use-case';
 import { FindProblemByIdUseCase } from '../use-case/problem/find-by-id.use-case';
 import { FindProblemByTitleUseCase } from '../use-case/problem/find-by-title.use-case';
-import { FindAllTestCasesByProblemIdUseCase } from '../use-case/problem/find-test-cases-by-id.use-case';
 import { RemoveProblemUseCase } from '../use-case/problem/remove.use-case';
 import { UpdateProblemUseCase } from '../use-case/problem/update.use-case';
 
@@ -25,8 +23,6 @@ export class ProblemService {
     private readonly findProblemByIdUseCase: FindProblemByIdUseCase,
     @Inject(FindProblemByTitleUseCase)
     private readonly findProblemByTitleUseCase: FindProblemByTitleUseCase,
-    @Inject(FindAllTestCasesByProblemIdUseCase)
-    private readonly findAllTestCasesByProblemIdUseCase: FindAllTestCasesByProblemIdUseCase,
     @Inject(UpdateProblemUseCase)
     private readonly updateProblemUseCase: UpdateProblemUseCase,
     @Inject(RemoveProblemUseCase)
@@ -73,12 +69,6 @@ export class ProblemService {
       problemResponse.problem,
       ReturnCategoryDto.fromEntityList(problemResponse.categories),
       ReturnTestCaseDto.fromEntityList(problemResponse.testCases),
-    );
-  }
-
-  async findAllTestCasesById(id: number): Promise<ReturnTestCaseDto[]> {
-    return (await this.findAllTestCasesByProblemIdUseCase.execute(id)).map(
-      (testCase: TestCase) => ReturnTestCaseDto.fromEntity(testCase),
     );
   }
 

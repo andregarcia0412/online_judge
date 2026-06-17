@@ -3,13 +3,13 @@ import { TestCaseRepositoryPort } from '../../interface/test-case.repository.por
 import { TestCase } from '../../entities/test-case.entity';
 
 @Injectable()
-export class FindAllTestCasesByProblemIdUseCase {
+export class FindAllTestCasesUseCase {
   constructor(
     @Inject(TestCaseRepositoryPort)
     private readonly testCaseRepository: TestCaseRepositoryPort,
   ) {}
 
-  async execute(id: number): Promise<TestCase[]> {
-    return await this.testCaseRepository.findByProblemId(id);
+  async execute(): Promise<TestCase[]> {
+    return await this.testCaseRepository.findAll();
   }
 }
