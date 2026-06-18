@@ -1,6 +1,4 @@
-import { DeleteResult, EntityManager, UpdateResult } from 'typeorm';
-import { CreateUserDto } from '../dto/create-user.dto';
-import { UpdateUserDto } from '../dto/update-user.dto';
+import { EntityManager } from 'typeorm';
 import { User } from '../entities/user.entity';
 
 export interface UserRepositoryPort {
@@ -10,15 +8,15 @@ export interface UserRepositoryPort {
     manager?: EntityManager,
   ): Promise<User | null>;
   findOneById(id: string, manager?: EntityManager): Promise<User | null>;
-  save(createUserDto: CreateUserDto, manager?: EntityManager): Promise<User>;
+  save(user: Partial<User>, manager?: EntityManager): Promise<User>;
   saveExistingEntity(user: User, manager?: EntityManager): Promise<User>;
   findAll(manager?: EntityManager): Promise<User[]>;
   updateById(
     id: string,
-    updateUserDto: UpdateUserDto,
+    updateUser: Partial<User>,
     manager?: EntityManager,
-  ): Promise<UpdateResult>;
-  delete(id: string, manager?: EntityManager): Promise<DeleteResult>;
+  ): Promise<User | null>;
+  delete(id: string, manager?: EntityManager): Promise<void>;
 }
 
 export const UserRepositoryPort = Symbol('UserRepositoryPort');

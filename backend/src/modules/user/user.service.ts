@@ -1,6 +1,6 @@
 import { Inject, Injectable } from '@nestjs/common';
 import { ReturnSubmissionDto } from 'src/modules/submission/dto/return-submission.dto';
-import { DeleteResult, EntityManager, UpdateResult } from 'typeorm';
+import { EntityManager } from 'typeorm';
 import { CreateUserDto } from './dto/create-user.dto';
 import { ReturnUserDto } from './dto/return-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
@@ -70,19 +70,24 @@ export class UserService {
   async update(
     id: string,
     updateUserDto: UpdateUserDto,
-  ): Promise<UpdateResult> {
-    return await this.updateUserUseCase.execute(id, updateUserDto);
+  ): Promise<ReturnUserDto> {
+    return ReturnUserDto.fromEntity(
+      await this.updateUserUseCase.execute(id, updateUserDto),
+    );
   }
 
-  async remove(id: string): Promise<DeleteResult> {
-    return await this.deleteUserUseCase.execute(id);
+  async remove(id: string): Promise<void> {
+    await this.deleteUserUseCase.execute(id);
   }
 
-  async updateUserStreak(user: User) {
+  async updateUserStreak(user: User): Promise<void> {
     await this.updateUserStreakUseCase.execute(user);
   }
 
-  async updateUserStreakOnSubmission(user: User, manager?: EntityManager) {
+  async updateUserStreakOnSubmission(
+    user: User,
+    manager?: EntityManager,
+  ): Promise<void> {
     await this.updateUserStreakOnSubmissionUseCase.execute(user, manager);
   }
 }
