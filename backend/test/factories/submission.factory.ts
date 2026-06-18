@@ -9,22 +9,22 @@ export class SubmissionFactory {
   static makeSubmissionRepositoryMock() {
     const findOneUserAcceptedSubmission = jest.fn();
     const findLastUserSubmission = jest.fn();
-    const createAndSave = jest.fn();
+    const save = jest.fn();
     const findAll = jest.fn();
     const findOneById = jest.fn();
     const findAllByUserId = jest.fn();
     const updateById = jest.fn();
-    const deleteFn = jest.fn();
+    const remove = jest.fn();
 
     return {
       findOneUserAcceptedSubmission,
       findLastUserSubmission,
-      createAndSave,
+      save,
       findAll,
       findOneById,
       findAllByUserId,
       updateById,
-      delete: deleteFn,
+      remove,
     };
   }
 

@@ -81,7 +81,7 @@ describe('CreateSubmissionUseCase', () => {
     submissionRepositoryMock.findOneUserAcceptedSubmission.mockResolvedValue(
       null,
     );
-    submissionRepositoryMock.createAndSave.mockResolvedValue(savedSubmission);
+    submissionRepositoryMock.save.mockResolvedValue(savedSubmission);
     userRepositoryMock.save.mockResolvedValue(savedUser);
     problemRepositoryMock.saveExistingEntity.mockResolvedValue(savedProblem);
 
@@ -118,7 +118,7 @@ describe('CreateSubmissionUseCase', () => {
       createSubmissionDto.id_problem,
       expect.any(Object),
     );
-    expect(submissionRepositoryMock.createAndSave).toHaveBeenCalledWith(
+    expect(submissionRepositoryMock.save).toHaveBeenCalledWith(
       createSubmissionDto,
       testResult,
       expect.any(Object),
@@ -221,7 +221,7 @@ describe('CreateSubmissionUseCase', () => {
     submissionRepositoryMock.findOneUserAcceptedSubmission.mockResolvedValue(
       existingAcceptedSubmission,
     );
-    submissionRepositoryMock.createAndSave.mockResolvedValue(savedSubmission);
+    submissionRepositoryMock.save.mockResolvedValue(savedSubmission);
     userRepositoryMock.save.mockResolvedValue(savedUser);
     problemRepositoryMock.saveExistingEntity.mockResolvedValue(savedProblem);
 
@@ -271,7 +271,7 @@ describe('CreateSubmissionUseCase', () => {
     submissionRepositoryMock.findOneUserAcceptedSubmission.mockResolvedValue(
       null,
     );
-    submissionRepositoryMock.createAndSave.mockResolvedValue(savedSubmission);
+    submissionRepositoryMock.save.mockResolvedValue(savedSubmission);
     userRepositoryMock.save.mockResolvedValue(savedUser);
     problemRepositoryMock.saveExistingEntity.mockResolvedValue(savedProblem);
 

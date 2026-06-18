@@ -1,3 +1,4 @@
+import { NotFoundException } from '@nestjs/common';
 import { UpdateSubmissionUseCase } from 'src/modules/submission/use-case/update.use-case';
 import { SubmissionFactory } from 'test/factories/submission.factory';
 
@@ -16,12 +17,12 @@ describe('UpdateSubmissionUseCase', () => {
     jest.restoreAllMocks();
   });
 
-  it('should update submission and return result', async () => {
+  it('should update submission and return the updated entity', async () => {
     const id = '123';
     const updateSubmissionDto = { text: 'print("Updated")' };
-    const updateResult = { affected: 1, generatedMaps: [], raw: [] };
+    const updatedSubmission = SubmissionFactory.makeSubmissionEntity();
 
-    submissionRepositoryMock.updateById.mockResolvedValue(updateResult);
+    submissionRepositoryMock.updateById.mockResolvedValue(updatedSubmission);
 
     const result = await useCase.execute(id, updateSubmissionDto as any);
 
@@ -29,6 +30,18 @@ describe('UpdateSubmissionUseCase', () => {
       id,
       updateSubmissionDto,
     );
-    expect(result).toEqual(updateResult);
+    expect(result).toBe(updatedSubmission);
+  });
+
+  it('should throw NotFoundException when the submission does not exist', async () => {
+    const id = '123';
+    const updateSubmissionDto = { text: 'print("Updated")' };
+
+    submissionRepositoryMock.updateById.mockResolvedValue(null);
+
+    const updatePromise = useCase.execute(id, updateSubmissionDto as any);
+
+    await expect(updatePromise).rejects.toThrow(NotFoundException);
+    await expect(updatePromise).rejects.toThrow('Submission not found');
   });
 });
