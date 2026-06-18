@@ -14,15 +14,14 @@ describe('DeleteUserUseCase', () => {
     jest.restoreAllMocks();
   });
 
-  it('should delete user and return result', async () => {
+  it('should delegate deletion to the repository', async () => {
     const userId = '123';
-    const deleteResult = { affected: 1, raw: [] };
 
-    userRepositoryMock.delete.mockResolvedValue(deleteResult);
+    userRepositoryMock.delete.mockResolvedValue(undefined);
 
     const result = await useCase.execute(userId);
 
     expect(userRepositoryMock.delete).toHaveBeenCalledWith(userId);
-    expect(result).toEqual(deleteResult);
+    expect(result).toBeUndefined();
   });
 });

@@ -193,20 +193,16 @@ describe('UserService', () => {
   });
 
   describe('Update User', () => {
-    it('should update a user and return update result', async () => {
+    it('should update a user and return ReturnUserDto', async () => {
       const userId = '123';
       const updateUserDto = {
         username: 'newusername',
         password: 'newpassword123',
       };
 
-      const updateResult = {
-        affected: 1,
-        generatedMaps: [],
-        raw: [],
-      };
+      const updatedUser = UserFactory.makeUserEntity();
 
-      useCaseMocks.updateUserUseCase.execute.mockResolvedValue(updateResult);
+      useCaseMocks.updateUserUseCase.execute.mockResolvedValue(updatedUser);
 
       const result = await service.update(userId, updateUserDto);
 
@@ -215,19 +211,17 @@ describe('UserService', () => {
         updateUserDto,
       );
       expect(useCaseMocks.updateUserUseCase.execute).toHaveBeenCalledTimes(1);
-      expect(result).toEqual(updateResult);
+      expect(result).toBeInstanceOf(ReturnUserDto);
+      expect(result).toMatchObject(UserFactory.makeReturnUserDto());
+      expect(result).not.toHaveProperty('password');
     });
   });
 
   describe('Delete User', () => {
-    it('should delete a user and return delete result', async () => {
+    it('should delegate deletion to the use case', async () => {
       const userId = '123';
-      const deleteResult = {
-        affected: 1,
-        raw: [],
-      };
 
-      useCaseMocks.deleteUserUseCase.execute.mockResolvedValue(deleteResult);
+      useCaseMocks.deleteUserUseCase.execute.mockResolvedValue(undefined);
 
       const result = await service.remove(userId);
 
@@ -235,7 +229,7 @@ describe('UserService', () => {
         userId,
       );
       expect(useCaseMocks.deleteUserUseCase.execute).toHaveBeenCalledTimes(1);
-      expect(result).toEqual(deleteResult);
+      expect(result).toBeUndefined();
     });
   });
 
