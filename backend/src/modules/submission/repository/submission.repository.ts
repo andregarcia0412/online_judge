@@ -1,12 +1,10 @@
 import { Injectable } from '@nestjs/common';
-import { SubmissionRepositoryPort } from '../interface/submission.repository.port';
-import { TestResult } from 'src/modules/test-runner/dto/test-result.dto';
-import { UpdateResult, DeleteResult, Repository, EntityManager } from 'typeorm';
-import { CreateSubmissionDto } from '../dto/create-submission.dto';
-import { Submission } from '../entities/submission.entity';
 import { InjectRepository } from '@nestjs/typeorm';
+import { TestResult } from 'src/modules/test-runner/dto/test-result.dto';
+import { EntityManager, Repository } from 'typeorm';
+import { Submission } from '../entities/submission.entity';
 import { StatusEnum } from '../enum/submission-status';
-import { UpdateSubmissionDto } from '../dto/update-submission.dto';
+import { SubmissionRepositoryPort } from '../interface/submission.repository.port';
 
 @Injectable()
 export class SubmissionRepository implements SubmissionRepositoryPort {
@@ -44,14 +42,14 @@ export class SubmissionRepository implements SubmissionRepositoryPort {
       },
     });
   }
-  async createAndSave(
-    createSubmissionDto: CreateSubmissionDto,
+  async save(
+    submission: Partial<Submission>,
     testResult: TestResult,
     manager?: EntityManager,
   ): Promise<Submission> {
     const repository = this.getRepository(manager);
     const createdSubmission = repository.create({
-      ...createSubmissionDto,
+      ...submission,
       status: testResult.status,
       execution_time: testResult.execution_time,
       error: testResult.error,
@@ -80,15 +78,22 @@ export class SubmissionRepository implements SubmissionRepositoryPort {
   }
   async updateById(
     id: string,
-    updateSubmissionDto: UpdateSubmissionDto,
+    updateSubmission: Partial<Submission>,
     manager?: EntityManager,
-  ): Promise<UpdateResult> {
+  ): Promise<Submission | null> {
     const repository = this.getRepository(manager);
-    return await repository.update(id, updateSubmissionDto);
+    const submission = await repository.findOneBy({ id });
+
+    if (!submission) {
+      return null;
+    }
+
+    const merged = repository.merge(submission, updateSubmission);
+    return await repository.save(merged);
   }
-  async delete(id: string, manager?: EntityManager): Promise<DeleteResult> {
+  async remove(id: string, manager?: EntityManager): Promise<void> {
     const repository = this.getRepository(manager);
-    return await repository.delete(id);
+    await repository.delete(id);
   }
 
   private getRepository(manager?: EntityManager): Repository<Submission> {

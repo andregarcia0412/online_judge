@@ -1,5 +1,4 @@
 import { Injectable } from '@nestjs/common';
-import { DeleteResult, UpdateResult } from 'typeorm';
 import { TestResult } from '../test-runner/dto/test-result.dto';
 import { CreateSubmissionDto } from './dto/create-submission.dto';
 import { ReturnSubmissionDto } from './dto/return-submission.dto';
@@ -59,11 +58,13 @@ export class SubmissionService {
   async update(
     id: string,
     updateSubmissionDto: UpdateSubmissionDto,
-  ): Promise<UpdateResult> {
-    return await this.updateSubmissionUseCase.execute(id, updateSubmissionDto);
+  ): Promise<ReturnSubmissionDto> {
+    return ReturnSubmissionDto.fromEntity(
+      await this.updateSubmissionUseCase.execute(id, updateSubmissionDto),
+    );
   }
 
-  async remove(id: string): Promise<DeleteResult> {
-    return await this.deleteSubmissionUseCase.execute(id);
+  async remove(id: string): Promise<void> {
+    await this.deleteSubmissionUseCase.execute(id);
   }
 }

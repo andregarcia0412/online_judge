@@ -7,8 +7,11 @@ import {
   Patch,
   Post,
 } from '@nestjs/common';
-import { ApiCreatedResponse, ApiOkResponse } from '@nestjs/swagger';
-import { DeleteResult, UpdateResult } from 'typeorm';
+import {
+  ApiCreatedResponse,
+  ApiNoContentResponse,
+  ApiOkResponse,
+} from '@nestjs/swagger';
 import { TestResult } from '../test-runner/dto/test-result.dto';
 import { CreateSubmissionDto } from './dto/create-submission.dto';
 import { ReturnSubmissionDto } from './dto/return-submission.dto';
@@ -21,10 +24,10 @@ export class SubmissionController {
 
   @Post()
   @ApiCreatedResponse({ type: ReturnSubmissionDto })
-  create(
+  async create(
     @Body() createSubmissionDto: CreateSubmissionDto,
   ): Promise<CreateSubmissionDto> {
-    return this.submissionService.create(createSubmissionDto);
+    return await this.submissionService.create(createSubmissionDto);
   }
 
   @Post('/playground')
@@ -32,35 +35,35 @@ export class SubmissionController {
   async createPlaygroundSubmission(
     @Body() createSubmissionDto: CreateSubmissionDto,
   ): Promise<TestResult> {
-    return this.submissionService.createPlaygroundSubmission(
+    return await this.submissionService.createPlaygroundSubmission(
       createSubmissionDto,
     );
   }
 
   @Get()
   @ApiOkResponse({ type: [ReturnSubmissionDto] })
-  findAll(): Promise<ReturnSubmissionDto[]> {
-    return this.submissionService.findAll();
+  async findAll(): Promise<ReturnSubmissionDto[]> {
+    return await this.submissionService.findAll();
   }
 
   @Get(':id')
   @ApiOkResponse({ type: ReturnSubmissionDto })
-  findOne(@Param('id') id: string): Promise<ReturnSubmissionDto> {
-    return this.submissionService.findOneById(id);
+  async findOne(@Param('id') id: string): Promise<ReturnSubmissionDto> {
+    return await this.submissionService.findOneById(id);
   }
 
   @Patch(':id')
-  @ApiOkResponse({ type: UpdateResult })
-  update(
+  @ApiOkResponse({ type: ReturnSubmissionDto })
+  async update(
     @Param('id') id: string,
     @Body() updateSubmissionDto: UpdateSubmissionDto,
-  ): Promise<UpdateResult> {
-    return this.submissionService.update(id, updateSubmissionDto);
+  ): Promise<ReturnSubmissionDto> {
+    return await this.submissionService.update(id, updateSubmissionDto);
   }
 
   @Delete(':id')
-  @ApiOkResponse({ type: DeleteResult })
-  remove(@Param('id') id: string): Promise<DeleteResult> {
-    return this.submissionService.remove(id);
+  @ApiNoContentResponse()
+  async remove(@Param('id') id: string): Promise<void> {
+    await this.submissionService.remove(id);
   }
 }

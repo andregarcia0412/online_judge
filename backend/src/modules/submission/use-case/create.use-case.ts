@@ -76,7 +76,7 @@ export class CreateSubmissionUseCase {
       await this.problemRepository.saveExistingEntity(problem, manager);
 
       const returnSubmissionDto = ReturnSubmissionDto.fromEntity(
-        await this.submissionRepository.createAndSave(
+        await this.submissionRepository.save(
           createSubmissionDto,
           testResult,
           manager,

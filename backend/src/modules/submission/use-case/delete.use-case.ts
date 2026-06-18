@@ -1,5 +1,4 @@
 import { Inject, Injectable } from '@nestjs/common';
-import { DeleteResult } from 'typeorm';
 import { SubmissionRepositoryPort } from '../interface/submission.repository.port';
 
 @Injectable()
@@ -9,7 +8,7 @@ export class DeleteSubmissionUseCase {
     private submissionRepository: SubmissionRepositoryPort,
   ) {}
 
-  async execute(id: string): Promise<DeleteResult> {
-    return await this.submissionRepository.delete(id);
+  async execute(id: string): Promise<void> {
+    await this.submissionRepository.remove(id);
   }
 }

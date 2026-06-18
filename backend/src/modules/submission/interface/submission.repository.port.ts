@@ -1,8 +1,6 @@
 import { TestResult } from 'src/modules/test-runner/dto/test-result.dto';
-import { CreateSubmissionDto } from '../dto/create-submission.dto';
+import { EntityManager } from 'typeorm';
 import { Submission } from '../entities/submission.entity';
-import { DeleteResult, EntityManager, UpdateResult } from 'typeorm';
-import { UpdateSubmissionDto } from '../dto/update-submission.dto';
 
 export interface SubmissionRepositoryPort {
   findOneUserAcceptedSubmission(
@@ -11,21 +9,27 @@ export interface SubmissionRepositoryPort {
     id_problem: number,
     manager?: EntityManager,
   ): Promise<Submission | null>;
-  findLastUserSubmission(id_user: string, manager?: EntityManager): Promise<Submission | null>;
-  createAndSave(
-    createSubmissionDto: CreateSubmissionDto,
+  findLastUserSubmission(
+    id_user: string,
+    manager?: EntityManager,
+  ): Promise<Submission | null>;
+  save(
+    submission: Partial<Submission>,
     testResult: TestResult,
-    manager?: EntityManager
+    manager?: EntityManager,
   ): Promise<Submission>;
   findAll(manager?: EntityManager): Promise<Submission[]>;
   findOneById(id: string, manager?: EntityManager): Promise<Submission | null>;
-  findAllByUserId(id_user: string, manager?: EntityManager): Promise<Submission[]>;
+  findAllByUserId(
+    id_user: string,
+    manager?: EntityManager,
+  ): Promise<Submission[]>;
   updateById(
     id: string,
-    updateSubmissionDto: UpdateSubmissionDto,
-    manager?: EntityManager
-  ): Promise<UpdateResult>;
-  delete(id: string, manager?: EntityManager): Promise<DeleteResult>;
+    updateSubmission: Partial<Submission>,
+    manager?: EntityManager,
+  ): Promise<Submission | null>;
+  remove(id: string, manager?: EntityManager): Promise<void>;
 }
 
 export const SubmissionRepositoryPort = Symbol('SubmissionRepositoryPort');
