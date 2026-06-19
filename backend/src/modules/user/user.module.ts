@@ -39,6 +39,6 @@ import { UserServicePort } from './interface/user.service.port';
     DeleteUserUseCase,
     UpdateUserStreakOnSubmissionUseCase,
   ],
-  exports: [UserService, UserRepositoryPort],
+  exports: [UserServicePort, UserRepositoryPort],
 })
 export class UserModule {}

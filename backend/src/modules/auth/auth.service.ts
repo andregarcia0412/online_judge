@@ -8,7 +8,7 @@ import { ConfigService } from '@nestjs/config';
 import { JwtService } from '@nestjs/jwt';
 import { CreateUserDto } from 'src/modules/user/dto/create-user.dto';
 import { ReturnUserDto } from 'src/modules/user/dto/return-user.dto';
-import { UserService } from 'src/modules/user/user.service';
+import { UserServicePort } from 'src/modules/user/interface/user.service.port';
 import { HashProviderPort } from 'src/shared/provider/hash/hash.provider.port';
 import { UserRepositoryPort } from '../user/interface/user.repository.port';
 import { AuthResponseDto } from './dto/auth.dto';
@@ -22,7 +22,8 @@ export class AuthService {
     private readonly userRepository: UserRepositoryPort,
     @Inject(HashProviderPort)
     private readonly hashProvider: HashProviderPort,
-    private readonly userService: UserService,
+    @Inject(UserServicePort)
+    private readonly userService: UserServicePort,
     private readonly jwtService: JwtService,
     private readonly configService: ConfigService,
   ) {}

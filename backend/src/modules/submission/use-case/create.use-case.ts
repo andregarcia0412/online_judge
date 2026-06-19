@@ -10,7 +10,7 @@ import { DataSource, EntityManager } from 'typeorm';
 import { Problem } from 'src/modules/problem/entities/problem.entity';
 import { TestCase } from 'src/modules/problem/entities/test-case.entity';
 import { User } from 'src/modules/user/entities/user.entity';
-import { UserService } from 'src/modules/user/user.service';
+import { UserServicePort } from 'src/modules/user/interface/user.service.port';
 import { TestRunnerService } from 'src/modules/test-runner/test-runner.service';
 
 @Injectable()
@@ -25,7 +25,8 @@ export class CreateSubmissionUseCase {
     @Inject(TestCaseRepositoryPort)
     private readonly testCaseRepository: TestCaseRepositoryPort,
     private readonly testRunnerService: TestRunnerService,
-    private readonly userService: UserService,
+    @Inject(UserServicePort)
+    private readonly userService: UserServicePort,
     private readonly datasource: DataSource,
   ) {}
 
