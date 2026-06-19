@@ -9,6 +9,8 @@ import { JwtStrategy } from './common/jwt.strategy';
 import { HashProviderPort } from 'src/shared/provider/hash/hash.provider.port';
 import { BcryptProvider } from 'src/shared/provider/hash/bcrypt.provider';
 import { AuthServicePort } from './interface/auth.service.port';
+import { JwtProviderPort } from './provider/jwt.provider.port';
+import { JwtProvider } from './provider/jwt.provider';
 
 @Module({
   imports: [
@@ -18,9 +20,10 @@ import { AuthServicePort } from './interface/auth.service.port';
   ],
   controllers: [AuthController],
   providers: [
-    JwtStrategy,
     { provide: AuthServicePort, useClass: AuthService },
+    { provide: JwtProviderPort, useClass: JwtProvider },
     { provide: HashProviderPort, useClass: BcryptProvider },
+    JwtStrategy,
   ],
 })
 export class AuthModule {}

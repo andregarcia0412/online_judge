@@ -4,7 +4,7 @@ import {
   UnauthorizedException,
 } from '@nestjs/common';
 import { AuthService } from 'src/modules/auth/auth.service';
-import { AuthResponseDto } from 'src/modules/auth/dto/auth.dto';
+import { AuthResponseDto } from 'src/modules/auth/dto/auth-response.dto';
 import { RefreshResponseDto } from 'src/modules/auth/dto/refresh-response.dto';
 import { ReturnUserDto } from 'src/modules/user/dto/return-user.dto';
 import { AuthFactory } from 'test/factories/auth.factory';
@@ -29,8 +29,7 @@ describe('AuthService', () => {
       userRepositoryMock as any,
       hashProviderMock as any,
       userServiceMock as any,
-      jwtServiceMock as any,
-      configServiceMock as any,
+      jwtServiceMock as any, //TODO: mudar para jwt provider
     );
   });
 
