@@ -6,8 +6,8 @@ import {
   Post,
   UseGuards,
 } from '@nestjs/common';
-import { ApiCreatedResponse, ApiOkResponse } from '@nestjs/swagger';
-import { JwtAuthGuard } from 'src/modules/auth/jwt-auth.guard';
+import { ApiOkResponse } from '@nestjs/swagger';
+import { JwtAuthGuard } from 'src/modules/auth/common/jwt-auth.guard';
 import { AnalyzeRequestDto } from './dto/analyze-request.dto';
 import { AnalyzeResponseDto } from './dto/analyze-response.dto';
 import { AskRequestDto } from './dto/ask-request.dto';

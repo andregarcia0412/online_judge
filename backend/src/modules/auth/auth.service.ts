@@ -104,7 +104,7 @@ export class AuthService {
       const tokens = await this.getTokens(user.id, user.email);
 
       return new RefreshResponseDto(tokens.access_token, tokens.refresh_token);
-    } catch (e) {
+    } catch {
       throw new UnauthorizedException('Invalid refresh token');
     }
   }
