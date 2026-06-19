@@ -14,9 +14,11 @@ import { UserRepositoryPort } from '../user/interface/user.repository.port';
 import { AuthResponseDto } from './dto/auth.dto';
 import { LoginDto } from './dto/login.dto';
 import { RefreshResponseDto } from './dto/refresh-response.dto';
+import { AuthServicePort } from './interface/auth.service.port';
+import { RefreshTokenDto } from './dto/refresh-token.dto';
 
 @Injectable()
-export class AuthService {
+export class AuthService implements AuthServicePort {
   constructor(
     @Inject(UserRepositoryPort)
     private readonly userRepository: UserRepositoryPort,
@@ -91,8 +93,9 @@ export class AuthService {
     );
   }
 
-  async refresh(refreshToken: string): Promise<RefreshResponseDto> {
+  async refresh(refreshTokenDto: RefreshTokenDto): Promise<RefreshResponseDto> {
     try {
+      const refreshToken = refreshTokenDto.refreshToken;
       const payload = await this.jwtService.verifyAsync(refreshToken, {
         secret: this.configService.get<string>('JWT_REFRESH_SECRET'),
       });

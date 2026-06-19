@@ -1,4 +1,11 @@
-import { Body, Controller, HttpCode, HttpStatus, Post } from '@nestjs/common';
+import {
+  Body,
+  Controller,
+  HttpCode,
+  HttpStatus,
+  Inject,
+  Post,
+} from '@nestjs/common';
 import {
   ApiBearerAuth,
   ApiCreatedResponse,
@@ -6,14 +13,18 @@ import {
 } from '@nestjs/swagger';
 import { CreateUserDto } from 'src/modules/user/dto/create-user.dto';
 import { ReturnUserDto } from 'src/modules/user/dto/return-user.dto';
-import { AuthService } from './auth.service';
 import { AuthResponseDto } from './dto/auth.dto';
 import { LoginDto } from './dto/login.dto';
 import { RefreshResponseDto } from './dto/refresh-response.dto';
+import { AuthServicePort } from './interface/auth.service.port';
+import { RefreshTokenDto } from './dto/refresh-token.dto';
 
 @Controller('auth')
 export class AuthController {
-  constructor(private readonly authService: AuthService) {}
+  constructor(
+    @Inject(AuthServicePort)
+    private readonly authService: AuthServicePort,
+  ) {}
 
   @HttpCode(HttpStatus.OK)
   @Post('/login')
@@ -27,9 +38,9 @@ export class AuthController {
   @ApiOkResponse({ type: RefreshResponseDto })
   @ApiBearerAuth('refresh-token')
   refresh(
-    @Body('refresh_token') refreshToken: string,
+    @Body() refreshTokenDto: RefreshTokenDto,
   ): Promise<RefreshResponseDto> {
-    return this.authService.refresh(refreshToken);
+    return this.authService.refresh(refreshTokenDto);
   }
 
   @Post('/register')
