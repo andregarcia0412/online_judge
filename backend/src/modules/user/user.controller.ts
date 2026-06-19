@@ -3,6 +3,7 @@ import {
   Controller,
   Delete,
   Get,
+  Inject,
   Param,
   Patch,
   Post,
@@ -16,11 +17,14 @@ import { ReturnSubmissionDto } from 'src/modules/submission/dto/return-submissio
 import { CreateUserDto } from './dto/create-user.dto';
 import { ReturnUserDto } from './dto/return-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
-import { UserService } from './user.service';
+import { UserServicePort } from './interface/user.service.port';
 
 @Controller('user')
 export class UserController {
-  constructor(private readonly userService: UserService) {}
+  constructor(
+    @Inject(UserServicePort)
+    private readonly userService: UserServicePort,
+  ) {}
 
   @Post()
   @ApiCreatedResponse({ type: ReturnUserDto })

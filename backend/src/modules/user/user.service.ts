@@ -14,9 +14,10 @@ import { FindOneUserByIdUseCase } from './use-case/find-one-by-id.use-case';
 import { UpdateUserStreakOnSubmissionUseCase } from './use-case/update-streak-on-submission.use-case';
 import { UpdateUserStreakUseCase } from './use-case/update-streak.use-case';
 import { UpdateUserUseCase } from './use-case/update.use-case';
+import { UserServicePort } from './interface/user.service.port';
 
 @Injectable()
-export class UserService {
+export class UserService implements UserServicePort {
   constructor(
     @Inject(CreateUserUseCase)
     private readonly createUserUseCase: CreateUserUseCase,
