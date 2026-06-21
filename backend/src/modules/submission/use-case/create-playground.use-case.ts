@@ -1,12 +1,12 @@
 import { Inject, Injectable, NotFoundException } from '@nestjs/common';
-import { TestResult } from 'src/modules/test-runner/dto/test-result.dto';
-import { CreateSubmissionDto } from '../dto/create-submission.dto';
 import { Problem } from 'src/modules/problem/entities/problem.entity';
 import { TestCase } from 'src/modules/problem/entities/test-case.entity';
-import { EntityManager } from 'typeorm';
 import { ProblemRepositoryPort } from 'src/modules/problem/interface/problem.repository.port';
 import { TestCaseRepositoryPort } from 'src/modules/problem/interface/test-case.repository.port';
-import { TestRunnerService } from 'src/modules/test-runner/test-runner.service';
+import { TestResult } from 'src/modules/test-runner/dto/test-result.dto';
+import { TestRunnerServicePort } from 'src/modules/test-runner/interface/test-runner.service.port';
+import { EntityManager } from 'typeorm';
+import { CreateSubmissionDto } from '../dto/create-submission.dto';
 
 @Injectable()
 export class CreatePlaygroundSubmissionUseCase {
@@ -15,7 +15,8 @@ export class CreatePlaygroundSubmissionUseCase {
     private readonly problemRepository: ProblemRepositoryPort,
     @Inject(TestCaseRepositoryPort)
     private readonly testCaseRepository: TestCaseRepositoryPort,
-    private readonly testRunnerService: TestRunnerService,
+    @Inject(TestRunnerServicePort)
+    private readonly testRunnerService: TestRunnerServicePort,
   ) {}
 
   async execute(createSubmissionDto: CreateSubmissionDto): Promise<TestResult> {

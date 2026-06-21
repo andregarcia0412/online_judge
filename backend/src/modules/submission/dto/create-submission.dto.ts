@@ -9,10 +9,6 @@ import {
 } from 'class-validator';
 
 export class CreateSubmissionDto {
-  @IsUUID()
-  @ApiProperty()
-  id_user: string;
-
   @Type(() => Number)
   @IsNumber()
   @IsPositive()
@@ -28,13 +24,7 @@ export class CreateSubmissionDto {
   @ApiProperty()
   language: string;
 
-  constructor(
-    id_user: string,
-    id_problem: number,
-    text: string,
-    language: string,
-  ) {
-    this.id_user = id_user;
+  constructor(id_problem: number, text: string, language: string) {
     this.id_problem = id_problem;
     this.text = text;
     this.language = language;

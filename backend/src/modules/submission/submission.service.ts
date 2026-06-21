@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { Inject, Injectable } from '@nestjs/common';
 import { TestResult } from '../test-runner/dto/test-result.dto';
 import { CreateSubmissionDto } from './dto/create-submission.dto';
 import { ReturnSubmissionDto } from './dto/return-submission.dto';
@@ -14,19 +14,30 @@ import { UpdateSubmissionUseCase } from './use-case/update.use-case';
 @Injectable()
 export class SubmissionService {
   constructor(
+    @Inject(CreateSubmissionUseCase)
     private readonly createSubmissionUseCase: CreateSubmissionUseCase,
+    @Inject(CreatePlaygroundSubmissionUseCase)
     private readonly createPlaygroundSubmissionUseCase: CreatePlaygroundSubmissionUseCase,
+    @Inject(FindAllSubmissionUseCase)
     private readonly findAllSubmissionUseCase: FindAllSubmissionUseCase,
+    @Inject(FindOneSubmissionByIdUseCase)
     private readonly findOneSubmissionByIdUseCase: FindOneSubmissionByIdUseCase,
+    @Inject(FindAllSubmissionByUserIdUseCase)
     private readonly findAllSubmissionByUserIdUseCase: FindAllSubmissionByUserIdUseCase,
+    @Inject(UpdateSubmissionUseCase)
     private readonly updateSubmissionUseCase: UpdateSubmissionUseCase,
+    @Inject(DeleteSubmissionUseCase)
     private readonly deleteSubmissionUseCase: DeleteSubmissionUseCase,
   ) {}
 
   async create(
+    userId: string,
     createSubmissionDto: CreateSubmissionDto,
   ): Promise<ReturnSubmissionDto> {
-    return await this.createSubmissionUseCase.execute(createSubmissionDto);
+    return await this.createSubmissionUseCase.execute(
+      userId,
+      createSubmissionDto,
+    );
   }
 
   async createPlaygroundSubmission(

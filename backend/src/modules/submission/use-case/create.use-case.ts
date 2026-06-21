@@ -1,17 +1,17 @@
 import { Inject, Injectable, NotFoundException } from '@nestjs/common';
-import { SubmissionRepositoryPort } from '../interface/submission.repository.port';
+import { Problem } from 'src/modules/problem/entities/problem.entity';
+import { TestCase } from 'src/modules/problem/entities/test-case.entity';
+import { ProblemRepositoryPort } from 'src/modules/problem/interface/problem.repository.port';
+import { TestCaseRepositoryPort } from 'src/modules/problem/interface/test-case.repository.port';
+import { TestRunnerServicePort } from 'src/modules/test-runner/interface/test-runner.service.port';
+import { User } from 'src/modules/user/entities/user.entity';
+import { UserRepositoryPort } from 'src/modules/user/interface/user.repository.port';
+import { UserServicePort } from 'src/modules/user/interface/user.service.port';
+import { DataSource, EntityManager } from 'typeorm';
 import { CreateSubmissionDto } from '../dto/create-submission.dto';
 import { ReturnSubmissionDto } from '../dto/return-submission.dto';
 import { StatusEnum } from '../enum/submission-status';
-import { ProblemRepositoryPort } from 'src/modules/problem/interface/problem.repository.port';
-import { TestCaseRepositoryPort } from 'src/modules/problem/interface/test-case.repository.port';
-import { UserRepositoryPort } from 'src/modules/user/interface/user.repository.port';
-import { DataSource, EntityManager } from 'typeorm';
-import { Problem } from 'src/modules/problem/entities/problem.entity';
-import { TestCase } from 'src/modules/problem/entities/test-case.entity';
-import { User } from 'src/modules/user/entities/user.entity';
-import { UserServicePort } from 'src/modules/user/interface/user.service.port';
-import { TestRunnerService } from 'src/modules/test-runner/test-runner.service';
+import { SubmissionRepositoryPort } from '../interface/submission.repository.port';
 
 @Injectable()
 export class CreateSubmissionUseCase {
@@ -24,20 +24,19 @@ export class CreateSubmissionUseCase {
     private readonly problemRepository: ProblemRepositoryPort,
     @Inject(TestCaseRepositoryPort)
     private readonly testCaseRepository: TestCaseRepositoryPort,
-    private readonly testRunnerService: TestRunnerService,
+    @Inject(TestRunnerServicePort)
+    private readonly testRunnerService: TestRunnerServicePort,
     @Inject(UserServicePort)
     private readonly userService: UserServicePort,
     private readonly datasource: DataSource,
   ) {}
 
   async execute(
+    userId: string,
     createSubmissionDto: CreateSubmissionDto,
   ): Promise<ReturnSubmissionDto> {
     return await this.datasource.transaction(async (manager) => {
-      const user = await this.getUserOrThrow(
-        createSubmissionDto.id_user,
-        manager,
-      );
+      const user = await this.getUserOrThrow(userId, manager);
 
       const problem = await this.getProblemOrThrow(
         createSubmissionDto.id_problem,
@@ -78,7 +77,7 @@ export class CreateSubmissionUseCase {
 
       const returnSubmissionDto = ReturnSubmissionDto.fromEntity(
         await this.submissionRepository.save(
-          createSubmissionDto,
+          { ...createSubmissionDto, id_user: user.id },
           testResult,
           manager,
         ),

@@ -6,8 +6,10 @@ import {
   Param,
   Patch,
   Post,
+  UseGuards,
 } from '@nestjs/common';
 import {
+  ApiBearerAuth,
   ApiCreatedResponse,
   ApiNoContentResponse,
   ApiOkResponse,
@@ -17,17 +19,22 @@ import { CreateSubmissionDto } from './dto/create-submission.dto';
 import { ReturnSubmissionDto } from './dto/return-submission.dto';
 import { UpdateSubmissionDto } from './dto/update-submission.dto';
 import { SubmissionService } from './submission.service';
+import { GetUser } from 'src/shared/decorator/get-user.decorator';
+import { JwtAuthGuard } from '../auth/common/jwt-auth.guard';
 
 @Controller('submission')
 export class SubmissionController {
   constructor(private readonly submissionService: SubmissionService) {}
 
   @Post()
+  @UseGuards(JwtAuthGuard)
+  @ApiBearerAuth()
   @ApiCreatedResponse({ type: ReturnSubmissionDto })
   async create(
     @Body() createSubmissionDto: CreateSubmissionDto,
+    @GetUser('userId') userId: string,
   ): Promise<CreateSubmissionDto> {
-    return await this.submissionService.create(createSubmissionDto);
+    return await this.submissionService.create(userId, createSubmissionDto);
   }
 
   @Post('/playground')

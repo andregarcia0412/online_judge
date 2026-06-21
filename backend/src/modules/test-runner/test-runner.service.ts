@@ -4,9 +4,10 @@ import { CodeRunnerProviderPort } from 'src/shared/provider/code-runner/code-run
 import { ExecuteCodeDto } from '../../shared/provider/code-runner/dto/execute-code.dto';
 import { StatusEnum } from '../submission/enum/submission-status';
 import { TestResult } from './dto/test-result.dto';
+import { TestRunnerServicePort } from './interface/test-runner.service.port';
 
 @Injectable()
-export class TestRunnerService {
+export class TestRunnerService implements TestRunnerServicePort {
   constructor(
     @Inject(CodeRunnerProviderPort)
     private readonly codeRunnerProviderPort: CodeRunnerProviderPort,
