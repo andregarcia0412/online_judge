@@ -15,7 +15,6 @@ import { JwtProvider } from './provider/jwt.provider';
 @Module({
   imports: [
     TypeOrmModule.forFeature([User]),
-    JwtModule.register({}),
     UserModule,
   ],
   controllers: [AuthController],

@@ -6,7 +6,6 @@ import { HashProviderPort } from 'src/shared/provider/hash/hash.provider.port';
 import { UserRepositoryPort } from '../user/interface/user.repository.port';
 import { AuthResponseDto } from './dto/auth-response.dto';
 import { LoginDto } from './dto/login.dto';
-import { RefreshResponseDto } from './dto/refresh-response.dto';
 import { RefreshTokenDto } from './dto/refresh-token.dto';
 import { AuthServicePort } from './interface/auth.service.port';
 import { JwtProviderPort } from './provider/jwt.provider.port';
@@ -41,7 +40,7 @@ export class AuthService implements AuthServicePort {
     );
   }
 
-  async refresh(refreshTokenDto: RefreshTokenDto): Promise<RefreshResponseDto> {
+  async refresh(refreshTokenDto: RefreshTokenDto): Promise<AuthResponseDto> {
     const payload = this.jwtProvider.verifyRefreshToken(
       refreshTokenDto.refreshToken,
     );

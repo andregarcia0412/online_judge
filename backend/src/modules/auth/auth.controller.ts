@@ -15,7 +15,6 @@ import { CreateUserDto } from 'src/modules/user/dto/create-user.dto';
 import { ReturnUserDto } from 'src/modules/user/dto/return-user.dto';
 import { AuthResponseDto } from './dto/auth-response.dto';
 import { LoginDto } from './dto/login.dto';
-import { RefreshResponseDto } from './dto/refresh-response.dto';
 import { AuthServicePort } from './interface/auth.service.port';
 import { RefreshTokenDto } from './dto/refresh-token.dto';
 
@@ -35,11 +34,9 @@ export class AuthController {
 
   @HttpCode(HttpStatus.OK)
   @Post('/refresh')
-  @ApiOkResponse({ type: RefreshResponseDto })
+  @ApiOkResponse({ type: AuthResponseDto })
   @ApiBearerAuth('refresh-token')
-  refresh(
-    @Body() refreshTokenDto: RefreshTokenDto,
-  ): Promise<RefreshResponseDto> {
+  refresh(@Body() refreshTokenDto: RefreshTokenDto): Promise<AuthResponseDto> {
     return this.authService.refresh(refreshTokenDto);
   }
 
