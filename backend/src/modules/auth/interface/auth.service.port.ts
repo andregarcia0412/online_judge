@@ -8,6 +8,7 @@ export interface AuthServicePort {
   login(loginDto: LoginDto): Promise<AuthResponseDto>;
   refresh(refreshToken: RefreshTokenDto): Promise<AuthResponseDto>;
   register(createUserDto: CreateUserDto): Promise<ReturnUserDto>;
+  getUserData(userId: string): Promise<ReturnUserDto>;
 }
 
 export const AuthServicePort = Symbol('AuthServicePort');

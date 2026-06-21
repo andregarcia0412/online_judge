@@ -5,6 +5,7 @@ import {
   HttpStatus,
   Inject,
   Post,
+  UseGuards,
 } from '@nestjs/common';
 import {
   ApiBearerAuth,
@@ -17,6 +18,8 @@ import { AuthResponseDto } from './dto/auth-response.dto';
 import { LoginDto } from './dto/login.dto';
 import { AuthServicePort } from './interface/auth.service.port';
 import { RefreshTokenDto } from './dto/refresh-token.dto';
+import { GetUser } from 'src/shared/decorator/get-user.decorator';
+import { JwtAuthGuard } from './common/jwt-auth.guard';
 
 @Controller('auth')
 export class AuthController {
@@ -28,21 +31,31 @@ export class AuthController {
   @HttpCode(HttpStatus.OK)
   @Post('/login')
   @ApiOkResponse({ type: AuthResponseDto })
-  login(@Body() LoginDto: LoginDto): Promise<AuthResponseDto> {
-    return this.authService.login(LoginDto);
+  async login(@Body() LoginDto: LoginDto): Promise<AuthResponseDto> {
+    return await this.authService.login(LoginDto);
   }
 
   @HttpCode(HttpStatus.OK)
   @Post('/refresh')
   @ApiOkResponse({ type: AuthResponseDto })
   @ApiBearerAuth('refresh-token')
-  refresh(@Body() refreshTokenDto: RefreshTokenDto): Promise<AuthResponseDto> {
-    return this.authService.refresh(refreshTokenDto);
+  async refresh(
+    @Body() refreshTokenDto: RefreshTokenDto,
+  ): Promise<AuthResponseDto> {
+    return await this.authService.refresh(refreshTokenDto);
   }
 
   @Post('/register')
   @ApiCreatedResponse({ type: ReturnUserDto })
-  register(@Body() createUserDto: CreateUserDto): Promise<ReturnUserDto> {
-    return this.authService.register(createUserDto);
+  async register(@Body() createUserDto: CreateUserDto): Promise<ReturnUserDto> {
+    return await this.authService.register(createUserDto);
+  }
+
+  @Post('/me')
+  @UseGuards(JwtAuthGuard)
+  @ApiBearerAuth()
+  @ApiCreatedResponse({ type: ReturnUserDto })
+  async getUserData(@GetUser('userId') userId: string) {
+    return await this.authService.getUserData(userId);
   }
 }

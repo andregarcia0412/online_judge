@@ -51,7 +51,11 @@ export class AuthService implements AuthServicePort {
     return new AuthResponseDto(accessToken, newRefreshToken);
   }
 
-  register(createUserDto: CreateUserDto): Promise<ReturnUserDto> {
-    return this.userService.create(createUserDto);
+  async register(createUserDto: CreateUserDto): Promise<ReturnUserDto> {
+    return await this.userService.create(createUserDto);
+  }
+
+  async getUserData(userId: string): Promise<ReturnUserDto> {
+    return await this.userService.findOneById(userId);
   }
 }
