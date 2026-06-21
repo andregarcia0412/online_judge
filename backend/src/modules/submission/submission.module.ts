@@ -5,6 +5,7 @@ import { ProblemModule } from '../problem/problem.module';
 import { UserModule } from '../user/user.module';
 import { Submission } from './entities/submission.entity';
 import { SubmissionRepositoryPort } from './interface/submission.repository.port';
+import { SubmissionServicePort } from './interface/submission.service.port';
 import { SubmissionRepository } from './repository/submission.repository';
 import { SubmissionController } from './submission.controller';
 import { SubmissionService } from './submission.service';
@@ -25,8 +26,8 @@ import { UpdateSubmissionUseCase } from './use-case/update.use-case';
   ],
   controllers: [SubmissionController],
   providers: [
+    { provide: SubmissionServicePort, useClass: SubmissionService },
     { provide: SubmissionRepositoryPort, useClass: SubmissionRepository },
-    SubmissionService,
     CreateSubmissionUseCase,
     CreatePlaygroundSubmissionUseCase,
     FindAllSubmissionUseCase,
@@ -35,6 +36,6 @@ import { UpdateSubmissionUseCase } from './use-case/update.use-case';
     UpdateSubmissionUseCase,
     DeleteSubmissionUseCase,
   ],
-  exports: [SubmissionService, SubmissionRepositoryPort],
+  exports: [SubmissionServicePort, SubmissionRepositoryPort],
 })
 export class SubmissionModule {}

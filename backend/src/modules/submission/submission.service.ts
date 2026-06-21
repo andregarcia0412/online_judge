@@ -3,6 +3,7 @@ import { TestResult } from '../test-runner/dto/test-result.dto';
 import { CreateSubmissionDto } from './dto/create-submission.dto';
 import { ReturnSubmissionDto } from './dto/return-submission.dto';
 import { UpdateSubmissionDto } from './dto/update-submission.dto';
+import { SubmissionServicePort } from './interface/submission.service.port';
 import { CreatePlaygroundSubmissionUseCase } from './use-case/create-playground.use-case';
 import { CreateSubmissionUseCase } from './use-case/create.use-case';
 import { DeleteSubmissionUseCase } from './use-case/delete.use-case';
@@ -12,7 +13,7 @@ import { FindOneSubmissionByIdUseCase } from './use-case/find-one-by-id.use-case
 import { UpdateSubmissionUseCase } from './use-case/update.use-case';
 
 @Injectable()
-export class SubmissionService {
+export class SubmissionService implements SubmissionServicePort {
   constructor(
     @Inject(CreateSubmissionUseCase)
     private readonly createSubmissionUseCase: CreateSubmissionUseCase,
@@ -48,7 +49,7 @@ export class SubmissionService {
     );
   }
 
-  async findAll() {
+  async findAll(): Promise<ReturnSubmissionDto[]> {
     return (await this.findAllSubmissionUseCase.execute()).map(
       ReturnSubmissionDto.fromEntity,
     );

@@ -3,6 +3,7 @@ import {
   Controller,
   Delete,
   Get,
+  Inject,
   Param,
   Patch,
   Post,
@@ -14,17 +15,20 @@ import {
   ApiNoContentResponse,
   ApiOkResponse,
 } from '@nestjs/swagger';
+import { GetUser } from 'src/shared/decorator/get-user.decorator';
+import { JwtAuthGuard } from '../auth/common/jwt-auth.guard';
 import { TestResult } from '../test-runner/dto/test-result.dto';
 import { CreateSubmissionDto } from './dto/create-submission.dto';
 import { ReturnSubmissionDto } from './dto/return-submission.dto';
 import { UpdateSubmissionDto } from './dto/update-submission.dto';
-import { SubmissionService } from './submission.service';
-import { GetUser } from 'src/shared/decorator/get-user.decorator';
-import { JwtAuthGuard } from '../auth/common/jwt-auth.guard';
+import { SubmissionServicePort } from './interface/submission.service.port';
 
 @Controller('submission')
 export class SubmissionController {
-  constructor(private readonly submissionService: SubmissionService) {}
+  constructor(
+    @Inject(SubmissionServicePort)
+    private readonly submissionService: SubmissionServicePort,
+  ) {}
 
   @Post()
   @UseGuards(JwtAuthGuard)
