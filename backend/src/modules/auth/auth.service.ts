@@ -3,7 +3,6 @@ import { CreateUserDto } from 'src/modules/user/dto/create-user.dto';
 import { ReturnUserDto } from 'src/modules/user/dto/return-user.dto';
 import { UserServicePort } from 'src/modules/user/interface/user.service.port';
 import { HashProviderPort } from 'src/shared/provider/hash/hash.provider.port';
-import { UserRepositoryPort } from '../user/interface/user.repository.port';
 import { AuthResponseDto } from './dto/auth-response.dto';
 import { LoginDto } from './dto/login.dto';
 import { RefreshTokenDto } from './dto/refresh-token.dto';
@@ -13,8 +12,6 @@ import { JwtProviderPort } from './provider/jwt.provider.port';
 @Injectable()
 export class AuthService implements AuthServicePort {
   constructor(
-    @Inject(UserRepositoryPort)
-    private readonly userRepository: UserRepositoryPort,
     @Inject(HashProviderPort)
     private readonly hashProvider: HashProviderPort,
     @Inject(UserServicePort)
@@ -23,7 +20,7 @@ export class AuthService implements AuthServicePort {
     private readonly jwtProvider: JwtProviderPort,
   ) {}
   async login(loginDto: LoginDto): Promise<AuthResponseDto> {
-    const user = await this.userRepository.findOneByEmail(loginDto.email);
+    const user = await this.userService.findOneByEmail(loginDto.email);
 
     if (
       !user ||

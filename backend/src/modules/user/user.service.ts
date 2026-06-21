@@ -56,10 +56,8 @@ export class UserService implements UserServicePort {
     return ReturnUserDto.fromEntity(user);
   }
 
-  async findOneByEmail(email: string): Promise<ReturnUserDto> {
-    return ReturnUserDto.fromEntity(
-      await this.findOneByEmailUseCase.execute(email),
-    );
+  async findOneByEmail(email: string): Promise<User> {
+    return await this.findOneByEmailUseCase.execute(email);
   }
 
   async findAllSubmissionsById(id: string): Promise<ReturnSubmissionDto[]> {
