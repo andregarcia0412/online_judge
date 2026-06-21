@@ -49,7 +49,7 @@ export class SubmissionFactory {
   }
 
   static makeCreateSubmissionDto(): CreateSubmissionDto {
-    return new CreateSubmissionDto('123', 1, 'print("Hello World!")', 'python');
+    return new CreateSubmissionDto(1, 'print("Hello World!")', 'python');
   }
 
   static makeSubmissionEntity(): Submission {

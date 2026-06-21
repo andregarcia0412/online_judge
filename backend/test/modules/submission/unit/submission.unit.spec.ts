@@ -30,26 +30,31 @@ describe('SubmissionService', () => {
 
   describe('create', () => {
     it('should delegate to CreateSubmissionUseCase', async () => {
+      const userId = '123';
       const createSubmissionDto = SubmissionFactory.makeCreateSubmissionDto();
       const expected = SubmissionFactory.makeReturnSubmissionDto();
 
       useCaseMocks.createSubmissionUseCase.execute.mockResolvedValue(expected);
 
-      const result = await service.create(createSubmissionDto);
+      const result = await service.create(userId, createSubmissionDto);
 
       expect(useCaseMocks.createSubmissionUseCase.execute).toHaveBeenCalledWith(
+        userId,
         createSubmissionDto,
       );
       expect(result).toBe(expected);
     });
 
     it('should propagate errors from CreateSubmissionUseCase', async () => {
+      const userId = '123';
       const createSubmissionDto = SubmissionFactory.makeCreateSubmissionDto();
       const error = new NotFoundException('User not found');
 
       useCaseMocks.createSubmissionUseCase.execute.mockRejectedValue(error);
 
-      await expect(service.create(createSubmissionDto)).rejects.toThrow(error);
+      await expect(
+        service.create(userId, createSubmissionDto),
+      ).rejects.toThrow(error);
     });
   });
 

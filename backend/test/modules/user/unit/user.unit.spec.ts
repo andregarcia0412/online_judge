@@ -2,6 +2,7 @@ import { ConflictException, NotFoundException } from '@nestjs/common';
 import { UserService } from 'src/modules/user/user.service';
 import { UserFactory } from 'test/factories/user.factory';
 import { ReturnUserDto } from 'src/modules/user/dto/return-user.dto';
+import { User } from 'src/modules/user/entities/user.entity';
 import { SubmissionFactory } from 'test/factories/submission.factory';
 import { ReturnSubmissionDto } from 'src/modules/submission/dto/return-submission.dto';
 
@@ -151,12 +152,12 @@ describe('UserService', () => {
 
       const result = await service.findOneByEmail(userEntity.email);
 
-      expect(result).toBeInstanceOf(ReturnUserDto);
+      expect(result).toBeInstanceOf(User);
+      expect(result).toBe(userEntity);
       expect(result.id).toMatch(userEntity.id);
       expect(useCaseMocks.findOneByEmailUseCase.execute).toHaveBeenCalledWith(
         userEntity.email,
       );
-      expect(result).not.toHaveProperty('password');
     });
 
     it('should throw not found exception when email does not matches', async () => {
