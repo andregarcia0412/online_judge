@@ -5,7 +5,6 @@ import {
   HttpStatus,
   Inject,
   Post,
-  UseGuards,
 } from '@nestjs/common';
 import {
   ApiBearerAuth,
@@ -13,9 +12,6 @@ import {
   ApiOkResponse,
 } from '@nestjs/swagger';
 import { CreateUserDto } from 'src/modules/user/dto/create-user.dto';
-import { ReturnUserDto } from 'src/modules/user/dto/return-user.dto';
-import { GetUser } from 'src/shared/decorator/get-user.decorator';
-import { JwtAuthGuard } from './common/jwt-auth.guard';
 import { AuthResponseDto } from './dto/auth-response.dto';
 import { LoginDto } from './dto/login.dto';
 import { RefreshTokenDto } from './dto/refresh-token.dto';
@@ -51,13 +47,5 @@ export class AuthController {
     @Body() createUserDto: CreateUserDto,
   ): Promise<AuthResponseDto> {
     return await this.authService.register(createUserDto);
-  }
-
-  @Post('/me')
-  @UseGuards(JwtAuthGuard)
-  @ApiBearerAuth()
-  @ApiCreatedResponse({ type: ReturnUserDto })
-  async getUserData(@GetUser('userId') userId: string) {
-    return await this.authService.getUserData(userId);
   }
 }

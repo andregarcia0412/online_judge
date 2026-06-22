@@ -5,7 +5,6 @@ import {
   UnauthorizedException,
 } from '@nestjs/common';
 import { CreateUserDto } from 'src/modules/user/dto/create-user.dto';
-import { ReturnUserDto } from 'src/modules/user/dto/return-user.dto';
 import { UserServicePort } from 'src/modules/user/interface/user.service.port';
 import { HashProviderPort } from 'src/shared/provider/hash/hash.provider.port';
 import { AuthResponseDto } from './dto/auth-response.dto';
@@ -61,10 +60,6 @@ export class AuthService implements AuthServicePort {
     const user = await this.userService.create(createUserDto);
 
     return this.generateTokens(user.id);
-  }
-
-  async getUserData(userId: string): Promise<ReturnUserDto> {
-    return await this.userService.findOneById(userId);
   }
 
   private generateTokens(userId: string): AuthResponseDto {

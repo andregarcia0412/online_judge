@@ -7,8 +7,10 @@ import {
   Param,
   Patch,
   Post,
+  UseGuards,
 } from '@nestjs/common';
 import {
+  ApiBearerAuth,
   ApiCreatedResponse,
   ApiNoContentResponse,
   ApiOkResponse,
@@ -18,6 +20,8 @@ import { CreateUserDto } from './dto/create-user.dto';
 import { ReturnUserDto } from './dto/return-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
 import { UserServicePort } from './interface/user.service.port';
+import { JwtAuthGuard } from '../auth/common/jwt-auth.guard';
+import { GetUser } from 'src/shared/decorator/get-user.decorator';
 
 @Controller('user')
 export class UserController {
@@ -40,10 +44,14 @@ export class UserController {
     return await this.userService.findAllSubmissionsById(id);
   }
 
-  @Get(':id')
+  @Get('me')
+  @UseGuards(JwtAuthGuard)
+  @ApiBearerAuth()
   @ApiOkResponse({ type: ReturnUserDto })
-  async findOne(@Param('id') id: string): Promise<ReturnUserDto> {
-    return await this.userService.findOneById(id);
+  async findCurrentUser(
+    @GetUser('userId') userId: string,
+  ): Promise<ReturnUserDto> {
+    return await this.userService.findOneById(userId);
   }
 
   @Patch(':id')
