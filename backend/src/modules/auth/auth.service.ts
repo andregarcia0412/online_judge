@@ -1,4 +1,9 @@
-import { Inject, Injectable, UnauthorizedException } from '@nestjs/common';
+import {
+  Inject,
+  Injectable,
+  NotFoundException,
+  UnauthorizedException,
+} from '@nestjs/common';
 import { CreateUserDto } from 'src/modules/user/dto/create-user.dto';
 import { ReturnUserDto } from 'src/modules/user/dto/return-user.dto';
 import { UserServicePort } from 'src/modules/user/interface/user.service.port';
@@ -44,6 +49,13 @@ export class AuthService implements AuthServicePort {
 
     const sub = typeof payload === 'string' ? payload : payload.sub;
     if (!sub) throw new UnauthorizedException('Invalid refresh token');
+
+    try {
+      await this.userService.findOneById(sub);
+    } catch (e) {
+      if (e instanceof NotFoundException) throw new UnauthorizedException();
+      throw e;
+    }
 
     const accessToken = this.jwtProvider.generateAccessToken(sub);
     const newRefreshToken = this.jwtProvider.generateRefreshToken(sub);
