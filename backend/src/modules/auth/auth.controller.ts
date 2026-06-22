@@ -14,12 +14,12 @@ import {
 } from '@nestjs/swagger';
 import { CreateUserDto } from 'src/modules/user/dto/create-user.dto';
 import { ReturnUserDto } from 'src/modules/user/dto/return-user.dto';
-import { AuthResponseDto } from './dto/auth-response.dto';
-import { LoginDto } from './dto/login.dto';
-import { AuthServicePort } from './interface/auth.service.port';
-import { RefreshTokenDto } from './dto/refresh-token.dto';
 import { GetUser } from 'src/shared/decorator/get-user.decorator';
 import { JwtAuthGuard } from './common/jwt-auth.guard';
+import { AuthResponseDto } from './dto/auth-response.dto';
+import { LoginDto } from './dto/login.dto';
+import { RefreshTokenDto } from './dto/refresh-token.dto';
+import { AuthServicePort } from './interface/auth.service.port';
 
 @Controller('auth')
 export class AuthController {
@@ -46,8 +46,10 @@ export class AuthController {
   }
 
   @Post('/register')
-  @ApiCreatedResponse({ type: ReturnUserDto })
-  async register(@Body() createUserDto: CreateUserDto): Promise<ReturnUserDto> {
+  @ApiCreatedResponse({ type: AuthResponseDto })
+  async register(
+    @Body() createUserDto: CreateUserDto,
+  ): Promise<AuthResponseDto> {
     return await this.authService.register(createUserDto);
   }
 

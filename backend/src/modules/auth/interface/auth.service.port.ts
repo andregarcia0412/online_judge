@@ -7,7 +7,7 @@ import { RefreshTokenDto } from '../dto/refresh-token.dto';
 export interface AuthServicePort {
   login(loginDto: LoginDto): Promise<AuthResponseDto>;
   refresh(refreshToken: RefreshTokenDto): Promise<AuthResponseDto>;
-  register(createUserDto: CreateUserDto): Promise<ReturnUserDto>;
+  register(createUserDto: CreateUserDto): Promise<AuthResponseDto>;
   getUserData(userId: string): Promise<ReturnUserDto>;
 }
 

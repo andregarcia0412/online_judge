@@ -36,10 +36,7 @@ export class AuthService implements AuthServicePort {
 
     await this.userService.updateUserStreak(user);
 
-    return new AuthResponseDto(
-      this.jwtProvider.generateAccessToken(user.id),
-      this.jwtProvider.generateRefreshToken(user.id),
-    );
+    return this.generateTokens(user.id);
   }
 
   async refresh(refreshTokenDto: RefreshTokenDto): Promise<AuthResponseDto> {
@@ -57,17 +54,23 @@ export class AuthService implements AuthServicePort {
       throw e;
     }
 
-    const accessToken = this.jwtProvider.generateAccessToken(sub);
-    const newRefreshToken = this.jwtProvider.generateRefreshToken(sub);
-
-    return new AuthResponseDto(accessToken, newRefreshToken);
+    return this.generateTokens(sub);
   }
 
-  async register(createUserDto: CreateUserDto): Promise<ReturnUserDto> {
-    return await this.userService.create(createUserDto);
+  async register(createUserDto: CreateUserDto): Promise<AuthResponseDto> {
+    const user = await this.userService.create(createUserDto);
+
+    return this.generateTokens(user.id);
   }
 
   async getUserData(userId: string): Promise<ReturnUserDto> {
     return await this.userService.findOneById(userId);
+  }
+
+  private generateTokens(userId: string): AuthResponseDto {
+    return new AuthResponseDto(
+      this.jwtProvider.generateAccessToken(userId),
+      this.jwtProvider.generateRefreshToken(userId),
+    );
   }
 }
