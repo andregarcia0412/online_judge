@@ -9,9 +9,10 @@ import { FindAllTestCasesUseCase } from '../use-case/test-case/find-all.use-case
 import { FindTestCaseByIdUseCase } from '../use-case/test-case/find-one.use-case';
 import { RemoveTestCaseUseCase } from '../use-case/test-case/remove.use-case';
 import { UpdateTestCaseUseCase } from '../use-case/test-case/update.use-case';
+import { TestCaseServicePort } from '../interface/service/test-case.service.port';
 
 @Injectable()
-export class TestCaseService {
+export class TestCaseService implements TestCaseServicePort {
   constructor(
     @Inject(CreateTestCaseUseCase)
     private readonly createTestCaseUseCase: CreateTestCaseUseCase,

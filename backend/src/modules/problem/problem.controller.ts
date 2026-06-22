@@ -3,33 +3,36 @@ import {
   Controller,
   Delete,
   Get,
+  Inject,
   Param,
   Patch,
   Post,
 } from '@nestjs/common';
 import { ApiCreatedResponse, ApiOkResponse } from '@nestjs/swagger';
-import { UpdateResult } from 'typeorm';
-import { DeleteResult } from 'typeorm';
-import { ReturnTestCaseDto } from './dto/test-case/return-test-case.dto';
+import { DeleteResult, UpdateResult } from 'typeorm';
+import { CreateCategoryDto } from './dto/category/create-category.dto';
+import { ReturnCategoriesDto } from './dto/category/return-categories.dto';
+import { ReturnCategoryDto } from './dto/category/return-category.dto';
+import { UpdateCategoryDto } from './dto/category/update-category.dto';
 import { CreateProblemDto } from './dto/problem/create-problem.dto';
 import { ReturnProblemDto } from './dto/problem/return-problem.dto';
 import { UpdateProblemDto } from './dto/problem/update-problem.dto';
-import { ProblemService } from './service/problem.service';
-import { ReturnCategoryDto } from './dto/category/return-category.dto';
-import { CreateCategoryDto } from './dto/category/create-category.dto';
-import { CategoryService } from './service/category.service';
-import { UpdateCategoryDto } from './dto/category/update-category.dto';
 import { CreateTestCaseDto } from './dto/test-case/create-test-case.dto';
-import { TestCaseService } from './service/test-case.service';
+import { ReturnTestCaseDto } from './dto/test-case/return-test-case.dto';
 import { UpdateTestCaseDto } from './dto/test-case/update-test-case.dto';
-import { ReturnCategoriesDto } from './dto/category/return-categories.dto';
+import { CategoryServicePort } from './interface/service/category.service.port';
+import { ProblemServicePort } from './interface/service/problem.service.port';
+import { TestCaseServicePort } from './interface/service/test-case.service.port';
 
 @Controller()
 export class ProblemController {
   constructor(
-    private readonly problemService: ProblemService,
-    private readonly categoryService: CategoryService,
-    private readonly testCaseService: TestCaseService,
+    @Inject(ProblemServicePort)
+    private readonly problemService: ProblemServicePort,
+    @Inject(CategoryServicePort)
+    private readonly categoryService: CategoryServicePort,
+    @Inject(TestCaseServicePort)
+    private readonly testCaseService: TestCaseServicePort,
   ) {}
 
   @Post('/problem')

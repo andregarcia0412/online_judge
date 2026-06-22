@@ -13,9 +13,10 @@ import { FindCategoryByIdUseCase } from '../use-case/category/find-by-id.use-cas
 import { RemoveCategoryByProblemIdUseCase } from '../use-case/category/remove-by-problem-id.use-case';
 import { RemoveCategoryUseCase } from '../use-case/category/remove.use-case';
 import { UpdateCategoryUseCase } from '../use-case/category/update.use-case';
+import { CategoryServicePort } from '../interface/service/category.service.port';
 
 @Injectable()
-export class CategoryService {
+export class CategoryService implements CategoryServicePort {
   constructor(
     @Inject(CreateCategoryUseCase)
     private readonly createCategoryUseCase: CreateCategoryUseCase,

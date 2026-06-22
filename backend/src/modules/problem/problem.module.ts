@@ -32,14 +32,17 @@ import { FindAllTestCasesUseCase } from './use-case/test-case/find-all.use-case'
 import { FindTestCaseByIdUseCase } from './use-case/test-case/find-one.use-case';
 import { RemoveTestCaseUseCase } from './use-case/test-case/remove.use-case';
 import { UpdateTestCaseUseCase } from './use-case/test-case/update.use-case';
+import { ProblemServicePort } from './interface/service/problem.service.port';
+import { CategoryServicePort } from './interface/service/category.service.port';
+import { TestCaseServicePort } from './interface/service/test-case.service.port';
 
 @Module({
   imports: [TypeOrmModule.forFeature([Problem, Category, TestCase])],
   controllers: [ProblemController],
   providers: [
-    ProblemService,
-    CategoryService,
-    TestCaseService,
+    { provide: ProblemServicePort, useClass: ProblemService },
+    { provide: CategoryServicePort, useClass: CategoryService },
+    { provide: TestCaseServicePort, useClass: TestCaseService },
     { provide: ProblemRepositoryPort, useClass: ProblemRepository },
     { provide: CategoryRepositoryPort, useClass: CategoryRepository },
     { provide: TestCaseRepositoryPort, useClass: TestCaseRepository },
@@ -64,7 +67,7 @@ import { UpdateTestCaseUseCase } from './use-case/test-case/update.use-case';
     UpdateTestCaseUseCase,
   ],
   exports: [
-    ProblemService,
+    ProblemServicePort,
     ProblemRepositoryPort,
     CategoryRepositoryPort,
     TestCaseRepositoryPort,

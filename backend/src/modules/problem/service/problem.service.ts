@@ -11,9 +11,10 @@ import { FindProblemByIdUseCase } from '../use-case/problem/find-by-id.use-case'
 import { FindProblemByTitleUseCase } from '../use-case/problem/find-by-title.use-case';
 import { RemoveProblemUseCase } from '../use-case/problem/remove.use-case';
 import { UpdateProblemUseCase } from '../use-case/problem/update.use-case';
+import { ProblemServicePort } from '../interface/service/problem.service.port';
 
 @Injectable()
-export class ProblemService {
+export class ProblemService implements ProblemServicePort {
   constructor(
     @Inject(CreateProblemUseCase)
     private readonly createProblemUseCase: CreateProblemUseCase,
