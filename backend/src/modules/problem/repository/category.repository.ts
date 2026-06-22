@@ -13,7 +13,7 @@ export class CategoryRepository implements CategoryRepositoryPort {
     private readonly categoryRepository: Repository<Category>,
   ) {}
   async findByProblemId(
-    id_problem: any,
+    id_problem: number,
     manager?: EntityManager,
   ): Promise<Category[]> {
     const repository = this.getRepository(manager);
