@@ -1,8 +1,8 @@
 import { Inject, Injectable, NotFoundException } from '@nestjs/common';
 import { Problem } from 'src/modules/problem/entities/problem.entity';
 import { TestCase } from 'src/modules/problem/entities/test-case.entity';
-import { ProblemRepositoryPort } from 'src/modules/problem/interface/problem.repository.port';
-import { TestCaseRepositoryPort } from 'src/modules/problem/interface/test-case.repository.port';
+import { ProblemRepositoryPort } from 'src/modules/problem/interface/repository/problem.repository.port';
+import { TestCaseRepositoryPort } from 'src/modules/problem/interface/repository/test-case.repository.port';
 import { TestResult } from 'src/modules/test-runner/dto/test-result.dto';
 import { TestRunnerServicePort } from 'src/modules/test-runner/interface/test-runner.service.port';
 import { EntityManager } from 'typeorm';

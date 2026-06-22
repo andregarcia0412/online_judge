@@ -4,10 +4,10 @@ import {
   Injectable,
   NotFoundException,
 } from '@nestjs/common';
-import { TestCaseRepositoryPort } from '../../interface/test-case.repository.port';
+import { TestCaseRepositoryPort } from '../../interface/repository/test-case.repository.port';
 import { CreateTestCaseDto } from '../../dto/test-case/create-test-case.dto';
 import { TestCase } from '../../entities/test-case.entity';
-import { ProblemRepositoryPort } from '../../interface/problem.repository.port';
+import { ProblemRepositoryPort } from '../../interface/repository/problem.repository.port';
 
 @Injectable()
 export class CreateTestCaseUseCase {

@@ -1,5 +1,5 @@
 import { Injectable } from '@nestjs/common';
-import { TestCaseRepositoryPort } from '../interface/test-case.repository.port';
+import { TestCaseRepositoryPort } from '../interface/repository/test-case.repository.port';
 import { UpdateResult, DeleteResult, Repository, EntityManager } from 'typeorm';
 import { CreateTestCaseDto } from '../dto/test-case/create-test-case.dto';
 import { UpdateTestCaseDto } from '../dto/test-case/update-test-case.dto';

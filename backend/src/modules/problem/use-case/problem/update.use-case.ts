@@ -1,7 +1,7 @@
 import { Inject, Injectable } from '@nestjs/common';
 import { UpdateResult } from 'typeorm';
 import { UpdateProblemDto } from '../../dto/problem/update-problem.dto';
-import { ProblemRepositoryPort } from '../../interface/problem.repository.port';
+import { ProblemRepositoryPort } from '../../interface/repository/problem.repository.port';
 
 @Injectable()
 export class UpdateProblemUseCase {

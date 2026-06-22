@@ -1,6 +1,6 @@
 import { Inject, Injectable } from '@nestjs/common';
 import { DeleteResult } from 'typeorm';
-import { CategoryRepositoryPort } from '../../interface/category.repository.port';
+import { CategoryRepositoryPort } from '../../interface/repository/category.repository.port';
 
 @Injectable()
 export class RemoveCategoryUseCase {

@@ -1,7 +1,7 @@
 import { DeleteResult, EntityManager, UpdateResult } from 'typeorm';
-import { CreateProblemDto } from '../dto/problem/create-problem.dto';
-import { UpdateProblemDto } from '../dto/problem/update-problem.dto';
-import { Problem } from '../entities/problem.entity';
+import { CreateProblemDto } from '../../dto/problem/create-problem.dto';
+import { UpdateProblemDto } from '../../dto/problem/update-problem.dto';
+import { Problem } from '../../entities/problem.entity';
 
 export interface ProblemRepositoryPort {
   findByTitle(title: string, manager?: EntityManager): Promise<Problem | null>;

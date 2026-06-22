@@ -1,5 +1,5 @@
 import { Inject, Injectable, NotFoundException } from '@nestjs/common';
-import { TestCaseRepositoryPort } from '../../interface/test-case.repository.port';
+import { TestCaseRepositoryPort } from '../../interface/repository/test-case.repository.port';
 import { TestCase } from '../../entities/test-case.entity';
 
 @Injectable()

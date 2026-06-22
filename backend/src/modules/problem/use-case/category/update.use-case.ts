@@ -1,5 +1,5 @@
 import { Inject, Injectable } from '@nestjs/common';
-import { CategoryRepositoryPort } from '../../interface/category.repository.port';
+import { CategoryRepositoryPort } from '../../interface/repository/category.repository.port';
 import { UpdateCategoryDto } from '../../dto/category/update-category.dto';
 import { UpdateResult } from 'typeorm';
 

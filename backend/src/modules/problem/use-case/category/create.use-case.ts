@@ -1,8 +1,8 @@
 import { Inject, Injectable, NotFoundException } from '@nestjs/common';
-import { CategoryRepositoryPort } from '../../interface/category.repository.port';
+import { CategoryRepositoryPort } from '../../interface/repository/category.repository.port';
 import { CreateCategoryDto } from '../../dto/category/create-category.dto';
 import { Category } from '../../entities/category.entity';
-import { ProblemRepositoryPort } from '../../interface/problem.repository.port';
+import { ProblemRepositoryPort } from '../../interface/repository/problem.repository.port';
 
 @Injectable()
 export class CreateCategoryUseCase {

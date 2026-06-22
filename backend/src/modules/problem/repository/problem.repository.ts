@@ -4,7 +4,7 @@ import { DeleteResult, EntityManager, Repository, UpdateResult } from 'typeorm';
 import { CreateProblemDto } from '../dto/problem/create-problem.dto';
 import { UpdateProblemDto } from '../dto/problem/update-problem.dto';
 import { Problem } from '../entities/problem.entity';
-import { ProblemRepositoryPort } from '../interface/problem.repository.port';
+import { ProblemRepositoryPort } from '../interface/repository/problem.repository.port';
 
 @Injectable()
 export class ProblemRepository implements ProblemRepositoryPort {
