@@ -1,4 +1,4 @@
-import { DeleteResult, UpdateResult } from 'typeorm';
+import { UpdateResult } from 'typeorm';
 import { CreateProblemDto } from '../../dto/problem/create-problem.dto';
 import { ReturnProblemDto } from '../../dto/problem/return-problem.dto';
 import { UpdateProblemDto } from '../../dto/problem/update-problem.dto';
@@ -9,7 +9,7 @@ export interface ProblemServicePort {
   findOneById(id: number): Promise<ReturnProblemDto>;
   findOneByTitle(title: string): Promise<ReturnProblemDto>;
   update(id: number, updateProblemDto: UpdateProblemDto): Promise<UpdateResult>;
-  remove(id: number): Promise<DeleteResult>;
+  remove(id: number): Promise<void>;
 }
 
 export const ProblemServicePort = Symbol('ProblemServicePort');

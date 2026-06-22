@@ -2,7 +2,6 @@ import { EntityManager, UpdateResult } from 'typeorm';
 import { CreateCategoryDto } from '../../dto/category/create-category.dto';
 import { UpdateCategoryDto } from '../../dto/category/update-category.dto';
 import { Category } from '../../entities/category.entity';
-import { DeleteResult } from 'typeorm';
 
 export interface CategoryRepositoryPort {
   createAndSave(
@@ -26,11 +25,8 @@ export interface CategoryRepositoryPort {
     updateCategoryDto: UpdateCategoryDto,
     manager?: EntityManager,
   ): Promise<UpdateResult>;
-  delete(id: number, manager?: EntityManager): Promise<DeleteResult>;
-  deleteByProblemId(
-    id_problem: number,
-    manager?: EntityManager,
-  ): Promise<DeleteResult>;
+  delete(id: number, manager?: EntityManager): Promise<void>;
+  deleteByProblemId(id_problem: number, manager?: EntityManager): Promise<void>;
 }
 
 export const CategoryRepositoryPort = Symbol('CategoryRepositoryPort');

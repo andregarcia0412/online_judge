@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { DeleteResult, EntityManager, Repository, UpdateResult } from 'typeorm';
+import { EntityManager, Repository, UpdateResult } from 'typeorm';
 import { CreateProblemDto } from '../dto/problem/create-problem.dto';
 import { UpdateProblemDto } from '../dto/problem/update-problem.dto';
 import { Problem } from '../entities/problem.entity';
@@ -54,9 +54,9 @@ export class ProblemRepository implements ProblemRepositoryPort {
     const repository = this.getRepository(manager);
     return await repository.update(id, updateProblemDto);
   }
-  async delete(id: number, manager?: EntityManager): Promise<DeleteResult> {
+  async delete(id: number, manager?: EntityManager): Promise<void> {
     const repository = this.getRepository(manager);
-    return await repository.delete(id);
+    await repository.delete(id);
   }
 
   private getRepository(manager?: EntityManager): Repository<Problem> {

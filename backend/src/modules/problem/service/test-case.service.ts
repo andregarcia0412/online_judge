@@ -1,15 +1,15 @@
 import { Inject, Injectable } from '@nestjs/common';
-import { DeleteResult, UpdateResult } from 'typeorm';
+import { UpdateResult } from 'typeorm';
 import { CreateTestCaseDto } from '../dto/test-case/create-test-case.dto';
 import { ReturnTestCaseDto } from '../dto/test-case/return-test-case.dto';
 import { UpdateTestCaseDto } from '../dto/test-case/update-test-case.dto';
-import { FindAllTestCasesByProblemIdUseCase } from '../use-case/test-case/find-all-by-problem-id.use-case';
+import { TestCaseServicePort } from '../interface/service/test-case.service.port';
 import { CreateTestCaseUseCase } from '../use-case/test-case/create.use-case';
+import { FindAllTestCasesByProblemIdUseCase } from '../use-case/test-case/find-all-by-problem-id.use-case';
 import { FindAllTestCasesUseCase } from '../use-case/test-case/find-all.use-case';
 import { FindTestCaseByIdUseCase } from '../use-case/test-case/find-one.use-case';
 import { RemoveTestCaseUseCase } from '../use-case/test-case/remove.use-case';
 import { UpdateTestCaseUseCase } from '../use-case/test-case/update.use-case';
-import { TestCaseServicePort } from '../interface/service/test-case.service.port';
 
 @Injectable()
 export class TestCaseService implements TestCaseServicePort {
@@ -61,7 +61,7 @@ export class TestCaseService implements TestCaseServicePort {
     return await this.updateTestCaseUseCase.execute(id, updateTestCaseDto);
   }
 
-  async remove(id: string): Promise<DeleteResult> {
-    return await this.removeTestCaseUseCase.execute(id);
+  async remove(id: string): Promise<void> {
+    await this.removeTestCaseUseCase.execute(id);
   }
 }

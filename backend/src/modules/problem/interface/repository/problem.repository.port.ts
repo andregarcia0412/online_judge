@@ -1,4 +1,4 @@
-import { DeleteResult, EntityManager, UpdateResult } from 'typeorm';
+import { EntityManager, UpdateResult } from 'typeorm';
 import { CreateProblemDto } from '../../dto/problem/create-problem.dto';
 import { UpdateProblemDto } from '../../dto/problem/update-problem.dto';
 import { Problem } from '../../entities/problem.entity';
@@ -20,7 +20,7 @@ export interface ProblemRepositoryPort {
     updateProblemDto: UpdateProblemDto,
     manager?: EntityManager,
   ): Promise<UpdateResult>;
-  delete(id: number, manager?: EntityManager): Promise<DeleteResult>;
+  delete(id: number, manager?: EntityManager): Promise<void>;
 }
 
 export const ProblemRepositoryPort = Symbol('ProblemRepositoryPort');

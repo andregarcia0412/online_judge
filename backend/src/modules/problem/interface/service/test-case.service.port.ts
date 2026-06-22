@@ -1,4 +1,4 @@
-import { DeleteResult, UpdateResult } from 'typeorm';
+import { UpdateResult } from 'typeorm';
 import { CreateTestCaseDto } from '../../dto/test-case/create-test-case.dto';
 import { ReturnTestCaseDto } from '../../dto/test-case/return-test-case.dto';
 import { UpdateTestCaseDto } from '../../dto/test-case/update-test-case.dto';
@@ -12,7 +12,7 @@ export interface TestCaseServicePort {
     id: string,
     updateTestCaseDto: UpdateTestCaseDto,
   ): Promise<UpdateResult>;
-  remove(id: string): Promise<DeleteResult>;
+  remove(id: string): Promise<void>;
 }
 
 export const TestCaseServicePort = Symbol('TestCaseServicePort');

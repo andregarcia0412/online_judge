@@ -1,5 +1,4 @@
 import { Inject, Injectable } from '@nestjs/common';
-import { DeleteResult } from 'typeorm';
 import { CategoryRepositoryPort } from '../../interface/repository/category.repository.port';
 
 @Injectable()
@@ -9,7 +8,7 @@ export class RemoveCategoryUseCase {
     private readonly categoryRepository: CategoryRepositoryPort,
   ) {}
 
-  async execute(id: number): Promise<DeleteResult> {
-    return await this.categoryRepository.delete(id);
+  async execute(id: number): Promise<void> {
+    await this.categoryRepository.delete(id);
   }
 }

@@ -1,10 +1,10 @@
 import { Injectable } from '@nestjs/common';
-import { CategoryRepositoryPort } from '../interface/repository/category.repository.port';
-import { UpdateResult, DeleteResult, Repository, EntityManager } from 'typeorm';
+import { InjectRepository } from '@nestjs/typeorm';
+import { EntityManager, Repository, UpdateResult } from 'typeorm';
 import { CreateCategoryDto } from '../dto/category/create-category.dto';
 import { UpdateCategoryDto } from '../dto/category/update-category.dto';
 import { Category } from '../entities/category.entity';
-import { InjectRepository } from '@nestjs/typeorm';
+import { CategoryRepositoryPort } from '../interface/repository/category.repository.port';
 
 @Injectable()
 export class CategoryRepository implements CategoryRepositoryPort {
@@ -64,16 +64,16 @@ export class CategoryRepository implements CategoryRepositoryPort {
     const repository = this.getRepository(manager);
     return await repository.update(id, updateCategoryDto);
   }
-  async delete(id: number, manager?: EntityManager): Promise<DeleteResult> {
+  async delete(id: number, manager?: EntityManager): Promise<void> {
     const repository = this.getRepository(manager);
-    return await repository.delete(id);
+    await repository.delete(id);
   }
   async deleteByProblemId(
     id_problem: number,
     manager?: EntityManager,
-  ): Promise<DeleteResult> {
+  ): Promise<void> {
     const repository = this.getRepository(manager);
-    return await repository.delete({ id_problem });
+    await repository.delete({ id_problem });
   }
   private getRepository(manager?: EntityManager): Repository<Category> {
     return manager ? manager.getRepository(Category) : this.categoryRepository;

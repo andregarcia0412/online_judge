@@ -1,6 +1,5 @@
 import { Inject, Injectable } from '@nestjs/common';
 import { TestCaseRepositoryPort } from '../../interface/repository/test-case.repository.port';
-import { DeleteResult } from 'typeorm';
 
 @Injectable()
 export class RemoveTestCaseUseCase {
@@ -9,7 +8,7 @@ export class RemoveTestCaseUseCase {
     private readonly testCaseRepository: TestCaseRepositoryPort,
   ) {}
 
-  async execute(id: string): Promise<DeleteResult> {
-    return await this.testCaseRepository.delete(id);
+  async execute(id: string): Promise<void> {
+    await this.testCaseRepository.delete(id);
   }
 }

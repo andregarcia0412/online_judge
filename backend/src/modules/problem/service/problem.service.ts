@@ -1,17 +1,17 @@
 import { Inject, Injectable } from '@nestjs/common';
-import { DeleteResult, UpdateResult } from 'typeorm';
+import { UpdateResult } from 'typeorm';
 import { ReturnCategoryDto } from '../dto/category/return-category.dto';
 import { CreateProblemDto } from '../dto/problem/create-problem.dto';
 import { ReturnProblemDto } from '../dto/problem/return-problem.dto';
 import { UpdateProblemDto } from '../dto/problem/update-problem.dto';
 import { ReturnTestCaseDto } from '../dto/test-case/return-test-case.dto';
+import { ProblemServicePort } from '../interface/service/problem.service.port';
 import { CreateProblemUseCase } from '../use-case/problem/create.use-case';
 import { FindAllProblemUseCase } from '../use-case/problem/find-all.use-case';
 import { FindProblemByIdUseCase } from '../use-case/problem/find-by-id.use-case';
 import { FindProblemByTitleUseCase } from '../use-case/problem/find-by-title.use-case';
 import { RemoveProblemUseCase } from '../use-case/problem/remove.use-case';
 import { UpdateProblemUseCase } from '../use-case/problem/update.use-case';
-import { ProblemServicePort } from '../interface/service/problem.service.port';
 
 @Injectable()
 export class ProblemService implements ProblemServicePort {
@@ -80,7 +80,7 @@ export class ProblemService implements ProblemServicePort {
     return await this.updateProblemUseCase.execute(id, updateProblemDto);
   }
 
-  async remove(id: number): Promise<DeleteResult> {
-    return await this.removeProblemUseCase.execute(id);
+  async remove(id: number): Promise<void> {
+    await this.removeProblemUseCase.execute(id);
   }
 }

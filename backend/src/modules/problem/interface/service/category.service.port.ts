@@ -1,4 +1,4 @@
-import { DeleteResult, UpdateResult } from 'typeorm';
+import { UpdateResult } from 'typeorm';
 import { CreateCategoryDto } from '../../dto/category/create-category.dto';
 import { ReturnCategoriesDto } from '../../dto/category/return-categories.dto';
 import { ReturnCategoryDto } from '../../dto/category/return-category.dto';
@@ -17,8 +17,8 @@ export interface CategoryServicePort {
     id: number,
     updateCategoryDto: UpdateCategoryDto,
   ): Promise<UpdateResult>;
-  remove(id: number): Promise<DeleteResult>;
-  removeByProblemId(problemId: number): Promise<DeleteResult>;
+  remove(id: number): Promise<void>;
+  removeByProblemId(problemId: number): Promise<void>;
 }
 
 export const CategoryServicePort = Symbol('CategoryServicePort');
