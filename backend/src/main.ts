@@ -13,7 +13,11 @@ async function bootstrap() {
     }),
   );
 
-  const config = new DocumentBuilder().setTitle('online judge API').build();
+  const config = new DocumentBuilder()
+    .setTitle('Online Judge API')
+    .setVersion('1.0')
+    .addBearerAuth()
+    .build();
 
   const document = SwaggerModule.createDocument(app, config);
   SwaggerModule.setup('docs', app, document);
