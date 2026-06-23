@@ -1,8 +1,4 @@
-import {
-  ConflictException,
-  NotFoundException,
-  UnauthorizedException,
-} from '@nestjs/common';
+import { ConflictException, UnauthorizedException } from '@nestjs/common';
 import { AuthService } from 'src/modules/auth/auth.service';
 import { AuthResponseDto } from 'src/modules/auth/dto/auth-response.dto';
 import { AuthFactory } from 'test/factories/auth.factory';
@@ -157,16 +153,28 @@ describe('AuthService', () => {
   });
 
   describe('Register', () => {
-    it('should delegate user creation to UserService and return ReturnUserDto', async () => {
+    it('should create the user and return AuthResponseDto', async () => {
       const createUserDto = AuthFactory.makeCreateUserDto();
-      const returnUserDto = UserFactory.makeReturnUserDto();
+      const createdUser = UserFactory.makeReturnUserDto();
 
-      userServiceMock.create.mockResolvedValue(returnUserDto);
+      userServiceMock.create.mockResolvedValue(createdUser);
+      jwtProviderMock.generateAccessToken.mockReturnValue('access-token');
+      jwtProviderMock.generateRefreshToken.mockReturnValue('refresh-token');
 
       const result = await service.register(createUserDto);
 
       expect(userServiceMock.create).toHaveBeenCalledWith(createUserDto);
-      expect(result).toEqual(returnUserDto);
+      expect(jwtProviderMock.generateAccessToken).toHaveBeenCalledWith(
+        createdUser.id,
+      );
+      expect(jwtProviderMock.generateRefreshToken).toHaveBeenCalledWith(
+        createdUser.id,
+      );
+      expect(result).toBeInstanceOf(AuthResponseDto);
+      expect(result).toMatchObject({
+        accessToken: 'access-token',
+        refreshToken: 'refresh-token',
+      });
     });
 
     it('should propagate exception when UserService.create fails', async () => {
@@ -181,29 +189,6 @@ describe('AuthService', () => {
       await expect(registerPromise).rejects.toThrow(
         'This email is already in use',
       );
-    });
-  });
-
-  describe('Get User Data', () => {
-    it('should delegate to UserService and return ReturnUserDto', async () => {
-      const returnUserDto = UserFactory.makeReturnUserDto();
-      userServiceMock.findOneById.mockResolvedValue(returnUserDto);
-
-      const result = await service.getUserData('123');
-
-      expect(userServiceMock.findOneById).toHaveBeenCalledWith('123');
-      expect(result).toEqual(returnUserDto);
-    });
-
-    it('should propagate exception when user does not exist', async () => {
-      userServiceMock.findOneById.mockRejectedValue(
-        new NotFoundException('User not found'),
-      );
-
-      const getPromise = service.getUserData('non-existent-id');
-
-      await expect(getPromise).rejects.toThrow(NotFoundException);
-      await expect(getPromise).rejects.toThrow('User not found');
     });
   });
 });
