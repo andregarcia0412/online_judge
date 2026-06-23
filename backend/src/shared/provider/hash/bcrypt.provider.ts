@@ -11,10 +11,10 @@ export class BcryptProvider implements HashProviderPort {
     this.salt = Number(configService.get<string>('BCRYPT_SALT')) ?? 10;
   }
 
-  generateHash(password: string): Promise<string> {
-    return bcrypt.hash(password, this.salt);
+  async generateHash(password: string): Promise<string> {
+    return await bcrypt.hash(password, this.salt);
   }
-  compare(passwordType: string, passwordHash: string): Promise<boolean> {
-    return bcrypt.compareSync(passwordType, passwordHash);
+  async compare(passwordType: string, passwordHash: string): Promise<boolean> {
+    return await bcrypt.compare(passwordType, passwordHash);
   }
 }
