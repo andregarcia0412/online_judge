@@ -18,17 +18,16 @@ describe('RemoveCategoryByProblemIdUseCase', () => {
     jest.restoreAllMocks();
   });
 
-  it('should delegate to the repository and return the delete result', async () => {
+  it('should delegate to the repository and resolve void', async () => {
     const problemId = 1;
-    const deleteResult = { affected: 2, raw: [] };
 
-    categoryRepositoryMock.deleteByProblemId.mockResolvedValue(deleteResult);
+    categoryRepositoryMock.deleteByProblemId.mockResolvedValue(undefined);
 
     const result = await useCase.execute(problemId);
 
     expect(categoryRepositoryMock.deleteByProblemId).toHaveBeenCalledWith(
       problemId,
     );
-    expect(result).toEqual(deleteResult);
+    expect(result).toBeUndefined();
   });
 });

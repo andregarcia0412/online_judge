@@ -134,21 +134,17 @@ describe('TestCaseService', () => {
   });
 
   describe('Update Test Case', () => {
-    it('should delegate to UpdateTestCaseUseCase and return update result', async () => {
+    it('should delegate to UpdateTestCaseUseCase and map to ReturnTestCaseDto', async () => {
       const testCaseId = '123';
       const updateTestCaseDto = {
         input: '12',
         output: '144',
       };
 
-      const updateResult = {
-        affected: 1,
-        generatedMaps: [],
-        raw: [],
-      };
+      const updatedTestCase = TestCaseFactory.makeTestCaseEntity();
 
       useCaseMocks.updateTestCaseUseCase.execute.mockResolvedValue(
-        updateResult,
+        updatedTestCase,
       );
 
       const result = await service.update(testCaseId, updateTestCaseDto);
@@ -160,21 +156,21 @@ describe('TestCaseService', () => {
       expect(useCaseMocks.updateTestCaseUseCase.execute).toHaveBeenCalledTimes(
         1,
       );
-      expect(result).toEqual(updateResult);
+      expect(result).toBeInstanceOf(ReturnTestCaseDto);
+      expect(result).toMatchObject({
+        id: updatedTestCase.id,
+        id_problem: updatedTestCase.id_problem,
+        input: updatedTestCase.input,
+        output: updatedTestCase.output,
+      });
     });
   });
 
   describe('Delete Test Case', () => {
-    it('should delegate to RemoveTestCaseUseCase and return delete result', async () => {
+    it('should delegate to RemoveTestCaseUseCase and resolve void', async () => {
       const testCaseId = '123';
-      const deleteResult = {
-        affected: 1,
-        raw: [],
-      };
 
-      useCaseMocks.removeTestCaseUseCase.execute.mockResolvedValue(
-        deleteResult,
-      );
+      useCaseMocks.removeTestCaseUseCase.execute.mockResolvedValue(undefined);
 
       const result = await service.remove(testCaseId);
 
@@ -184,7 +180,7 @@ describe('TestCaseService', () => {
       expect(useCaseMocks.removeTestCaseUseCase.execute).toHaveBeenCalledTimes(
         1,
       );
-      expect(result).toEqual(deleteResult);
+      expect(result).toBeUndefined();
     });
   });
 });

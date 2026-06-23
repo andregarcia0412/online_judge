@@ -152,19 +152,15 @@ describe('CategoryService', () => {
   });
 
   describe('Update Category', () => {
-    it('should delegate to UpdateCategoryUseCase and return update result', async () => {
+    it('should delegate to UpdateCategoryUseCase and map to ReturnCategoryDto', async () => {
       const categoryId = 1;
       const updateCategoryDto = {
         category: CategoryEnum.GRAPH,
       };
-      const updateResult = {
-        affected: 1,
-        generatedMaps: [],
-        raw: [],
-      };
+      const updatedCategory = CategoryFactory.makeCategoryEntity();
 
       useCaseMocks.updateCategoryUseCase.execute.mockResolvedValue(
-        updateResult,
+        updatedCategory,
       );
 
       const result = await service.update(categoryId, updateCategoryDto);
@@ -176,21 +172,20 @@ describe('CategoryService', () => {
       expect(useCaseMocks.updateCategoryUseCase.execute).toHaveBeenCalledTimes(
         1,
       );
-      expect(result).toEqual(updateResult);
+      expect(result).toBeInstanceOf(ReturnCategoryDto);
+      expect(result).toMatchObject({
+        id: updatedCategory.id,
+        id_problem: updatedCategory.id_problem,
+        category: updatedCategory.category,
+      });
     });
   });
 
   describe('Delete Category', () => {
-    it('should delegate to RemoveCategoryUseCase and return delete result', async () => {
+    it('should delegate to RemoveCategoryUseCase and resolve void', async () => {
       const categoryId = 1;
-      const deleteResult = {
-        affected: 1,
-        raw: [],
-      };
 
-      useCaseMocks.removeCategoryUseCase.execute.mockResolvedValue(
-        deleteResult,
-      );
+      useCaseMocks.removeCategoryUseCase.execute.mockResolvedValue(undefined);
 
       const result = await service.remove(categoryId);
 
@@ -200,20 +195,16 @@ describe('CategoryService', () => {
       expect(useCaseMocks.removeCategoryUseCase.execute).toHaveBeenCalledTimes(
         1,
       );
-      expect(result).toEqual(deleteResult);
+      expect(result).toBeUndefined();
     });
   });
 
   describe('Delete Categories By Problem Id', () => {
-    it('should delegate to RemoveCategoryByProblemIdUseCase and return delete result', async () => {
+    it('should delegate to RemoveCategoryByProblemIdUseCase and resolve void', async () => {
       const problemId = 1;
-      const deleteResult = {
-        affected: 2,
-        raw: [],
-      };
 
       useCaseMocks.removeCategoryByProblemIdUseCase.execute.mockResolvedValue(
-        deleteResult,
+        undefined,
       );
 
       const result = await service.removeByProblemId(problemId);
@@ -224,7 +215,7 @@ describe('CategoryService', () => {
       expect(
         useCaseMocks.removeCategoryByProblemIdUseCase.execute,
       ).toHaveBeenCalledTimes(1);
-      expect(result).toEqual(deleteResult);
+      expect(result).toBeUndefined();
     });
   });
 
