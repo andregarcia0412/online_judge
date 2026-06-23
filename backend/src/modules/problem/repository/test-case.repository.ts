@@ -11,11 +11,11 @@ export class TestCaseRepository implements TestCaseRepositoryPort {
     private readonly testCaseRepository: Repository<TestCase>,
   ) {}
   async findByProblemId(
-    id_problem: number,
+    idProblem: number,
     manager?: EntityManager,
   ): Promise<TestCase[]> {
     const repository = this.getRepository(manager);
-    return await repository.findBy({ id_problem });
+    return await repository.findBy({ idProblem });
   }
   async createAndSave(
     createTestCase: Partial<TestCase>,
@@ -64,11 +64,11 @@ export class TestCaseRepository implements TestCaseRepositoryPort {
     await repository.delete(id);
   }
   async deleteByProblemId(
-    id_problem: number,
+    idProblem: number,
     manager?: EntityManager,
   ): Promise<void> {
     const repository = this.getRepository(manager);
-    await repository.delete({ id_problem });
+    await repository.delete({ idProblem });
   }
   private getRepository(manager?: EntityManager): Repository<TestCase> {
     return manager ? manager.getRepository(TestCase) : this.testCaseRepository;

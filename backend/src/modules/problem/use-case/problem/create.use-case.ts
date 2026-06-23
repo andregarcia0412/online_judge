@@ -41,11 +41,11 @@ export class CreateProblemUseCase {
       );
 
       createProblemDto.test_cases.map(
-        (testCase) => (testCase.id_problem = savedProblem.id),
+        (testCase) => (testCase.idProblem = savedProblem.id),
       );
 
       const savedTestCases = await this.testCaseRepository.createAndSaveMany(
-        createProblemDto.test_cases,
+        createProblemDto.testCases,
         manager,
       );
 

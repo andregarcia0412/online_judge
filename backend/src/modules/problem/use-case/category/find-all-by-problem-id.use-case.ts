@@ -12,13 +12,13 @@ export class FindAllCategoriesByProblemIdUseCase {
     private readonly categoryRepository: CategoryRepositoryPort,
   ) {}
 
-  async execute(problemId: number): Promise<Category[]> {
-    const savedProblem = await this.problemRepository.findById(problemId);
+  async execute(idProblem: number): Promise<Category[]> {
+    const savedProblem = await this.problemRepository.findById(idProblem);
 
     if (!savedProblem) {
       throw new NotFoundException('Problem not found');
     }
 
-    return await this.categoryRepository.findByProblemId(problemId);
+    return await this.categoryRepository.findByProblemId(idProblem);
   }
 }

@@ -18,8 +18,8 @@ export class TestCase {
   @JoinColumn({ name: 'id_problem' })
   problem!: Problem;
 
-  @Column({ type: 'integer' })
-  id_problem!: number;
+  @Column({ name: 'id_problem', type: 'integer' })
+  idProblem!: number;
 
   @Column({ type: 'text', nullable: true })
   input!: string;
