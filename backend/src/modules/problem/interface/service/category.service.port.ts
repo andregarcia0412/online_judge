@@ -1,0 +1,23 @@
+import { CreateCategoryDto } from '../../dto/category/create-category.dto';
+import { ReturnCategoriesDto } from '../../dto/category/return-categories.dto';
+import { ReturnCategoryDto } from '../../dto/category/return-category.dto';
+import { UpdateCategoryDto } from '../../dto/category/update-category.dto';
+
+export interface CategoryServicePort {
+  create(
+    createCategoryDto: CreateCategoryDto,
+    problemId: number,
+  ): Promise<ReturnCategoryDto>;
+  findAll(): Promise<ReturnCategoryDto[]>;
+  getAvailableCategories(): ReturnCategoriesDto[];
+  findOneById(id: number): Promise<ReturnCategoryDto>;
+  findCategoriesByProblemId(problemId: number): Promise<ReturnCategoryDto[]>;
+  update(
+    id: number,
+    updateCategoryDto: UpdateCategoryDto,
+  ): Promise<ReturnCategoryDto>;
+  remove(id: number): Promise<void>;
+  removeByProblemId(problemId: number): Promise<void>;
+}
+
+export const CategoryServicePort = Symbol('CategoryServicePort');

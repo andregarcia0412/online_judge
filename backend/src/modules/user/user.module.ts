@@ -17,6 +17,7 @@ import { FindAllSubmissionsUseCase } from './use-case/find-all-submissions.use-c
 import { UpdateUserUseCase } from './use-case/update.use-case';
 import { UpdateUserStreakOnSubmissionUseCase } from './use-case/update-streak-on-submission.use-case';
 import { DeleteUserUseCase } from './use-case/delete.use-case';
+import { UserServicePort } from './interface/user.service.port';
 
 @Module({
   imports: [
@@ -25,7 +26,7 @@ import { DeleteUserUseCase } from './use-case/delete.use-case';
   ],
   controllers: [UserController],
   providers: [
-    UserService,
+    { provide: UserServicePort, useClass: UserService },
     { provide: UserRepositoryPort, useClass: UserRepository },
     { provide: HashProviderPort, useClass: BcryptProvider },
     CreateUserUseCase,
@@ -38,6 +39,6 @@ import { DeleteUserUseCase } from './use-case/delete.use-case';
     DeleteUserUseCase,
     UpdateUserStreakOnSubmissionUseCase,
   ],
-  exports: [UserService, UserRepositoryPort],
+  exports: [UserServicePort, UserRepositoryPort],
 })
 export class UserModule {}

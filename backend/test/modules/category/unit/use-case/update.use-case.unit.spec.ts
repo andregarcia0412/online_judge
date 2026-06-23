@@ -1,3 +1,4 @@
+import { NotFoundException } from '@nestjs/common';
 import { UpdateCategoryUseCase } from 'src/modules/problem/use-case/category/update.use-case';
 import { CategoryEnum } from 'src/modules/problem/enum/category.enum';
 import { CategoryFactory } from 'test/factories/category.factory';
@@ -17,12 +18,12 @@ describe('UpdateCategoryUseCase', () => {
     jest.restoreAllMocks();
   });
 
-  it('should delegate to the repository and return the update result', async () => {
+  it('should delegate to the repository and return the updated category', async () => {
     const categoryId = 1;
     const updateCategoryDto = { category: CategoryEnum.GRAPH };
-    const updateResult = { affected: 1, generatedMaps: [], raw: [] };
+    const updatedCategory = CategoryFactory.makeCategoryEntity();
 
-    categoryRepositoryMock.updateById.mockResolvedValue(updateResult);
+    categoryRepositoryMock.updateById.mockResolvedValue(updatedCategory);
 
     const result = await useCase.execute(categoryId, updateCategoryDto);
 
@@ -30,6 +31,14 @@ describe('UpdateCategoryUseCase', () => {
       categoryId,
       updateCategoryDto,
     );
-    expect(result).toEqual(updateResult);
+    expect(result).toEqual(updatedCategory);
+  });
+
+  it('should throw NotFoundException when the category does not exist', async () => {
+    categoryRepositoryMock.updateById.mockResolvedValue(null);
+
+    await expect(
+      useCase.execute(123, { category: CategoryEnum.GRAPH }),
+    ).rejects.toThrow(new NotFoundException('Category not found'));
   });
 });

@@ -16,19 +16,15 @@ describe('RemoveTestCaseUseCase', () => {
     jest.restoreAllMocks();
   });
 
-  it('should delegate to the repository and return the delete result', async () => {
+  it('should delegate to the repository and resolve void', async () => {
     const testCaseId = '123';
-    const deleteResult = {
-      affected: 1,
-      raw: [],
-    };
 
-    testCaseRepositoryMock.delete.mockResolvedValue(deleteResult);
+    testCaseRepositoryMock.delete.mockResolvedValue(undefined);
 
     const result = await useCase.execute(testCaseId);
 
     expect(testCaseRepositoryMock.delete).toHaveBeenCalledWith(testCaseId);
     expect(testCaseRepositoryMock.delete).toHaveBeenCalledTimes(1);
-    expect(result).toEqual(deleteResult);
+    expect(result).toBeUndefined();
   });
 });

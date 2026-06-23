@@ -2,8 +2,7 @@ import {
   BadRequestException,
   Inject,
   Injectable,
-  Logger,
-  NotFoundException,
+  Logger
 } from '@nestjs/common';
 import Docker from 'dockerode';
 import { ExecuteCodeDto } from 'src/shared/provider/code-runner/dto/execute-code.dto';

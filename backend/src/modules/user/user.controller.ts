@@ -1,56 +1,71 @@
 import {
-  Controller,
-  Get,
-  Post,
   Body,
-  Patch,
-  Param,
+  Controller,
   Delete,
+  Get,
+  Inject,
+  Param,
+  Patch,
+  Post,
+  UseGuards,
 } from '@nestjs/common';
-import { UserService } from './user.service';
-import { CreateUserDto } from './dto/create-user.dto';
-import { UpdateUserDto } from './dto/update-user.dto';
-import { ApiCreatedResponse, ApiOkResponse } from '@nestjs/swagger';
-import { ReturnUserDto } from './dto/return-user.dto';
-import { DeleteResult, UpdateResult } from 'typeorm';
+import {
+  ApiBearerAuth,
+  ApiCreatedResponse,
+  ApiNoContentResponse,
+  ApiOkResponse,
+} from '@nestjs/swagger';
 import { ReturnSubmissionDto } from 'src/modules/submission/dto/return-submission.dto';
+import { CreateUserDto } from './dto/create-user.dto';
+import { ReturnUserDto } from './dto/return-user.dto';
+import { UpdateUserDto } from './dto/update-user.dto';
+import { UserServicePort } from './interface/user.service.port';
+import { JwtAuthGuard } from '../auth/common/jwt-auth.guard';
+import { GetUser } from 'src/shared/decorator/get-user.decorator';
 
 @Controller('user')
 export class UserController {
-  constructor(private readonly userService: UserService) {}
+  constructor(
+    @Inject(UserServicePort)
+    private readonly userService: UserServicePort,
+  ) {}
 
   @Post()
   @ApiCreatedResponse({ type: ReturnUserDto })
-  create(@Body() createUserDto: CreateUserDto): Promise<ReturnUserDto> {
-    return this.userService.create(createUserDto);
+  async create(@Body() createUserDto: CreateUserDto): Promise<ReturnUserDto> {
+    return await this.userService.create(createUserDto);
   }
 
   @Get(':id/submission')
   @ApiOkResponse({ type: [ReturnSubmissionDto] })
-  findAllSubmissionsById(
+  async findAllSubmissionsById(
     @Param('id') id: string,
   ): Promise<ReturnSubmissionDto[]> {
-    return this.userService.findAllSubmissionsById(id);
+    return await this.userService.findAllSubmissionsById(id);
   }
 
-  @Get(':id')
+  @Get('me')
+  @UseGuards(JwtAuthGuard)
+  @ApiBearerAuth()
   @ApiOkResponse({ type: ReturnUserDto })
-  findOne(@Param('id') id: string): Promise<ReturnUserDto> {
-    return this.userService.findOneById(id);
+  async findCurrentUser(
+    @GetUser('userId') userId: string,
+  ): Promise<ReturnUserDto> {
+    return await this.userService.findOneById(userId);
   }
 
   @Patch(':id')
-  @ApiOkResponse({ type: UpdateResult })
-  update(
+  @ApiOkResponse({ type: ReturnUserDto })
+  async update(
     @Param('id') id: string,
     @Body() updateUserDto: UpdateUserDto,
-  ): Promise<UpdateResult> {
-    return this.userService.update(id, updateUserDto);
+  ): Promise<ReturnUserDto> {
+    return await this.userService.update(id, updateUserDto);
   }
 
   @Delete(':id')
-  @ApiOkResponse({ type: UpdateResult })
-  remove(@Param('id') id: string): Promise<DeleteResult> {
-    return this.userService.remove(id);
+  @ApiNoContentResponse()
+  async remove(@Param('id') id: string): Promise<void> {
+    await this.userService.remove(id);
   }
 }

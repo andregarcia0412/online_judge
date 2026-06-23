@@ -81,15 +81,15 @@ describe('CreateSubmissionUseCase', () => {
     submissionRepositoryMock.findOneUserAcceptedSubmission.mockResolvedValue(
       null,
     );
-    submissionRepositoryMock.createAndSave.mockResolvedValue(savedSubmission);
+    submissionRepositoryMock.save.mockResolvedValue(savedSubmission);
     userRepositoryMock.save.mockResolvedValue(savedUser);
     problemRepositoryMock.saveExistingEntity.mockResolvedValue(savedProblem);
 
-    const result = await useCase.execute(createSubmissionDto);
+    const result = await useCase.execute(savedUser.id, createSubmissionDto);
 
     expect(dataSourceMock.transaction).toHaveBeenCalledTimes(1);
     expect(userRepositoryMock.findOneById).toHaveBeenCalledWith(
-      createSubmissionDto.id_user,
+      savedUser.id,
       expect.any(Object),
     );
     expect(problemRepositoryMock.findById).toHaveBeenCalledWith(
@@ -118,8 +118,8 @@ describe('CreateSubmissionUseCase', () => {
       createSubmissionDto.id_problem,
       expect.any(Object),
     );
-    expect(submissionRepositoryMock.createAndSave).toHaveBeenCalledWith(
-      createSubmissionDto,
+    expect(submissionRepositoryMock.save).toHaveBeenCalledWith(
+      { ...createSubmissionDto, id_user: savedUser.id },
       testResult,
       expect.any(Object),
     );
@@ -158,6 +158,7 @@ describe('CreateSubmissionUseCase', () => {
     userRepositoryMock.findOneById.mockResolvedValue(null);
 
     const createPromise = useCase.execute(
+      '123',
       SubmissionFactory.makeCreateSubmissionDto(),
     );
 
@@ -174,6 +175,7 @@ describe('CreateSubmissionUseCase', () => {
     problemRepositoryMock.findById.mockResolvedValue(null);
 
     const createPromise = useCase.execute(
+      '123',
       SubmissionFactory.makeCreateSubmissionDto(),
     );
 
@@ -191,6 +193,7 @@ describe('CreateSubmissionUseCase', () => {
     testCaseRepositoryMock.findByProblemId.mockResolvedValue([]);
 
     const createPromise = useCase.execute(
+      '123',
       SubmissionFactory.makeCreateSubmissionDto(),
     );
 
@@ -221,11 +224,11 @@ describe('CreateSubmissionUseCase', () => {
     submissionRepositoryMock.findOneUserAcceptedSubmission.mockResolvedValue(
       existingAcceptedSubmission,
     );
-    submissionRepositoryMock.createAndSave.mockResolvedValue(savedSubmission);
+    submissionRepositoryMock.save.mockResolvedValue(savedSubmission);
     userRepositoryMock.save.mockResolvedValue(savedUser);
     problemRepositoryMock.saveExistingEntity.mockResolvedValue(savedProblem);
 
-    await useCase.execute(createSubmissionDto);
+    await useCase.execute(savedUser.id, createSubmissionDto);
 
     expect(userRepositoryMock.save).toHaveBeenCalledWith(
       expect.objectContaining({
@@ -271,11 +274,11 @@ describe('CreateSubmissionUseCase', () => {
     submissionRepositoryMock.findOneUserAcceptedSubmission.mockResolvedValue(
       null,
     );
-    submissionRepositoryMock.createAndSave.mockResolvedValue(savedSubmission);
+    submissionRepositoryMock.save.mockResolvedValue(savedSubmission);
     userRepositoryMock.save.mockResolvedValue(savedUser);
     problemRepositoryMock.saveExistingEntity.mockResolvedValue(savedProblem);
 
-    await useCase.execute(createSubmissionDto);
+    await useCase.execute(savedUser.id, createSubmissionDto);
 
     expect(userRepositoryMock.save).toHaveBeenCalledWith(
       expect.objectContaining({

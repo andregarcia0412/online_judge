@@ -16,15 +16,15 @@ describe('DeleteSubmissionUseCase', () => {
     jest.restoreAllMocks();
   });
 
-  it('should delete submission and return result', async () => {
+  it('should delegate to the repository remove and resolve void', async () => {
     const id = '123';
-    const deleteResult = { affected: 1, raw: [] };
 
-    submissionRepositoryMock.delete.mockResolvedValue(deleteResult);
+    submissionRepositoryMock.remove.mockResolvedValue(undefined);
 
     const result = await useCase.execute(id);
 
-    expect(submissionRepositoryMock.delete).toHaveBeenCalledWith(id);
-    expect(result).toEqual(deleteResult);
+    expect(submissionRepositoryMock.remove).toHaveBeenCalledWith(id);
+    expect(submissionRepositoryMock.remove).toHaveBeenCalledTimes(1);
+    expect(result).toBeUndefined();
   });
 });

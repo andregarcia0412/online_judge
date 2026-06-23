@@ -3,9 +3,9 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import { Category } from './entities/category.entity';
 import { Problem } from './entities/problem.entity';
 import { TestCase } from './entities/test-case.entity';
-import { CategoryRepositoryPort } from './interface/category.repository.port';
-import { ProblemRepositoryPort } from './interface/problem.repository.port';
-import { TestCaseRepositoryPort } from './interface/test-case.repository.port';
+import { CategoryRepositoryPort } from './interface/repository/category.repository.port';
+import { ProblemRepositoryPort } from './interface/repository/problem.repository.port';
+import { TestCaseRepositoryPort } from './interface/repository/test-case.repository.port';
 import { ProblemController } from './problem.controller';
 import { CategoryRepository } from './repository/category.repository';
 import { ProblemRepository } from './repository/problem.repository';
@@ -32,14 +32,17 @@ import { FindAllTestCasesUseCase } from './use-case/test-case/find-all.use-case'
 import { FindTestCaseByIdUseCase } from './use-case/test-case/find-one.use-case';
 import { RemoveTestCaseUseCase } from './use-case/test-case/remove.use-case';
 import { UpdateTestCaseUseCase } from './use-case/test-case/update.use-case';
+import { ProblemServicePort } from './interface/service/problem.service.port';
+import { CategoryServicePort } from './interface/service/category.service.port';
+import { TestCaseServicePort } from './interface/service/test-case.service.port';
 
 @Module({
   imports: [TypeOrmModule.forFeature([Problem, Category, TestCase])],
   controllers: [ProblemController],
   providers: [
-    ProblemService,
-    CategoryService,
-    TestCaseService,
+    { provide: ProblemServicePort, useClass: ProblemService },
+    { provide: CategoryServicePort, useClass: CategoryService },
+    { provide: TestCaseServicePort, useClass: TestCaseService },
     { provide: ProblemRepositoryPort, useClass: ProblemRepository },
     { provide: CategoryRepositoryPort, useClass: CategoryRepository },
     { provide: TestCaseRepositoryPort, useClass: TestCaseRepository },
@@ -64,7 +67,7 @@ import { UpdateTestCaseUseCase } from './use-case/test-case/update.use-case';
     UpdateTestCaseUseCase,
   ],
   exports: [
-    ProblemService,
+    ProblemServicePort,
     ProblemRepositoryPort,
     CategoryRepositoryPort,
     TestCaseRepositoryPort,

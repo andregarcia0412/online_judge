@@ -3,53 +3,61 @@ import {
   Controller,
   Delete,
   Get,
+  HttpCode,
+  HttpStatus,
+  Inject,
   Param,
   Patch,
   Post,
 } from '@nestjs/common';
-import { ApiCreatedResponse, ApiOkResponse } from '@nestjs/swagger';
-import { UpdateResult } from 'typeorm';
-import { DeleteResult } from 'typeorm';
-import { ReturnTestCaseDto } from './dto/test-case/return-test-case.dto';
+import {
+  ApiCreatedResponse,
+  ApiNoContentResponse,
+  ApiOkResponse,
+} from '@nestjs/swagger';
+import { CreateCategoryDto } from './dto/category/create-category.dto';
+import { ReturnCategoriesDto } from './dto/category/return-categories.dto';
+import { ReturnCategoryDto } from './dto/category/return-category.dto';
+import { UpdateCategoryDto } from './dto/category/update-category.dto';
 import { CreateProblemDto } from './dto/problem/create-problem.dto';
 import { ReturnProblemDto } from './dto/problem/return-problem.dto';
 import { UpdateProblemDto } from './dto/problem/update-problem.dto';
-import { ProblemService } from './service/problem.service';
-import { ReturnCategoryDto } from './dto/category/return-category.dto';
-import { CreateCategoryDto } from './dto/category/create-category.dto';
-import { CategoryService } from './service/category.service';
-import { UpdateCategoryDto } from './dto/category/update-category.dto';
 import { CreateTestCaseDto } from './dto/test-case/create-test-case.dto';
-import { TestCaseService } from './service/test-case.service';
+import { ReturnTestCaseDto } from './dto/test-case/return-test-case.dto';
 import { UpdateTestCaseDto } from './dto/test-case/update-test-case.dto';
-import { ReturnCategoriesDto } from './dto/category/return-categories.dto';
+import { CategoryServicePort } from './interface/service/category.service.port';
+import { ProblemServicePort } from './interface/service/problem.service.port';
+import { TestCaseServicePort } from './interface/service/test-case.service.port';
 
 @Controller()
 export class ProblemController {
   constructor(
-    private readonly problemService: ProblemService,
-    private readonly categoryService: CategoryService,
-    private readonly testCaseService: TestCaseService,
+    @Inject(ProblemServicePort)
+    private readonly problemService: ProblemServicePort,
+    @Inject(CategoryServicePort)
+    private readonly categoryService: CategoryServicePort,
+    @Inject(TestCaseServicePort)
+    private readonly testCaseService: TestCaseServicePort,
   ) {}
 
   @Post('/problem')
   @ApiCreatedResponse({ type: ReturnProblemDto })
-  create(
+  async create(
     @Body() createProblemDto: CreateProblemDto,
   ): Promise<ReturnProblemDto> {
-    return this.problemService.create(createProblemDto);
+    return await this.problemService.create(createProblemDto);
   }
 
   @Get('/problem')
   @ApiOkResponse({ type: [ReturnProblemDto] })
-  findAll(): Promise<ReturnProblemDto[]> {
-    return this.problemService.findAll();
+  async findAll(): Promise<ReturnProblemDto[]> {
+    return await this.problemService.findAll();
   }
 
   @Get('/problem/:id')
   @ApiOkResponse({ type: ReturnProblemDto })
-  findOne(@Param('id') id: string): Promise<ReturnProblemDto> {
-    return this.problemService.findOneById(+id);
+  async findOne(@Param('id') id: string): Promise<ReturnProblemDto> {
+    return await this.problemService.findOneById(+id);
   }
 
   @Get('/problem/:id/test-case')
@@ -57,22 +65,23 @@ export class ProblemController {
   async findAllTestCaseById(
     @Param('id') id: string,
   ): Promise<ReturnTestCaseDto[]> {
-    return this.testCaseService.findAllByProblemId(+id);
+    return await this.testCaseService.findAllByProblemId(+id);
   }
 
   @Patch('/problem/:id')
-  @ApiOkResponse({ type: UpdateResult })
-  update(
+  @ApiOkResponse({ type: ReturnProblemDto })
+  async update(
     @Param('id') id: string,
     @Body() updateProblemDto: UpdateProblemDto,
-  ): Promise<UpdateResult> {
-    return this.problemService.update(+id, updateProblemDto);
+  ): Promise<ReturnProblemDto> {
+    return await this.problemService.update(+id, updateProblemDto);
   }
 
+  @HttpCode(HttpStatus.OK)
   @Delete('/problem/:id')
-  @ApiOkResponse({ type: DeleteResult })
-  remove(@Param('id') id: string): Promise<DeleteResult> {
-    return this.problemService.remove(+id);
+  @ApiNoContentResponse()
+  async remove(@Param('id') id: string): Promise<void> {
+    return await this.problemService.remove(+id);
   }
 
   @Post('/problem/:id/category')
@@ -105,52 +114,54 @@ export class ProblemController {
   }
 
   @Patch('/category/:id')
-  @ApiOkResponse({ type: UpdateResult })
+  @ApiOkResponse({ type: ReturnCategoryDto })
   async updateCategory(
     @Param('id') id: string,
     @Body() updateCategoryDto: UpdateCategoryDto,
-  ): Promise<UpdateResult> {
+  ): Promise<ReturnCategoryDto> {
     return await this.categoryService.update(+id, updateCategoryDto);
   }
 
+  @HttpCode(HttpStatus.OK)
   @Delete('/category/:id')
-  @ApiOkResponse({ type: DeleteResult })
-  async removeCategory(@Param('id') id: string): Promise<DeleteResult> {
-    return await this.categoryService.remove(+id);
+  @ApiNoContentResponse()
+  async removeCategory(@Param('id') id: string): Promise<void> {
+    await this.categoryService.remove(+id);
   }
 
   @Post('/test-case')
   @ApiCreatedResponse({ type: ReturnTestCaseDto })
-  createTestCase(
+  async createTestCase(
     @Body() createTestCaseDto: CreateTestCaseDto,
   ): Promise<ReturnTestCaseDto> {
-    return this.testCaseService.create(createTestCaseDto);
+    return await this.testCaseService.create(createTestCaseDto);
   }
 
   @Get('/test-case')
   @ApiOkResponse({ type: [ReturnTestCaseDto] })
-  findAllTestCases(): Promise<ReturnTestCaseDto[]> {
-    return this.testCaseService.findAll();
+  async findAllTestCases(): Promise<ReturnTestCaseDto[]> {
+    return await this.testCaseService.findAll();
   }
 
   @Get('/test-case/:id')
   @ApiOkResponse({ type: ReturnTestCaseDto })
-  findOneTestCase(@Param('id') id: string): Promise<ReturnTestCaseDto> {
-    return this.testCaseService.findOneById(id);
+  async findOneTestCase(@Param('id') id: string): Promise<ReturnTestCaseDto> {
+    return await this.testCaseService.findOneById(id);
   }
 
   @Patch('/test-case/:id')
-  @ApiOkResponse({ type: UpdateResult })
-  updateTestCase(
+  @ApiOkResponse({ type: ReturnTestCaseDto })
+  async updateTestCase(
     @Param('id') id: string,
     @Body() updateTestCaseDto: UpdateTestCaseDto,
-  ): Promise<UpdateResult> {
-    return this.testCaseService.update(id, updateTestCaseDto);
+  ): Promise<ReturnTestCaseDto> {
+    return await this.testCaseService.update(id, updateTestCaseDto);
   }
 
+  @HttpCode(HttpStatus.OK)
   @Delete('/test-case/:id')
-  @ApiOkResponse({ type: DeleteResult })
-  removeTestCase(@Param('id') id: string): Promise<DeleteResult> {
-    return this.testCaseService.remove(id);
+  @ApiNoContentResponse()
+  async removeTestCase(@Param('id') id: string): Promise<void> {
+    await this.testCaseService.remove(id);
   }
 }

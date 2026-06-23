@@ -1,10 +1,10 @@
 import { Inject, Injectable } from '@nestjs/common';
-import { DeleteResult, UpdateResult } from 'typeorm';
 import { ReturnCategoryDto } from '../dto/category/return-category.dto';
 import { CreateProblemDto } from '../dto/problem/create-problem.dto';
 import { ReturnProblemDto } from '../dto/problem/return-problem.dto';
 import { UpdateProblemDto } from '../dto/problem/update-problem.dto';
 import { ReturnTestCaseDto } from '../dto/test-case/return-test-case.dto';
+import { ProblemServicePort } from '../interface/service/problem.service.port';
 import { CreateProblemUseCase } from '../use-case/problem/create.use-case';
 import { FindAllProblemUseCase } from '../use-case/problem/find-all.use-case';
 import { FindProblemByIdUseCase } from '../use-case/problem/find-by-id.use-case';
@@ -13,7 +13,7 @@ import { RemoveProblemUseCase } from '../use-case/problem/remove.use-case';
 import { UpdateProblemUseCase } from '../use-case/problem/update.use-case';
 
 @Injectable()
-export class ProblemService {
+export class ProblemService implements ProblemServicePort {
   constructor(
     @Inject(CreateProblemUseCase)
     private readonly createProblemUseCase: CreateProblemUseCase,
@@ -75,11 +75,20 @@ export class ProblemService {
   async update(
     id: number,
     updateProblemDto: UpdateProblemDto,
-  ): Promise<UpdateResult> {
-    return await this.updateProblemUseCase.execute(id, updateProblemDto);
+  ): Promise<ReturnProblemDto> {
+    const problemResponse = await this.updateProblemUseCase.execute(
+      id,
+      updateProblemDto,
+    );
+
+    return ReturnProblemDto.fromEntity(
+      problemResponse.problem,
+      ReturnCategoryDto.fromEntityList(problemResponse.categories),
+      ReturnTestCaseDto.fromEntityList(problemResponse.testCases),
+    );
   }
 
-  async remove(id: number): Promise<DeleteResult> {
-    return await this.removeProblemUseCase.execute(id);
+  async remove(id: number): Promise<void> {
+    await this.removeProblemUseCase.execute(id);
   }
 }

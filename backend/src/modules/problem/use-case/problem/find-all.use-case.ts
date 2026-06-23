@@ -1,9 +1,9 @@
 import { Inject, Injectable } from '@nestjs/common';
 import { Problem } from '../../entities/problem.entity';
-import { ProblemRepositoryPort } from '../../interface/problem.repository.port';
+import { ProblemRepositoryPort } from '../../interface/repository/problem.repository.port';
 import { ProblemResponse } from './response/problem.response';
-import { CategoryRepositoryPort } from '../../interface/category.repository.port';
-import { TestCaseRepositoryPort } from '../../interface/test-case.repository.port';
+import { CategoryRepositoryPort } from '../../interface/repository/category.repository.port';
+import { TestCaseRepositoryPort } from '../../interface/repository/test-case.repository.port';
 
 @Injectable()
 export class FindAllProblemUseCase {

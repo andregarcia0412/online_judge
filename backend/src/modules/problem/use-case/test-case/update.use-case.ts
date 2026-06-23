@@ -1,7 +1,7 @@
-import { Inject, Injectable } from '@nestjs/common';
-import { TestCaseRepositoryPort } from '../../interface/test-case.repository.port';
-import { UpdateResult } from 'typeorm';
+import { Inject, Injectable, NotFoundException } from '@nestjs/common';
 import { UpdateTestCaseDto } from '../../dto/test-case/update-test-case.dto';
+import { TestCase } from '../../entities/test-case.entity';
+import { TestCaseRepositoryPort } from '../../interface/repository/test-case.repository.port';
 
 @Injectable()
 export class UpdateTestCaseUseCase {
@@ -13,7 +13,16 @@ export class UpdateTestCaseUseCase {
   async execute(
     id: string,
     updateTestCaseDto: UpdateTestCaseDto,
-  ): Promise<UpdateResult> {
-    return await this.testCaseRepository.updateById(id, updateTestCaseDto);
+  ): Promise<TestCase> {
+    const testCase = await this.testCaseRepository.updateById(
+      id,
+      updateTestCaseDto,
+    );
+
+    if (!testCase) {
+      throw new NotFoundException('Test case not found');
+    }
+
+    return testCase;
   }
 }

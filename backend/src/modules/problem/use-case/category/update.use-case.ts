@@ -1,7 +1,7 @@
-import { Inject, Injectable } from '@nestjs/common';
-import { CategoryRepositoryPort } from '../../interface/category.repository.port';
+import { Inject, Injectable, NotFoundException } from '@nestjs/common';
 import { UpdateCategoryDto } from '../../dto/category/update-category.dto';
-import { UpdateResult } from 'typeorm';
+import { Category } from '../../entities/category.entity';
+import { CategoryRepositoryPort } from '../../interface/repository/category.repository.port';
 
 @Injectable()
 export class UpdateCategoryUseCase {
@@ -13,7 +13,16 @@ export class UpdateCategoryUseCase {
   async execute(
     id: number,
     updateCategoryDto: UpdateCategoryDto,
-  ): Promise<UpdateResult> {
-    return await this.categoryRepository.updateById(id, updateCategoryDto);
+  ): Promise<Category> {
+    const category = await this.categoryRepository.updateById(
+      id,
+      updateCategoryDto,
+    );
+
+    if (!category) {
+      throw new NotFoundException('Category not found');
+    }
+
+    return category;
   }
 }

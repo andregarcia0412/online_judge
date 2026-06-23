@@ -1,6 +1,6 @@
 import { Inject, Injectable } from '@nestjs/common';
 import { ReturnSubmissionDto } from 'src/modules/submission/dto/return-submission.dto';
-import { DeleteResult, EntityManager, UpdateResult } from 'typeorm';
+import { EntityManager } from 'typeorm';
 import { CreateUserDto } from './dto/create-user.dto';
 import { ReturnUserDto } from './dto/return-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
@@ -14,9 +14,10 @@ import { FindOneUserByIdUseCase } from './use-case/find-one-by-id.use-case';
 import { UpdateUserStreakOnSubmissionUseCase } from './use-case/update-streak-on-submission.use-case';
 import { UpdateUserStreakUseCase } from './use-case/update-streak.use-case';
 import { UpdateUserUseCase } from './use-case/update.use-case';
+import { UserServicePort } from './interface/user.service.port';
 
 @Injectable()
-export class UserService {
+export class UserService implements UserServicePort {
   constructor(
     @Inject(CreateUserUseCase)
     private readonly createUserUseCase: CreateUserUseCase,
@@ -55,10 +56,8 @@ export class UserService {
     return ReturnUserDto.fromEntity(user);
   }
 
-  async findOneByEmail(email: string): Promise<ReturnUserDto> {
-    return ReturnUserDto.fromEntity(
-      await this.findOneByEmailUseCase.execute(email),
-    );
+  async findOneByEmail(email: string): Promise<User> {
+    return await this.findOneByEmailUseCase.execute(email);
   }
 
   async findAllSubmissionsById(id: string): Promise<ReturnSubmissionDto[]> {
@@ -70,19 +69,24 @@ export class UserService {
   async update(
     id: string,
     updateUserDto: UpdateUserDto,
-  ): Promise<UpdateResult> {
-    return await this.updateUserUseCase.execute(id, updateUserDto);
+  ): Promise<ReturnUserDto> {
+    return ReturnUserDto.fromEntity(
+      await this.updateUserUseCase.execute(id, updateUserDto),
+    );
   }
 
-  async remove(id: string): Promise<DeleteResult> {
-    return await this.deleteUserUseCase.execute(id);
+  async remove(id: string): Promise<void> {
+    await this.deleteUserUseCase.execute(id);
   }
 
-  async updateUserStreak(user: User) {
+  async updateUserStreak(user: User): Promise<void> {
     await this.updateUserStreakUseCase.execute(user);
   }
 
-  async updateUserStreakOnSubmission(user: User, manager?: EntityManager) {
+  async updateUserStreakOnSubmission(
+    user: User,
+    manager?: EntityManager,
+  ): Promise<void> {
     await this.updateUserStreakOnSubmissionUseCase.execute(user, manager);
   }
 }

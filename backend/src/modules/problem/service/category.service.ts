@@ -1,11 +1,11 @@
 import { Inject, Injectable } from '@nestjs/common';
-import { DeleteResult, UpdateResult } from 'typeorm';
 import { CategoryLabels } from '../constants/category.labels';
 import { CreateCategoryDto } from '../dto/category/create-category.dto';
 import { ReturnCategoriesDto } from '../dto/category/return-categories.dto';
 import { ReturnCategoryDto } from '../dto/category/return-category.dto';
 import { UpdateCategoryDto } from '../dto/category/update-category.dto';
 import { CategoryEnum } from '../enum/category.enum';
+import { CategoryServicePort } from '../interface/service/category.service.port';
 import { CreateCategoryUseCase } from '../use-case/category/create.use-case';
 import { FindAllCategoriesByProblemIdUseCase } from '../use-case/category/find-all-by-problem-id.use-case';
 import { FindAllCategoriesUseCase } from '../use-case/category/find-all.use-case';
@@ -15,7 +15,7 @@ import { RemoveCategoryUseCase } from '../use-case/category/remove.use-case';
 import { UpdateCategoryUseCase } from '../use-case/category/update.use-case';
 
 @Injectable()
-export class CategoryService {
+export class CategoryService implements CategoryServicePort {
   constructor(
     @Inject(CreateCategoryUseCase)
     private readonly createCategoryUseCase: CreateCategoryUseCase,
@@ -71,15 +71,17 @@ export class CategoryService {
   async update(
     id: number,
     updateCategoryDto: UpdateCategoryDto,
-  ): Promise<UpdateResult> {
-    return await this.updateCategoryUseCase.execute(id, updateCategoryDto);
+  ): Promise<ReturnCategoryDto> {
+    return ReturnCategoryDto.fromEntity(
+      await this.updateCategoryUseCase.execute(id, updateCategoryDto),
+    );
   }
 
-  async remove(id: number): Promise<DeleteResult> {
-    return await this.removeCategoryUseCase.execute(id);
+  async remove(id: number): Promise<void> {
+    await this.removeCategoryUseCase.execute(id);
   }
 
-  async removeByProblemId(problemId: number): Promise<DeleteResult> {
-    return await this.removeCategoryByProblemIdUseCase.execute(problemId);
+  async removeByProblemId(problemId: number): Promise<void> {
+    await this.removeCategoryByProblemIdUseCase.execute(problemId);
   }
 }

@@ -1,7 +1,7 @@
 import { Inject, Injectable, NotFoundException } from '@nestjs/common';
-import { ProblemRepositoryPort } from '../../interface/problem.repository.port';
+import { ProblemRepositoryPort } from '../../interface/repository/problem.repository.port';
 import { Category } from '../../entities/category.entity';
-import { CategoryRepositoryPort } from '../../interface/category.repository.port';
+import { CategoryRepositoryPort } from '../../interface/repository/category.repository.port';
 
 @Injectable()
 export class FindAllCategoriesByProblemIdUseCase {

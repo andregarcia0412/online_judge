@@ -1,10 +1,8 @@
 import { Injectable } from '@nestjs/common';
-import { CategoryRepositoryPort } from '../interface/category.repository.port';
-import { UpdateResult, DeleteResult, Repository, EntityManager } from 'typeorm';
-import { CreateCategoryDto } from '../dto/category/create-category.dto';
-import { UpdateCategoryDto } from '../dto/category/update-category.dto';
-import { Category } from '../entities/category.entity';
 import { InjectRepository } from '@nestjs/typeorm';
+import { EntityManager, Repository } from 'typeorm';
+import { Category } from '../entities/category.entity';
+import { CategoryRepositoryPort } from '../interface/repository/category.repository.port';
 
 @Injectable()
 export class CategoryRepository implements CategoryRepositoryPort {
@@ -13,32 +11,32 @@ export class CategoryRepository implements CategoryRepositoryPort {
     private readonly categoryRepository: Repository<Category>,
   ) {}
   async findByProblemId(
-    id_problem: any,
+    id_problem: number,
     manager?: EntityManager,
   ): Promise<Category[]> {
     const repository = this.getRepository(manager);
     return await repository.findBy({ id_problem });
   }
   async createAndSave(
-    createCategoryDto: CreateCategoryDto,
+    createCategory: Partial<Category>,
     problemId: number,
     manager?: EntityManager,
   ): Promise<Category> {
     const repository = this.getRepository(manager);
     const createdCategory = repository.create({
-      category: createCategoryDto.category,
+      category: createCategory.category,
       id_problem: problemId,
     });
     return await repository.save(createdCategory);
   }
   async createAndSaveMany(
-    createCategoryDtos: CreateCategoryDto[],
+    createCategories: Partial<Category>[],
     problemId: number,
     manager?: EntityManager,
   ): Promise<Category[]> {
     const repository = this.getRepository(manager);
     const createdCategories = repository.create(
-      createCategoryDtos.map((dto) => ({
+      createCategories.map((dto) => ({
         category: dto.category,
         id_problem: problemId,
       })),
@@ -58,22 +56,30 @@ export class CategoryRepository implements CategoryRepositoryPort {
   }
   async updateById(
     id: number,
-    updateCategoryDto: UpdateCategoryDto,
+    updateCategory: Partial<Category>,
     manager?: EntityManager,
-  ): Promise<UpdateResult> {
+  ): Promise<Category | null> {
     const repository = this.getRepository(manager);
-    return await repository.update(id, updateCategoryDto);
+    const category = await repository.findOneBy({ id });
+
+    if (!category) {
+      return null;
+    }
+
+    const merged = repository.merge(category, updateCategory);
+
+    return await repository.save(merged);
   }
-  async delete(id: number, manager?: EntityManager): Promise<DeleteResult> {
+  async delete(id: number, manager?: EntityManager): Promise<void> {
     const repository = this.getRepository(manager);
-    return await repository.delete(id);
+    await repository.delete(id);
   }
   async deleteByProblemId(
     id_problem: number,
     manager?: EntityManager,
-  ): Promise<DeleteResult> {
+  ): Promise<void> {
     const repository = this.getRepository(manager);
-    return await repository.delete({ id_problem });
+    await repository.delete({ id_problem });
   }
   private getRepository(manager?: EntityManager): Repository<Category> {
     return manager ? manager.getRepository(Category) : this.categoryRepository;

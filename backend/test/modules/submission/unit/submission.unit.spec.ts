@@ -30,26 +30,31 @@ describe('SubmissionService', () => {
 
   describe('create', () => {
     it('should delegate to CreateSubmissionUseCase', async () => {
+      const userId = '123';
       const createSubmissionDto = SubmissionFactory.makeCreateSubmissionDto();
       const expected = SubmissionFactory.makeReturnSubmissionDto();
 
       useCaseMocks.createSubmissionUseCase.execute.mockResolvedValue(expected);
 
-      const result = await service.create(createSubmissionDto);
+      const result = await service.create(userId, createSubmissionDto);
 
       expect(useCaseMocks.createSubmissionUseCase.execute).toHaveBeenCalledWith(
+        userId,
         createSubmissionDto,
       );
       expect(result).toBe(expected);
     });
 
     it('should propagate errors from CreateSubmissionUseCase', async () => {
+      const userId = '123';
       const createSubmissionDto = SubmissionFactory.makeCreateSubmissionDto();
       const error = new NotFoundException('User not found');
 
       useCaseMocks.createSubmissionUseCase.execute.mockRejectedValue(error);
 
-      await expect(service.create(createSubmissionDto)).rejects.toThrow(error);
+      await expect(
+        service.create(userId, createSubmissionDto),
+      ).rejects.toThrow(error);
     });
   });
 
@@ -156,13 +161,13 @@ describe('SubmissionService', () => {
   });
 
   describe('update', () => {
-    it('should delegate to UpdateSubmissionUseCase', async () => {
+    it('should delegate to UpdateSubmissionUseCase and map to ReturnSubmissionDto', async () => {
       const id = '123';
       const updateSubmissionDto = { text: 'print("Updated")' };
-      const expectedUpdateResult = { affected: 1, generatedMaps: [], raw: [] };
+      const updatedSubmission = SubmissionFactory.makeSubmissionEntity();
 
       useCaseMocks.updateSubmissionUseCase.execute.mockResolvedValue(
-        expectedUpdateResult,
+        updatedSubmission,
       );
 
       const result = await service.update(id, updateSubmissionDto as any);
@@ -171,25 +176,23 @@ describe('SubmissionService', () => {
         id,
         updateSubmissionDto,
       );
-      expect(result).toEqual(expectedUpdateResult);
+      expect(result).toBeInstanceOf(ReturnSubmissionDto);
+      expect(result).toMatchObject(SubmissionFactory.makeReturnSubmissionDto());
     });
   });
 
   describe('remove', () => {
-    it('should delegate to DeleteSubmissionUseCase', async () => {
+    it('should delegate to DeleteSubmissionUseCase and resolve void', async () => {
       const id = '123';
-      const expectedDeleteResult = { affected: 1, raw: [] };
 
-      useCaseMocks.deleteSubmissionUseCase.execute.mockResolvedValue(
-        expectedDeleteResult,
-      );
+      useCaseMocks.deleteSubmissionUseCase.execute.mockResolvedValue(undefined);
 
       const result = await service.remove(id);
 
       expect(useCaseMocks.deleteSubmissionUseCase.execute).toHaveBeenCalledWith(
         id,
       );
-      expect(result).toEqual(expectedDeleteResult);
+      expect(result).toBeUndefined();
     });
   });
 });

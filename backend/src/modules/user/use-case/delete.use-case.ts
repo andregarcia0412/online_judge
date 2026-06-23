@@ -8,7 +8,7 @@ export class DeleteUserUseCase {
     private readonly userRepository: UserRepositoryPort,
   ) {}
 
-  async execute(id: string) {
-    return this.userRepository.delete(id);
+  async execute(id: string): Promise<void> {
+    await this.userRepository.delete(id);
   }
 }

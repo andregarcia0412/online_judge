@@ -1,7 +1,7 @@
 import { Inject, Injectable, NotFoundException } from '@nestjs/common';
-import { ProblemRepositoryPort } from '../../interface/problem.repository.port';
-import { CategoryRepositoryPort } from '../../interface/category.repository.port';
-import { TestCaseRepositoryPort } from '../../interface/test-case.repository.port';
+import { ProblemRepositoryPort } from '../../interface/repository/problem.repository.port';
+import { CategoryRepositoryPort } from '../../interface/repository/category.repository.port';
+import { TestCaseRepositoryPort } from '../../interface/repository/test-case.repository.port';
 import { ProblemResponse } from './response/problem.response';
 
 @Injectable()

@@ -1,10 +1,8 @@
 import { Injectable } from '@nestjs/common';
-import { UserRepositoryPort } from '../interface/user.repository.port';
-import { UpdateResult, DeleteResult, Repository, EntityManager } from 'typeorm';
-import { CreateUserDto } from '../dto/create-user.dto';
-import { UpdateUserDto } from '../dto/update-user.dto';
-import { User } from '../entities/user.entity';
 import { InjectRepository } from '@nestjs/typeorm';
+import { EntityManager, Repository } from 'typeorm';
+import { User } from '../entities/user.entity';
+import { UserRepositoryPort } from '../interface/user.repository.port';
 
 @Injectable()
 export class UserRepository implements UserRepositoryPort {
@@ -31,12 +29,9 @@ export class UserRepository implements UserRepositoryPort {
     const repository = this.getRepository(manager);
     return await repository.findOneBy({ id });
   }
-  async save(
-    createUserDto: CreateUserDto,
-    manager?: EntityManager,
-  ): Promise<User> {
+  async save(user: Partial<User>, manager?: EntityManager): Promise<User> {
     const repository = this.getRepository(manager);
-    return await repository.save(createUserDto);
+    return await repository.save(user);
   }
   async saveExistingEntity(user: User, manager?: EntityManager): Promise<User> {
     const repository = this.getRepository(manager);
@@ -48,15 +43,23 @@ export class UserRepository implements UserRepositoryPort {
   }
   async updateById(
     id: string,
-    updateUserDto: UpdateUserDto,
+    updateUser: Partial<User>,
     manager?: EntityManager,
-  ): Promise<UpdateResult> {
+  ): Promise<User | null> {
     const repository = this.getRepository(manager);
-    return await repository.update(id, updateUserDto);
+    const user = await repository.findOneBy({ id });
+
+    if (!user) {
+      return null;
+    }
+
+    const merged = repository.merge(user, updateUser);
+
+    return await repository.save(merged);
   }
-  async delete(id: string, manager?: EntityManager): Promise<DeleteResult> {
+  async delete(id: string, manager?: EntityManager): Promise<void> {
     const repository = this.getRepository(manager);
-    return await repository.delete(id);
+    await repository.delete(id);
   }
 
   private getRepository(manager?: EntityManager): Repository<User> {
