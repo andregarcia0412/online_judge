@@ -5,6 +5,7 @@ import { CreateUserDto } from './dto/create-user.dto';
 import { ReturnUserDto } from './dto/return-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
 import { User } from './entities/user.entity';
+import { UserServicePort } from './interface/user.service.port';
 import { CreateUserUseCase } from './use-case/create.use-case';
 import { DeleteUserUseCase } from './use-case/delete.use-case';
 import { FindAllSubmissionsUseCase } from './use-case/find-all-submissions.use-case';
@@ -14,7 +15,6 @@ import { FindOneUserByIdUseCase } from './use-case/find-one-by-id.use-case';
 import { UpdateUserStreakOnSubmissionUseCase } from './use-case/update-streak-on-submission.use-case';
 import { UpdateUserStreakUseCase } from './use-case/update-streak.use-case';
 import { UpdateUserUseCase } from './use-case/update.use-case';
-import { UserServicePort } from './interface/user.service.port';
 
 @Injectable()
 export class UserService implements UserServicePort {
@@ -56,7 +56,7 @@ export class UserService implements UserServicePort {
     return ReturnUserDto.fromEntity(user);
   }
 
-  async findOneByEmail(email: string): Promise<User> {
+  async findOneByEmail(email: string): Promise<User | null> {
     return await this.findOneByEmailUseCase.execute(email);
   }
 

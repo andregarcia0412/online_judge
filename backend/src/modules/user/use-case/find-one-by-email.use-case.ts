@@ -1,4 +1,4 @@
-import { Inject, Injectable, NotFoundException } from '@nestjs/common';
+import { Inject, Injectable } from '@nestjs/common';
 import { User } from '../entities/user.entity';
 import { UserRepositoryPort } from '../interface/user.repository.port';
 
@@ -9,12 +9,8 @@ export class FindOneByEmailUseCase {
     private readonly userRepository: UserRepositoryPort,
   ) {}
 
-  async execute(email: string): Promise<User> {
+  async execute(email: string): Promise<User | null> {
     const user = await this.userRepository.findOneByEmail(email);
-
-    if (!user) {
-      throw new NotFoundException('User not found');
-    }
 
     return user;
   }
