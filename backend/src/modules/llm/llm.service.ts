@@ -7,9 +7,10 @@ import { lastValueFrom } from 'rxjs';
 import { AnalyzeResponseDto } from './dto/analyze-response.dto';
 import { AskRequestDto } from './dto/ask-request.dto';
 import { AskResponseDto } from './dto/ask-response.dto';
+import { LlmServicePort } from './interface/llm.service.port';
 
 @Injectable()
-export class LlmService {
+export class LlmService implements LlmServicePort {
   private apiUrl: string | undefined;
   private apiSecret: string | undefined;
   constructor(
@@ -23,49 +24,41 @@ export class LlmService {
   async analyze(
     analyzeRequestDto: AnalyzeRequestDto,
   ): Promise<AnalyzeResponseDto> {
-    try {
-      const response = await lastValueFrom(
-        this.httpService.post(
-          `${this.apiUrl}/llm/analyze`,
-          {
-            code: analyzeRequestDto.code,
+    const response = await lastValueFrom(
+      this.httpService.post(
+        `${this.apiUrl}/llm/analyze`,
+        {
+          code: analyzeRequestDto.code,
+        },
+        {
+          headers: {
+            'Content-Type': 'application/json',
+            'X-API-PASSWORD': this.apiSecret,
           },
-          {
-            headers: {
-              'Content-Type': 'application/json',
-              'X-API-PASSWORD': this.apiSecret,
-            },
-          },
-        ),
-      );
-      return response.data;
-    } catch (e) {
-      throw e;
-    }
+        },
+      ),
+    );
+    return response.data;
   }
 
   async ask(askRequestDto: AskRequestDto): Promise<AskResponseDto> {
-    try {
-      const response = await lastValueFrom(
-        this.httpService.post(
-          `${this.apiUrl}/llm/ask`,
-          {
-            language: askRequestDto.language,
-            code: askRequestDto.code,
-            question: askRequestDto.question,
+    const response = await lastValueFrom(
+      this.httpService.post(
+        `${this.apiUrl}/llm/ask`,
+        {
+          language: askRequestDto.language,
+          code: askRequestDto.code,
+          question: askRequestDto.question,
+        },
+        {
+          headers: {
+            'Content-Type': 'application/json',
+            'X-API-PASSWORD': this.apiSecret,
           },
-          {
-            headers: {
-              'Content-Type': 'application/json',
-              'X-API-PASSWORD': this.apiSecret,
-            },
-          },
-        ),
-      );
+        },
+      ),
+    );
 
-      return response.data;
-    } catch (e) {
-      throw e;
-    }
+    return response.data;
   }
 }

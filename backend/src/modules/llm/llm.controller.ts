@@ -3,6 +3,7 @@ import {
   Controller,
   HttpCode,
   HttpStatus,
+  Inject,
   Post,
   UseGuards,
 } from '@nestjs/common';
@@ -12,11 +13,14 @@ import { AnalyzeRequestDto } from './dto/analyze-request.dto';
 import { AnalyzeResponseDto } from './dto/analyze-response.dto';
 import { AskRequestDto } from './dto/ask-request.dto';
 import { AskResponseDto } from './dto/ask-response.dto';
-import { LlmService } from './llm.service';
+import { LlmServicePort } from './interface/llm.service.port';
 
 @Controller('llm')
 export class LlmController {
-  constructor(private readonly llmService: LlmService) {}
+  constructor(
+    @Inject(LlmServicePort)
+    private readonly llmService: LlmServicePort,
+  ) {}
 
   @HttpCode(HttpStatus.OK)
   @Post('/analyze')
