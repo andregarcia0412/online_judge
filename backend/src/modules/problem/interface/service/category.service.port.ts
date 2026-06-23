@@ -17,7 +17,6 @@ export interface CategoryServicePort {
     updateCategoryDto: UpdateCategoryDto,
   ): Promise<ReturnCategoryDto>;
   remove(id: number): Promise<void>;
-  removeByProblemId(problemId: number): Promise<void>;
 }
 
 export const CategoryServicePort = Symbol('CategoryServicePort');

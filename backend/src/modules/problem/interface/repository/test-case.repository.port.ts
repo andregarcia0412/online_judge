@@ -22,7 +22,6 @@ export interface TestCaseRepositoryPort {
     manager?: EntityManager,
   ): Promise<TestCase | null>;
   delete(id: string, manager?: EntityManager): Promise<void>;
-  deleteByProblemId(id_problem: number, manager?: EntityManager): Promise<void>;
 }
 
 export const TestCaseRepositoryPort = Symbol('TestCaseRepositoryPort');

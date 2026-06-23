@@ -10,7 +10,6 @@ import { CreateCategoryUseCase } from '../use-case/category/create.use-case';
 import { FindAllCategoriesByProblemIdUseCase } from '../use-case/category/find-all-by-problem-id.use-case';
 import { FindAllCategoriesUseCase } from '../use-case/category/find-all.use-case';
 import { FindCategoryByIdUseCase } from '../use-case/category/find-by-id.use-case';
-import { RemoveCategoryByProblemIdUseCase } from '../use-case/category/remove-by-problem-id.use-case';
 import { RemoveCategoryUseCase } from '../use-case/category/remove.use-case';
 import { UpdateCategoryUseCase } from '../use-case/category/update.use-case';
 
@@ -29,8 +28,6 @@ export class CategoryService implements CategoryServicePort {
     private readonly updateCategoryUseCase: UpdateCategoryUseCase,
     @Inject(RemoveCategoryUseCase)
     private readonly removeCategoryUseCase: RemoveCategoryUseCase,
-    @Inject(RemoveCategoryByProblemIdUseCase)
-    private readonly removeCategoryByProblemIdUseCase: RemoveCategoryByProblemIdUseCase,
   ) {}
 
   async create(
@@ -79,9 +76,5 @@ export class CategoryService implements CategoryServicePort {
 
   async remove(id: number): Promise<void> {
     await this.removeCategoryUseCase.execute(id);
-  }
-
-  async removeByProblemId(problemId: number): Promise<void> {
-    await this.removeCategoryByProblemIdUseCase.execute(problemId);
   }
 }
