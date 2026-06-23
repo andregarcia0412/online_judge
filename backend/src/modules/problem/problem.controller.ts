@@ -3,6 +3,8 @@ import {
   Controller,
   Delete,
   Get,
+  HttpCode,
+  HttpStatus,
   Inject,
   Param,
   Patch,
@@ -13,7 +15,6 @@ import {
   ApiNoContentResponse,
   ApiOkResponse,
 } from '@nestjs/swagger';
-import { UpdateResult } from 'typeorm';
 import { CreateCategoryDto } from './dto/category/create-category.dto';
 import { ReturnCategoriesDto } from './dto/category/return-categories.dto';
 import { ReturnCategoryDto } from './dto/category/return-category.dto';
@@ -68,14 +69,15 @@ export class ProblemController {
   }
 
   @Patch('/problem/:id')
-  @ApiOkResponse({ type: UpdateResult })
+  @ApiOkResponse({ type: ReturnProblemDto })
   async update(
     @Param('id') id: string,
     @Body() updateProblemDto: UpdateProblemDto,
-  ): Promise<UpdateResult> {
+  ): Promise<ReturnProblemDto> {
     return await this.problemService.update(+id, updateProblemDto);
   }
 
+  @HttpCode(HttpStatus.OK)
   @Delete('/problem/:id')
   @ApiNoContentResponse()
   async remove(@Param('id') id: string): Promise<void> {
@@ -112,14 +114,15 @@ export class ProblemController {
   }
 
   @Patch('/category/:id')
-  @ApiOkResponse({ type: UpdateResult })
+  @ApiOkResponse({ type: ReturnCategoryDto })
   async updateCategory(
     @Param('id') id: string,
     @Body() updateCategoryDto: UpdateCategoryDto,
-  ): Promise<UpdateResult> {
+  ): Promise<ReturnCategoryDto> {
     return await this.categoryService.update(+id, updateCategoryDto);
   }
 
+  @HttpCode(HttpStatus.OK)
   @Delete('/category/:id')
   @ApiNoContentResponse()
   async removeCategory(@Param('id') id: string): Promise<void> {
@@ -147,14 +150,15 @@ export class ProblemController {
   }
 
   @Patch('/test-case/:id')
-  @ApiOkResponse({ type: UpdateResult })
+  @ApiOkResponse({ type: ReturnTestCaseDto })
   async updateTestCase(
     @Param('id') id: string,
     @Body() updateTestCaseDto: UpdateTestCaseDto,
-  ): Promise<UpdateResult> {
+  ): Promise<ReturnTestCaseDto> {
     return await this.testCaseService.update(id, updateTestCaseDto);
   }
 
+  @HttpCode(HttpStatus.OK)
   @Delete('/test-case/:id')
   @ApiNoContentResponse()
   async removeTestCase(@Param('id') id: string): Promise<void> {

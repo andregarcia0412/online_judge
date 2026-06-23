@@ -1,16 +1,14 @@
-import { EntityManager, UpdateResult } from 'typeorm';
-import { CreateCategoryDto } from '../../dto/category/create-category.dto';
-import { UpdateCategoryDto } from '../../dto/category/update-category.dto';
+import { EntityManager } from 'typeorm';
 import { Category } from '../../entities/category.entity';
 
 export interface CategoryRepositoryPort {
   createAndSave(
-    createCategoryDto: CreateCategoryDto,
+    createCategory: Partial<Category>,
     problemId: number,
     manager?: EntityManager,
   ): Promise<Category>;
   createAndSaveMany(
-    createCategoryDtos: CreateCategoryDto[],
+    createCategories: Partial<Category>[],
     problemId: number,
     manager?: EntityManager,
   ): Promise<Category[]>;
@@ -22,9 +20,9 @@ export interface CategoryRepositoryPort {
   ): Promise<Category[]>;
   updateById(
     id: number,
-    updateCategoryDto: UpdateCategoryDto,
+    updateCategory: Partial<Category>,
     manager?: EntityManager,
-  ): Promise<UpdateResult>;
+  ): Promise<Category | null>;
   delete(id: number, manager?: EntityManager): Promise<void>;
   deleteByProblemId(id_problem: number, manager?: EntityManager): Promise<void>;
 }

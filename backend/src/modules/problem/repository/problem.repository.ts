@@ -1,8 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { EntityManager, Repository, UpdateResult } from 'typeorm';
-import { CreateProblemDto } from '../dto/problem/create-problem.dto';
-import { UpdateProblemDto } from '../dto/problem/update-problem.dto';
+import { EntityManager, Repository } from 'typeorm';
 import { Problem } from '../entities/problem.entity';
 import { ProblemRepositoryPort } from '../interface/repository/problem.repository.port';
 
@@ -20,11 +18,11 @@ export class ProblemRepository implements ProblemRepositoryPort {
     return await repository.findOneBy({ title });
   }
   async createAndSave(
-    createProblemDto: CreateProblemDto,
+    createProblem: Partial<Problem>,
     manager?: EntityManager,
   ): Promise<Problem> {
     const repository = this.getRepository(manager);
-    const createdProblem = repository.create(createProblemDto);
+    const createdProblem = repository.create(createProblem);
     return await repository.save(createdProblem);
   }
   async saveExistingEntity(
@@ -48,11 +46,18 @@ export class ProblemRepository implements ProblemRepositoryPort {
   }
   async updateById(
     id: number,
-    updateProblemDto: UpdateProblemDto,
+    updateProblem: Partial<Problem>,
     manager?: EntityManager,
-  ): Promise<UpdateResult> {
+  ): Promise<Problem | null> {
     const repository = this.getRepository(manager);
-    return await repository.update(id, updateProblemDto);
+    const problem = await repository.findOneBy({ id });
+
+    if (!problem) {
+      return null;
+    }
+
+    const merged = repository.merge(problem, updateProblem);
+    return await repository.save(merged);
   }
   async delete(id: number, manager?: EntityManager): Promise<void> {
     const repository = this.getRepository(manager);

@@ -1,4 +1,3 @@
-import { UpdateResult } from 'typeorm';
 import { CreateProblemDto } from '../../dto/problem/create-problem.dto';
 import { ReturnProblemDto } from '../../dto/problem/return-problem.dto';
 import { UpdateProblemDto } from '../../dto/problem/update-problem.dto';
@@ -8,7 +7,10 @@ export interface ProblemServicePort {
   findAll(): Promise<ReturnProblemDto[]>;
   findOneById(id: number): Promise<ReturnProblemDto>;
   findOneByTitle(title: string): Promise<ReturnProblemDto>;
-  update(id: number, updateProblemDto: UpdateProblemDto): Promise<UpdateResult>;
+  update(
+    id: number,
+    updateProblemDto: UpdateProblemDto,
+  ): Promise<ReturnProblemDto>;
   remove(id: number): Promise<void>;
 }
 

@@ -1,5 +1,4 @@
 import { Inject, Injectable } from '@nestjs/common';
-import { UpdateResult } from 'typeorm';
 import { ReturnCategoryDto } from '../dto/category/return-category.dto';
 import { CreateProblemDto } from '../dto/problem/create-problem.dto';
 import { ReturnProblemDto } from '../dto/problem/return-problem.dto';
@@ -76,8 +75,17 @@ export class ProblemService implements ProblemServicePort {
   async update(
     id: number,
     updateProblemDto: UpdateProblemDto,
-  ): Promise<UpdateResult> {
-    return await this.updateProblemUseCase.execute(id, updateProblemDto);
+  ): Promise<ReturnProblemDto> {
+    const problemResponse = await this.updateProblemUseCase.execute(
+      id,
+      updateProblemDto,
+    );
+
+    return ReturnProblemDto.fromEntity(
+      problemResponse.problem,
+      ReturnCategoryDto.fromEntityList(problemResponse.categories),
+      ReturnTestCaseDto.fromEntityList(problemResponse.testCases),
+    );
   }
 
   async remove(id: number): Promise<void> {

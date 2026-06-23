@@ -1,5 +1,4 @@
 import { Inject, Injectable } from '@nestjs/common';
-import { UpdateResult } from 'typeorm';
 import { CategoryLabels } from '../constants/category.labels';
 import { CreateCategoryDto } from '../dto/category/create-category.dto';
 import { ReturnCategoriesDto } from '../dto/category/return-categories.dto';
@@ -72,8 +71,10 @@ export class CategoryService implements CategoryServicePort {
   async update(
     id: number,
     updateCategoryDto: UpdateCategoryDto,
-  ): Promise<UpdateResult> {
-    return await this.updateCategoryUseCase.execute(id, updateCategoryDto);
+  ): Promise<ReturnCategoryDto> {
+    return ReturnCategoryDto.fromEntity(
+      await this.updateCategoryUseCase.execute(id, updateCategoryDto),
+    );
   }
 
   async remove(id: number): Promise<void> {

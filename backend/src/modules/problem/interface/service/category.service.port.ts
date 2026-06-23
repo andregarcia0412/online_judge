@@ -1,4 +1,3 @@
-import { UpdateResult } from 'typeorm';
 import { CreateCategoryDto } from '../../dto/category/create-category.dto';
 import { ReturnCategoriesDto } from '../../dto/category/return-categories.dto';
 import { ReturnCategoryDto } from '../../dto/category/return-category.dto';
@@ -16,7 +15,7 @@ export interface CategoryServicePort {
   update(
     id: number,
     updateCategoryDto: UpdateCategoryDto,
-  ): Promise<UpdateResult>;
+  ): Promise<ReturnCategoryDto>;
   remove(id: number): Promise<void>;
   removeByProblemId(problemId: number): Promise<void>;
 }

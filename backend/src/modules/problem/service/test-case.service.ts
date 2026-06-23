@@ -1,5 +1,4 @@
 import { Inject, Injectable } from '@nestjs/common';
-import { UpdateResult } from 'typeorm';
 import { CreateTestCaseDto } from '../dto/test-case/create-test-case.dto';
 import { ReturnTestCaseDto } from '../dto/test-case/return-test-case.dto';
 import { UpdateTestCaseDto } from '../dto/test-case/update-test-case.dto';
@@ -57,8 +56,10 @@ export class TestCaseService implements TestCaseServicePort {
   async update(
     id: string,
     updateTestCaseDto: UpdateTestCaseDto,
-  ): Promise<UpdateResult> {
-    return await this.updateTestCaseUseCase.execute(id, updateTestCaseDto);
+  ): Promise<ReturnTestCaseDto> {
+    return ReturnTestCaseDto.fromEntity(
+      await this.updateTestCaseUseCase.execute(id, updateTestCaseDto),
+    );
   }
 
   async remove(id: string): Promise<void> {
