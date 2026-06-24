@@ -10,17 +10,17 @@ export class UserFactory {
   }
 
   static makeUserEntity(): User {
-    return new User(
-      '123',
-      'user@example.com',
-      'user',
-      '123123123',
-      0,
-      0,
-      0,
-      0,
-      new Date(this.fixedDate.getTime()),
-    );
+    const user = new User();
+    user.id = '123';
+    user.email = 'user@example.com';
+    user.username = 'user';
+    user.password = '123123123';
+    user.points = 0;
+    user.totalSubmissions = 0;
+    user.totalResolved = 0;
+    user.streak = 0;
+    user.createdAt = new Date(this.fixedDate.getTime());
+    return user;
   }
 
   static makeReturnUserDto(): ReturnUserDto {

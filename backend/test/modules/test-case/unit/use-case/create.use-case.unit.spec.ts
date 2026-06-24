@@ -37,7 +37,7 @@ describe('CreateTestCaseUseCase', () => {
     const result = await useCase.execute(createTestCaseDto);
 
     expect(problemRepositoryMock.findById).toHaveBeenCalledWith(
-      createTestCaseDto.id_problem,
+      createTestCaseDto.idProblem,
     );
     expect(problemRepositoryMock.findById).toHaveBeenCalledTimes(1);
     expect(testCaseRepositoryMock.createAndSave).toHaveBeenCalledWith(
@@ -49,7 +49,7 @@ describe('CreateTestCaseUseCase', () => {
   it('should throw BadRequestException when id_problem is missing', async () => {
     const createTestCaseDto = {
       ...TestCaseFactory.makeCreateTestCaseDto(),
-      id_problem: undefined as unknown as number,
+      idProblem: undefined as unknown as number,
     };
 
     const createPromise = useCase.execute(createTestCaseDto);
@@ -72,7 +72,7 @@ describe('CreateTestCaseUseCase', () => {
     await expect(createPromise).rejects.toThrow('Problem not found');
 
     expect(problemRepositoryMock.findById).toHaveBeenCalledWith(
-      createTestCaseDto.id_problem,
+      createTestCaseDto.idProblem,
     );
     expect(problemRepositoryMock.findById).toHaveBeenCalledTimes(1);
     expect(testCaseRepositoryMock.createAndSave).not.toHaveBeenCalled();

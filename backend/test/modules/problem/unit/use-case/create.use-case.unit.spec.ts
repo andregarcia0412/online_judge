@@ -1,19 +1,10 @@
 import { ConflictException } from '@nestjs/common';
-import { ProblemResponse } from 'src/modules/problem/use-case/problem/response/problem.response';
 import { CreateProblemUseCase } from 'src/modules/problem/use-case/problem/create.use-case';
-import { CategoryFactory } from 'test/factories/category.factory';
 import { ProblemFactory } from 'test/factories/problem.factory';
-import { TestCaseFactory } from 'test/factories/test-case.factory';
 
 describe('CreateProblemUseCase', () => {
   let problemRepositoryMock: ReturnType<
     typeof ProblemFactory.makeProblemRepositoryMock
-  >;
-  let categoryRepositoryMock: ReturnType<
-    typeof CategoryFactory.makeCategoryRepositoryMock
-  >;
-  let testCaseRepositoryMock: ReturnType<
-    typeof TestCaseFactory.makeTestCaseRepositoryMock
   >;
   let dataSourceMock: { transaction: jest.Mock };
   let useCase: CreateProblemUseCase;
@@ -21,8 +12,6 @@ describe('CreateProblemUseCase', () => {
 
   beforeEach(() => {
     problemRepositoryMock = ProblemFactory.makeProblemRepositoryMock();
-    categoryRepositoryMock = CategoryFactory.makeCategoryRepositoryMock();
-    testCaseRepositoryMock = TestCaseFactory.makeTestCaseRepositoryMock();
     dataSourceMock = {
       transaction: jest
         .fn()
@@ -31,8 +20,6 @@ describe('CreateProblemUseCase', () => {
 
     useCase = new CreateProblemUseCase(
       problemRepositoryMock as any,
-      categoryRepositoryMock as any,
-      testCaseRepositoryMock as any,
       dataSourceMock as any,
     );
   });
@@ -41,16 +28,12 @@ describe('CreateProblemUseCase', () => {
     jest.restoreAllMocks();
   });
 
-  it('should create a problem and return ProblemResponse when title does not match', async () => {
+  it('should create a problem with its relations via cascade when title does not match', async () => {
     const createProblemDto = ProblemFactory.makeCreateProblemDto();
     const savedProblem = ProblemFactory.makeProblemEntity();
-    const savedCategory = CategoryFactory.makeCategoryEntity();
-    const savedTestCase = TestCaseFactory.makeTestCaseEntity();
 
     problemRepositoryMock.findByTitle.mockResolvedValue(null);
     problemRepositoryMock.createAndSave.mockResolvedValue(savedProblem);
-    categoryRepositoryMock.createAndSaveMany.mockResolvedValue([savedCategory]);
-    testCaseRepositoryMock.createAndSaveMany.mockResolvedValue([savedTestCase]);
 
     const result = await useCase.execute(createProblemDto);
 
@@ -59,23 +42,18 @@ describe('CreateProblemUseCase', () => {
       createProblemDto.title,
       manager,
     );
+    // uma única escrita: o grafo é montado e o cascade persiste os filhos
     expect(problemRepositoryMock.createAndSave).toHaveBeenCalledWith(
-      createProblemDto,
+      {
+        ...createProblemDto,
+        categories: createProblemDto.category,
+        testCases: createProblemDto.testCases,
+      },
       manager,
     );
-    expect(categoryRepositoryMock.createAndSaveMany).toHaveBeenCalledWith(
-      createProblemDto.category,
-      savedProblem.id,
-      manager,
-    );
-    expect(testCaseRepositoryMock.createAndSaveMany).toHaveBeenCalledWith(
-      createProblemDto.test_cases,
-      manager,
-    );
-    expect(result).toBeInstanceOf(ProblemResponse);
-    expect(result.problem).toBe(savedProblem);
-    expect(result.categories).toEqual([savedCategory]);
-    expect(result.testCases).toEqual([savedTestCase]);
+    expect(result).toBe(savedProblem);
+    expect(result.categories).toEqual(savedProblem.categories);
+    expect(result.testCases).toEqual(savedProblem.testCases);
   });
 
   it('should throw ConflictException when title matches', async () => {

@@ -4,6 +4,13 @@ import { StatusEnum } from 'src/modules/submission/enum/submission-status';
 import { TestCase } from 'src/modules/problem/entities/test-case.entity';
 import { TestRunnerService } from 'src/modules/test-runner/test-runner.service';
 
+const makeTestCase = (input: string, output: string): TestCase => {
+  const testCase = new TestCase();
+  testCase.input = input;
+  testCase.output = output;
+  return testCase;
+};
+
 describe('TestRunnerService', () => {
   let codeRunnerServiceMock: {
     getAllowedLanguages: jest.Mock;
@@ -45,7 +52,7 @@ describe('TestRunnerService', () => {
   });
 
   it('should return REJECTED when execution result is malformed', async () => {
-    const testCases = [new TestCase('tc-1', 1, '1\n', '1\n')];
+    const testCases = [makeTestCase('1\n', '1\n')];
 
     codeRunnerServiceMock.executeCode.mockResolvedValue({
       output: '',
@@ -58,15 +65,15 @@ describe('TestRunnerService', () => {
     const result = await service.runTests(testCases, 'print(1)', 'python');
 
     expect(result.status).toBe(StatusEnum.REJECTED);
-    expect(result.execution_time).toBe(0);
+    expect(result.executionTime).toBe(0);
     expect(result.stdout).toBeNull();
     expect(result.error).toBe('Execution failed');
-    expect(result.memory_usage_MB).toBe(0);
-    expect(result.test_cases_passed).toBe(0);
+    expect(result.memoryUsageMB).toBe(0);
+    expect(result.testCasesPassed).toBe(0);
   });
 
   it('should return REJECTED when output mismatches and include stderr only when execution errored', async () => {
-    const testCases = [new TestCase('tc-1', 1, '2\n', '4\n')];
+    const testCases = [makeTestCase('2\n', '4\n')];
 
     codeRunnerServiceMock.executeCode.mockResolvedValue(
       new ExecuteCodeDto('3\n', 'runtime error', 14.7, true, 12.5),
@@ -75,17 +82,17 @@ describe('TestRunnerService', () => {
     const result = await service.runTests(testCases, 'print(3)', 'python');
 
     expect(result.status).toBe(StatusEnum.REJECTED);
-    expect(result.execution_time).toBe(14);
+    expect(result.executionTime).toBe(14);
     expect(result.stdout).toBe('3\n');
     expect(result.error).toBe('runtime error');
-    expect(result.memory_usage_MB).toBe(12.5);
-    expect(result.test_cases_passed).toBe(0);
+    expect(result.memoryUsageMB).toBe(12.5);
+    expect(result.testCasesPassed).toBe(0);
   });
 
   it('should return ACCEPTED with biggest runtime and memory usage', async () => {
     const testCases = [
-      new TestCase('tc-1', 1, '1\n', '1\n'),
-      new TestCase('tc-2', 1, '2\n', '2\n'),
+      makeTestCase('1\n', '1\n'),
+      makeTestCase('2\n', '2\n'),
     ];
 
     codeRunnerServiceMock.executeCode
@@ -101,10 +108,10 @@ describe('TestRunnerService', () => {
     expect(codeRunnerServiceMock.getAllowedLanguages).toHaveBeenCalledTimes(1);
     expect(codeRunnerServiceMock.executeCode).toHaveBeenCalledTimes(2);
     expect(result.status).toBe(StatusEnum.ACCEPTED);
-    expect(result.execution_time).toBe(10);
+    expect(result.executionTime).toBe(10);
     expect(result.stdout).toBe('2\n');
     expect(result.error).toBeNull();
-    expect(result.memory_usage_MB).toBe(9.25);
-    expect(result.test_cases_passed).toBe(2);
+    expect(result.memoryUsageMB).toBe(9.25);
+    expect(result.testCasesPassed).toBe(2);
   });
 });

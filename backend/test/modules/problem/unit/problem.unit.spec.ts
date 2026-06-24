@@ -1,7 +1,6 @@
 import { ConflictException, NotFoundException } from '@nestjs/common';
 import { ReturnProblemDto } from 'src/modules/problem/dto/problem/return-problem.dto';
 import { ProblemService } from 'src/modules/problem/service/problem.service';
-import { CategoryFactory } from 'test/factories/category.factory';
 import { ProblemFactory } from 'test/factories/problem.factory';
 
 describe('ProblemService', () => {
@@ -26,15 +25,13 @@ describe('ProblemService', () => {
   });
 
   describe('Create Problem', () => {
-    it('should delegate to CreateProblemUseCase and map to ReturnProblemDto', async () => {
+    it('should delegate to CreateProblemUseCase and map the entity to ReturnProblemDto', async () => {
       const createProblemDto = ProblemFactory.makeCreateProblemDto();
-      const problemResponse = ProblemFactory.makeProblemResponse();
-      const savedCategory = problemResponse.categories[0];
-      const savedTestCase = problemResponse.testCases[0];
+      const problem = ProblemFactory.makeProblemEntity();
+      const category = problem.categories[0];
+      const testCase = problem.testCases[0];
 
-      useCaseMocks.createProblemUseCase.execute.mockResolvedValue(
-        problemResponse,
-      );
+      useCaseMocks.createProblemUseCase.execute.mockResolvedValue(problem);
 
       const result = await service.create(createProblemDto);
 
@@ -43,20 +40,21 @@ describe('ProblemService', () => {
       );
       expect(result).toBeInstanceOf(ReturnProblemDto);
       expect(result).toMatchObject({
-        ...ProblemFactory.makeReturnProblemDto(),
+        id: problem.id,
+        title: problem.title,
         categories: [
           {
-            id: savedCategory.id,
-            id_problem: savedCategory.id_problem,
-            category: savedCategory.category,
+            id: category.id,
+            idProblem: category.idProblem,
+            category: category.category,
           },
         ],
-        test_cases: [
+        testCases: [
           {
-            id: savedTestCase.id,
-            id_problem: savedTestCase.id_problem,
-            input: savedTestCase.input,
-            output: savedTestCase.output,
+            id: testCase.id,
+            idProblem: testCase.idProblem,
+            input: testCase.input,
+            output: testCase.output,
           },
         ],
       });
@@ -76,11 +74,9 @@ describe('ProblemService', () => {
 
   describe('Find All Problems', () => {
     it('should delegate to FindAllProblemUseCase and map to ReturnProblemDto', async () => {
-      const problemResponse = ProblemFactory.makeProblemResponse();
+      const problem = ProblemFactory.makeProblemEntity();
 
-      useCaseMocks.findAllProblemUseCase.execute.mockResolvedValue([
-        problemResponse,
-      ]);
+      useCaseMocks.findAllProblemUseCase.execute.mockResolvedValue([problem]);
 
       const result = await service.findAll();
 
@@ -88,29 +84,27 @@ describe('ProblemService', () => {
       expect(result).toHaveLength(1);
       expect(result[0]).toBeInstanceOf(ReturnProblemDto);
       expect(result[0]).toMatchObject({
-        id: problemResponse.problem.id,
-        title: problemResponse.problem.title,
+        id: problem.id,
+        title: problem.title,
       });
     });
   });
 
   describe('Find Problem By Id', () => {
     it('should delegate to FindProblemByIdUseCase and map to ReturnProblemDto', async () => {
-      const problemResponse = ProblemFactory.makeProblemResponse();
+      const problem = ProblemFactory.makeProblemEntity();
 
-      useCaseMocks.findProblemByIdUseCase.execute.mockResolvedValue(
-        problemResponse,
-      );
+      useCaseMocks.findProblemByIdUseCase.execute.mockResolvedValue(problem);
 
-      const result = await service.findOneById(problemResponse.problem.id);
+      const result = await service.findOneById(problem.id);
 
       expect(useCaseMocks.findProblemByIdUseCase.execute).toHaveBeenCalledWith(
-        problemResponse.problem.id,
+        problem.id,
       );
       expect(result).toBeInstanceOf(ReturnProblemDto);
       expect(result).toMatchObject({
-        id: problemResponse.problem.id,
-        title: problemResponse.problem.title,
+        id: problem.id,
+        title: problem.title,
       });
     });
 
@@ -125,23 +119,19 @@ describe('ProblemService', () => {
 
   describe('Find Problem By Title', () => {
     it('should delegate to FindProblemByTitleUseCase and map to ReturnProblemDto', async () => {
-      const problemResponse = ProblemFactory.makeProblemResponse();
+      const problem = ProblemFactory.makeProblemEntity();
 
-      useCaseMocks.findProblemByTitleUseCase.execute.mockResolvedValue(
-        problemResponse,
-      );
+      useCaseMocks.findProblemByTitleUseCase.execute.mockResolvedValue(problem);
 
-      const result = await service.findOneByTitle(
-        problemResponse.problem.title,
-      );
+      const result = await service.findOneByTitle(problem.title);
 
       expect(
         useCaseMocks.findProblemByTitleUseCase.execute,
-      ).toHaveBeenCalledWith(problemResponse.problem.title);
+      ).toHaveBeenCalledWith(problem.title);
       expect(result).toBeInstanceOf(ReturnProblemDto);
       expect(result).toMatchObject({
-        id: problemResponse.problem.id,
-        title: problemResponse.problem.title,
+        id: problem.id,
+        title: problem.title,
       });
     });
 
@@ -155,19 +145,17 @@ describe('ProblemService', () => {
   });
 
   describe('Update Problem', () => {
-    it('should delegate to UpdateProblemUseCase and map to ReturnProblemDto', async () => {
+    it('should delegate to UpdateProblemUseCase and map the entity to ReturnProblemDto', async () => {
       const id = 1;
       const updateProblemDto = {
         title: 'Fibonacci Updated',
         points: 10,
       };
-      const problemResponse = ProblemFactory.makeProblemResponse();
-      const savedCategory = problemResponse.categories[0];
-      const savedTestCase = problemResponse.testCases[0];
+      const problem = ProblemFactory.makeProblemEntity();
+      const category = problem.categories[0];
+      const testCase = problem.testCases[0];
 
-      useCaseMocks.updateProblemUseCase.execute.mockResolvedValue(
-        problemResponse,
-      );
+      useCaseMocks.updateProblemUseCase.execute.mockResolvedValue(problem);
 
       const result = await service.update(id, updateProblemDto as any);
 
@@ -178,21 +166,21 @@ describe('ProblemService', () => {
       expect(useCaseMocks.updateProblemUseCase.execute).toHaveBeenCalledTimes(1);
       expect(result).toBeInstanceOf(ReturnProblemDto);
       expect(result).toMatchObject({
-        id: problemResponse.problem.id,
-        title: problemResponse.problem.title,
+        id: problem.id,
+        title: problem.title,
         categories: [
           {
-            id: savedCategory.id,
-            id_problem: savedCategory.id_problem,
-            category: savedCategory.category,
+            id: category.id,
+            idProblem: category.idProblem,
+            category: category.category,
           },
         ],
-        test_cases: [
+        testCases: [
           {
-            id: savedTestCase.id,
-            id_problem: savedTestCase.id_problem,
-            input: savedTestCase.input,
-            output: savedTestCase.output,
+            id: testCase.id,
+            idProblem: testCase.idProblem,
+            input: testCase.input,
+            output: testCase.output,
           },
         ],
       });

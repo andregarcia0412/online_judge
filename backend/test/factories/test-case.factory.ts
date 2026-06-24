@@ -45,8 +45,13 @@ export class TestCaseFactory {
     return new CreateTestCaseDto('10\n', '55\n', 1);
   }
 
-  static makeTestCaseEntity() {
-    return new TestCase('123', 1, '10\n', '55\n');
+  static makeTestCaseEntity(): TestCase {
+    const testCase = new TestCase();
+    testCase.id = '123';
+    testCase.idProblem = 1;
+    testCase.input = '10\n';
+    testCase.output = '55\n';
+    return testCase;
   }
 
   static makeReturnTestCaseDto() {

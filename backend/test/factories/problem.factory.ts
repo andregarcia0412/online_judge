@@ -5,7 +5,6 @@ import { ReturnProblemDto } from 'src/modules/problem/dto/problem/return-problem
 import { Problem } from 'src/modules/problem/entities/problem.entity';
 import { CategoryEnum } from 'src/modules/problem/enum/category.enum';
 import { ProblemDifficultyEnum } from 'src/modules/problem/enum/problem-difficulty.enum';
-import { ProblemResponse } from 'src/modules/problem/use-case/problem/response/problem.response';
 import { CategoryFactory } from 'test/factories/category.factory';
 import { TestCaseFactory } from 'test/factories/test-case.factory';
 
@@ -48,14 +47,6 @@ export class ProblemFactory {
     };
   }
 
-  static makeProblemResponse() {
-    return new ProblemResponse(
-      this.makeProblemEntity(),
-      [TestCaseFactory.makeTestCaseEntity()],
-      [CategoryFactory.makeCategoryEntity()],
-    );
-  }
-
   static makeCreateProblemDto() {
     return new CreateProblemDto(
       'Fibonacci',
@@ -72,22 +63,24 @@ export class ProblemFactory {
     );
   }
 
-  static makeProblemEntity() {
-    return new Problem(
-      1,
-      'Fibonacci',
-      2,
-      'user',
-      'description',
-      'input_description',
-      'output_description',
-      'input_example',
-      'output_example',
-      0,
-      0,
-      ProblemDifficultyEnum.EASY,
-      new Date(this.fixedData.getTime()),
-    );
+  static makeProblemEntity(): Problem {
+    const problem = new Problem();
+    problem.id = 1;
+    problem.title = 'Fibonacci';
+    problem.points = 2;
+    problem.author = 'user';
+    problem.description = 'description';
+    problem.inputDescription = 'input_description';
+    problem.outputDescription = 'output_description';
+    problem.inputExample = 'input_example';
+    problem.outputExample = 'output_example';
+    problem.totalSubmitted = 0;
+    problem.totalAccepted = 0;
+    problem.difficulty = ProblemDifficultyEnum.EASY;
+    problem.createdAt = new Date(this.fixedData.getTime());
+    problem.categories = [CategoryFactory.makeCategoryEntity()];
+    problem.testCases = [TestCaseFactory.makeTestCaseEntity()];
+    return problem;
   }
 
   static makeReturnProblemDto() {

@@ -101,10 +101,10 @@ describe('UserService', () => {
         email: userEntity.email,
         username: userEntity.username,
         points: userEntity.points,
-        total_submissions: userEntity.total_submissions,
-        total_resolved: userEntity.total_resolved,
+        totalSubmissions: userEntity.totalSubmissions,
+        totalResolved: userEntity.totalResolved,
         streak: userEntity.streak,
-        creation_date: userEntity.creation_date,
+        createdAt: userEntity.createdAt,
       });
 
       expect(result[0]).not.toHaveProperty('password');
