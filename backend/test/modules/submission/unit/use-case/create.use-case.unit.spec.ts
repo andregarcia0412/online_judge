@@ -203,7 +203,7 @@ describe('CreateSubmissionUseCase', () => {
     );
   });
 
-  it('should not add points when user already has accepted submission', async () => {
+  it('should still count the accepted submission but not re-award points when user already has accepted submission', async () => {
     const createSubmissionDto = SubmissionFactory.makeCreateSubmissionDto();
     const savedUser = UserFactory.makeUserEntity();
     const savedProblem = ProblemFactory.makeProblemEntity();
@@ -241,7 +241,7 @@ describe('CreateSubmissionUseCase', () => {
     expect(problemRepositoryMock.saveExistingEntity).toHaveBeenCalledWith(
       expect.objectContaining({
         totalSubmitted: 9,
-        totalAccepted: 5,
+        totalAccepted: 6,
       }),
       expect.any(Object),
     );
