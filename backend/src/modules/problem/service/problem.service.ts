@@ -1,9 +1,7 @@
 import { Inject, Injectable } from '@nestjs/common';
-import { ReturnCategoryDto } from '../dto/category/return-category.dto';
 import { CreateProblemDto } from '../dto/problem/create-problem.dto';
 import { ReturnProblemDto } from '../dto/problem/return-problem.dto';
 import { UpdateProblemDto } from '../dto/problem/update-problem.dto';
-import { ReturnTestCaseDto } from '../dto/test-case/return-test-case.dto';
 import { ProblemServicePort } from '../interface/service/problem.service.port';
 import { CreateProblemUseCase } from '../use-case/problem/create.use-case';
 import { FindAllProblemUseCase } from '../use-case/problem/find-all.use-case';
@@ -30,62 +28,39 @@ export class ProblemService implements ProblemServicePort {
   ) {}
 
   async create(createProblemDto: CreateProblemDto): Promise<ReturnProblemDto> {
-    const createResponse =
-      await this.createProblemUseCase.execute(createProblemDto);
+    const problem = await this.createProblemUseCase.execute(createProblemDto);
 
-    return ReturnProblemDto.fromEntity(
-      createResponse.problem,
-      ReturnCategoryDto.fromEntityList(createResponse.categories),
-      ReturnTestCaseDto.fromEntityList(createResponse.testCases),
-    );
+    return ReturnProblemDto.fromEntity(problem);
   }
 
   async findAll(): Promise<ReturnProblemDto[]> {
     const problems = await this.findAllProblemUseCase.execute();
 
-    return problems.map((problem) =>
-      ReturnProblemDto.fromEntity(
-        problem.problem,
-        ReturnCategoryDto.fromEntityList(problem.categories),
-        ReturnTestCaseDto.fromEntityList(problem.testCases),
-      ),
-    );
+    return problems.map((problem) => ReturnProblemDto.fromEntity(problem));
   }
 
   async findOneById(id: number): Promise<ReturnProblemDto> {
-    const problemResponse = await this.findProblemByIdUseCase.execute(id);
+    const problem = await this.findProblemByIdUseCase.execute(id);
 
-    return ReturnProblemDto.fromEntity(
-      problemResponse.problem,
-      ReturnCategoryDto.fromEntityList(problemResponse.categories),
-      ReturnTestCaseDto.fromEntityList(problemResponse.testCases),
-    );
+    return ReturnProblemDto.fromEntity(problem);
   }
 
   async findOneByTitle(title: string): Promise<ReturnProblemDto> {
-    const problemResponse = await this.findProblemByTitleUseCase.execute(title);
+    const problem = await this.findProblemByTitleUseCase.execute(title);
 
-    return ReturnProblemDto.fromEntity(
-      problemResponse.problem,
-      ReturnCategoryDto.fromEntityList(problemResponse.categories),
-      ReturnTestCaseDto.fromEntityList(problemResponse.testCases),
-    );
+    return ReturnProblemDto.fromEntity(problem);
   }
 
   async update(
     id: number,
     updateProblemDto: UpdateProblemDto,
   ): Promise<ReturnProblemDto> {
-    const problemResponse = await this.updateProblemUseCase.execute(
+    const problem = await this.updateProblemUseCase.execute(
       id,
       updateProblemDto,
     );
 
-    return ReturnProblemDto.fromEntity(
-      problemResponse.problem,
-      ReturnCategoryDto.fromEntityList(problemResponse.categories),
-      ReturnTestCaseDto.fromEntityList(problemResponse.testCases),
-    );
+    return ReturnProblemDto.fromEntity(problem);
   }
 
   async remove(id: number): Promise<void> {

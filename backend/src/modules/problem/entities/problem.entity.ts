@@ -1,7 +1,7 @@
-import { Entity, PrimaryGeneratedColumn, Column, OneToMany } from 'typeorm';
+import { Column, Entity, OneToMany, PrimaryGeneratedColumn } from 'typeorm';
 import { ProblemDifficultyEnum } from '../enum/problem-difficulty.enum';
-import { TestCase } from './test-case.entity';
 import { Category } from './category.entity';
+import { TestCase } from './test-case.entity';
 
 @Entity('Problem')
 export class Problem {
@@ -43,11 +43,13 @@ export class Problem {
 
   @OneToMany(() => TestCase, (testCase) => testCase.problem, {
     cascade: true,
+    eager: true,
   })
   testCases!: TestCase[];
 
   @OneToMany(() => Category, (category) => category.problem, {
     cascade: true,
+    eager: true,
   })
   categories!: Category[];
 

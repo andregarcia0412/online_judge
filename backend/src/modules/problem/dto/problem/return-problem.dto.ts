@@ -1,8 +1,8 @@
 import { ApiProperty } from '@nestjs/swagger';
+import { Expose } from 'class-transformer';
 import { Problem } from '../../entities/problem.entity';
 import { ReturnCategoryDto } from '../category/return-category.dto';
 import { ReturnTestCaseDto } from '../test-case/return-test-case.dto';
-import { Expose } from 'class-transformer';
 
 export class ReturnProblemDto {
   @ApiProperty()
@@ -92,11 +92,7 @@ export class ReturnProblemDto {
     this.testCases = testCases ?? [];
   }
 
-  static fromEntity(
-    problem: Problem,
-    categories?: ReturnCategoryDto[],
-    testCases?: ReturnTestCaseDto[],
-  ): ReturnProblemDto {
+  static fromEntity(problem: Problem): ReturnProblemDto {
     return new ReturnProblemDto(
       problem.id,
       problem.title,
@@ -111,8 +107,8 @@ export class ReturnProblemDto {
       problem.totalAccepted,
       problem.difficulty,
       problem.createdAt,
-      categories,
-      testCases,
+      ReturnCategoryDto.fromEntityList(problem.categories ?? []),
+      ReturnTestCaseDto.fromEntityList(problem.testCases ?? []),
     );
   }
 }
