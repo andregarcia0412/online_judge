@@ -16,7 +16,7 @@ import { userService } from "../../api/services/user.service";
 import { useNavigate } from "react-router-dom";
 
 export const Home = () => {
-  const { user } = useAuthContext();
+  const { user, getUserData } = useAuthContext();
   const navigate = useNavigate();
   const [quickSearchText, setQuickSearchText] = React.useState<string>("");
   const [homeSearchText, setHomeSearchText] = React.useState<string>("");
@@ -28,6 +28,10 @@ export const Home = () => {
   const handleSearch = () => {
     console.log("pesquisou");
   };
+
+  React.useEffect(() => {
+    getUserData();
+  }, [getUserData]);
 
   React.useEffect(() => {
     if (!user) return;
