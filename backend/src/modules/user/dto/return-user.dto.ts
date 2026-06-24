@@ -1,5 +1,6 @@
 import { ApiProperty } from '@nestjs/swagger';
 import { User } from '../entities/user.entity';
+import { Expose } from 'class-transformer';
 
 export class ReturnUserDto {
   constructor(
@@ -7,19 +8,19 @@ export class ReturnUserDto {
     email: string,
     username: string,
     points: number,
-    total_submissions: number,
-    total_resolved: number,
+    totalSubmissions: number,
+    totalResolved: number,
     streak: number,
-    creation_date: Date,
+    createdAt: Date,
   ) {
     this.id = id;
     this.email = email;
     this.username = username;
     this.points = points;
-    this.total_submissions = total_submissions;
-    this.total_resolved = total_resolved;
+    this.totalSubmissions = totalSubmissions;
+    this.totalResolved = totalResolved;
     this.streak = streak;
-    this.creation_date = creation_date;
+    this.createdAt = createdAt;
   }
 
   @ApiProperty()
@@ -34,17 +35,20 @@ export class ReturnUserDto {
   @ApiProperty()
   points: number;
 
-  @ApiProperty()
-  total_submissions: number;
+  @Expose({ name: 'total_submissions' })
+  @ApiProperty({ name: 'total_submissions' })
+  totalSubmissions: number;
 
-  @ApiProperty()
-  total_resolved: number;
+  @Expose({ name: 'total_resolved' })
+  @ApiProperty({ name: 'total_resolved' })
+  totalResolved: number;
 
   @ApiProperty()
   streak: number;
 
-  @ApiProperty()
-  creation_date: Date;
+  @Expose({ name: 'created_at' })
+  @ApiProperty({ name: 'created_at' })
+  createdAt: Date;
 
   static fromEntity(user: User) {
     return new ReturnUserDto(
@@ -52,10 +56,10 @@ export class ReturnUserDto {
       user.email,
       user.username,
       user.points,
-      user.total_submissions,
-      user.total_resolved,
+      user.totalSubmissions,
+      user.totalResolved,
       user.streak,
-      user.creation_date,
+      user.createdAt,
     );
   }
 }

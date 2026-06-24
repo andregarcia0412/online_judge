@@ -20,7 +20,7 @@ export class UpdateUserStreakUseCase {
     if (!lastUserSubmission) {
       user.streak = 0;
     } else {
-      const lastDate = new Date(lastUserSubmission.submission_date);
+      const lastDate = new Date(lastUserSubmission.submissionDate);
       const today = new Date();
 
       lastDate.setUTCHours(0, 0, 0, 0);
