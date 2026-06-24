@@ -2,6 +2,7 @@ import { ApiProperty } from '@nestjs/swagger';
 import { Problem } from '../../entities/problem.entity';
 import { ReturnCategoryDto } from '../category/return-category.dto';
 import { ReturnTestCaseDto } from '../test-case/return-test-case.dto';
+import { Expose } from 'class-transformer';
 
 export class ReturnProblemDto {
   @ApiProperty()
@@ -19,23 +20,29 @@ export class ReturnProblemDto {
   @ApiProperty()
   description: string;
 
-  @ApiProperty()
-  input_description: string;
+  @Expose({ name: 'input_description' })
+  @ApiProperty({ name: 'input_description' })
+  inputDescription: string;
 
-  @ApiProperty()
-  output_description: string;
+  @Expose({ name: 'output_description' })
+  @ApiProperty({ name: 'output_description' })
+  outputDescription: string;
 
-  @ApiProperty()
-  input_example: string;
+  @Expose({ name: 'input_example' })
+  @ApiProperty({ name: 'input_example' })
+  inputExample: string;
 
-  @ApiProperty()
-  output_example: string;
+  @Expose({ name: 'output_example' })
+  @ApiProperty({ name: 'output_example' })
+  outputExample: string;
 
-  @ApiProperty()
-  total_submitted: number;
+  @Expose({ name: 'total_submitted' })
+  @ApiProperty({ name: 'total_submitted' })
+  totalSubmitted: number;
 
-  @ApiProperty()
-  total_accepted: number;
+  @Expose({ name: 'total_accepted' })
+  @ApiProperty({ name: 'total_accepted' })
+  totalAccepted: number;
 
   @ApiProperty()
   difficulty: string;
@@ -43,11 +50,13 @@ export class ReturnProblemDto {
   @ApiProperty({ type: [ReturnCategoryDto] })
   categories: ReturnCategoryDto[];
 
-  @ApiProperty({ type: [ReturnTestCaseDto] })
-  test_cases: ReturnTestCaseDto[];
+  @Expose({ name: 'test_cases' })
+  @ApiProperty({ name: 'test_cases', type: [ReturnTestCaseDto] })
+  testCases: ReturnTestCaseDto[];
 
-  @ApiProperty()
-  creation_date: Date;
+  @Expose({ name: 'created_at' })
+  @ApiProperty({ name: 'created_at' })
+  createdAt: Date;
 
   constructor(
     id: number,
@@ -55,38 +64,38 @@ export class ReturnProblemDto {
     points: number,
     author: string,
     description: string,
-    input_description: string,
-    output_description: string,
-    input_example: string,
-    output_example: string,
-    total_submitted: number,
-    total_accepted: number,
+    inputDescription: string,
+    outputDescription: string,
+    inputExample: string,
+    outputExample: string,
+    totalSubmitted: number,
+    totalAccepted: number,
     difficulty: string,
-    creation_date: Date,
+    createdAt: Date,
     categories?: ReturnCategoryDto[],
-    test_cases?: ReturnTestCaseDto[],
+    testCases?: ReturnTestCaseDto[],
   ) {
     this.id = id;
     this.title = title;
     this.points = points;
     this.author = author;
     this.description = description;
-    this.input_description = input_description;
-    this.output_description = output_description;
-    this.input_example = input_example;
-    this.output_example = output_example;
-    this.total_submitted = total_submitted;
-    this.total_accepted = total_accepted;
+    this.inputDescription = inputDescription;
+    this.outputDescription = outputDescription;
+    this.inputExample = inputExample;
+    this.outputExample = outputExample;
+    this.totalSubmitted = totalSubmitted;
+    this.totalAccepted = totalAccepted;
     this.difficulty = difficulty;
-    this.creation_date = creation_date;
+    this.createdAt = createdAt;
     this.categories = categories ?? [];
-    this.test_cases = test_cases ?? [];
+    this.testCases = testCases ?? [];
   }
 
   static fromEntity(
     problem: Problem,
     categories?: ReturnCategoryDto[],
-    test_cases?: ReturnTestCaseDto[],
+    testCases?: ReturnTestCaseDto[],
   ): ReturnProblemDto {
     return new ReturnProblemDto(
       problem.id,
@@ -94,16 +103,16 @@ export class ReturnProblemDto {
       problem.points,
       problem.author,
       problem.description,
-      problem.input_description,
-      problem.output_description,
-      problem.input_example,
-      problem.output_example,
-      problem.total_submitted,
-      problem.total_accepted,
+      problem.inputDescription,
+      problem.outputDescription,
+      problem.inputExample,
+      problem.outputExample,
+      problem.totalSubmitted,
+      problem.totalAccepted,
       problem.difficulty,
-      problem.creation_date,
+      problem.createdAt,
       categories,
-      test_cases,
+      testCases,
     );
   }
 }
