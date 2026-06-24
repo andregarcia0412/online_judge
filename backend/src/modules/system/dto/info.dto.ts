@@ -1,5 +1,10 @@
+import { ApiProperty } from '@nestjs/swagger';
+
 export class InfoDto {
+  @ApiProperty()
   name: string;
+
+  @ApiProperty()
   version: string;
 
   constructor(name: string, version: string) {
