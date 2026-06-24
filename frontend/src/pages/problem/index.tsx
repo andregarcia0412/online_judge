@@ -11,8 +11,8 @@ import { HomeHeader } from "../../components/home-header/HomeHeader";
 import Button from "../../components/input/button/Button";
 import { useAuthContext } from "../../contexts/AuthContext";
 import { LanguageConstants } from "../../data/constants/language.constants";
-import type { Problem } from "../../data/dto/problem.dto";
 import type { Submission } from "../../data/dto/submission.dto";
+import { useFetch } from "../../hooks/useFetch";
 import { celebrate } from "../../utils/celebrate";
 import "./style.css";
 
@@ -28,37 +28,23 @@ export const ProblemScreen = () => {
   );
   const [loadingSubmit, setLoadingSubmit] = React.useState<boolean>(false);
   const [loadingRun, setLoadingRun] = React.useState<boolean>(false);
-  const [problem, setProblem] = React.useState<Problem | null | undefined>(
-    undefined,
-  );
   const [showPopup, setShowPopup] = React.useState<boolean>();
   const [submissionInfo, setSubmissionInfo] = React.useState<Submission | null>(
     null,
   );
   const [quickSearchText, setQuickSearchText] = React.useState<string>("");
 
-  React.useEffect(() => {
-    if (isInvalidId || !user) return;
+  const {
+    data: problem,
+    loading,
+    error,
+  } = useFetch(() => problemService.findById(safeIdProblem), [safeIdProblem]);
 
-    const findProblem = async () => {
-      try {
-        const problem = await problemService.findById(safeIdProblem);
-        setProblem(problem);
-      } catch (e: any) {
-        if (e.response?.status === 404) {
-          setProblem(null);
-        }
-      }
-    };
-
-    findProblem();
-  }, [safeIdProblem, isInvalidId, user]);
-
-  if (!user || isInvalidId || problem === null) {
+  if (!user || isInvalidId || error) {
     return <Navigate to="/not-found" replace />;
   }
 
-  if (problem === undefined) {
+  if (loading || !problem) {
     return null;
   }
 
