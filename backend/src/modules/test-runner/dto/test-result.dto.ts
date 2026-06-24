@@ -1,28 +1,30 @@
 import { ApiProperty } from '@nestjs/swagger';
+import { Expose } from 'class-transformer';
 import { StatusEnum } from 'src/modules/submission/enum/submission-status';
 
 export class TestResult {
   constructor(
     status: StatusEnum,
-    execution_time: number,
+    executionTime: number,
     stdout: string | null,
     error: string | null,
-    memory_usage_MB: number,
-    test_cases_passed: number,
+    memoryUsageMB: number,
+    testCasesPassed: number,
   ) {
     this.status = status;
-    this.execution_time = execution_time;
+    this.executionTime = executionTime;
     this.stdout = stdout;
     this.error = error;
-    this.memory_usage_MB = memory_usage_MB;
-    this.test_cases_passed = test_cases_passed;
+    this.memoryUsageMB = memoryUsageMB;
+    this.testCasesPassed = testCasesPassed;
   }
 
   @ApiProperty()
   status: StatusEnum;
 
-  @ApiProperty()
-  execution_time: number;
+  @Expose({ name: 'execution_time' })
+  @ApiProperty({ name: 'execution_time' })
+  executionTime: number;
 
   @ApiProperty()
   stdout: string | null;
@@ -30,9 +32,11 @@ export class TestResult {
   @ApiProperty()
   error: string | null;
 
-  @ApiProperty()
-  memory_usage_MB: number;
+  @Expose({ name: 'memory_usage_MB' })
+  @ApiProperty({ name: 'memory_usage_MB' })
+  memoryUsageMB: number;
 
-  @ApiProperty()
-  test_cases_passed: number;
+  @Expose({ name: 'test_cases_passed' })
+  @ApiProperty({ name: 'test_cases_passed' })
+  testCasesPassed: number;
 }
