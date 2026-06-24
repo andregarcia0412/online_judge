@@ -29,6 +29,11 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
   const [user, setUser] = React.useState<User | null>(null);
   const [isLoading, setLoading] = React.useState<boolean>(true);
 
+  const getUserData = React.useCallback(async () => {
+    const response = await userService.getCurrentUser();
+    setUser(response);
+  }, []);
+
   React.useEffect(() => {
     const loadUserData = async () => {
       try {
@@ -56,7 +61,7 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
       }
     };
     loadUserData();
-  }, []);
+  }, [getUserData]);
 
   const login = async (loginData: LoginDto, rememberMe: boolean) => {
     const response = await loginService(loginData);
@@ -100,11 +105,6 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
     }
 
     await getUserData();
-  };
-
-  const getUserData = async () => {
-    const response = await userService.getCurrentUser();
-    setUser(response);
   };
 
   return (
