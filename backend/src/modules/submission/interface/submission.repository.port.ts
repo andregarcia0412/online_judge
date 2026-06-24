@@ -4,13 +4,13 @@ import { Submission } from '../entities/submission.entity';
 
 export interface SubmissionRepositoryPort {
   findOneUserAcceptedSubmission(
-    id_user: string,
+    idUser: string,
     language: string,
-    id_problem: number,
+    idProblem: number,
     manager?: EntityManager,
   ): Promise<Submission | null>;
   findLastUserSubmission(
-    id_user: string,
+    idUser: string,
     manager?: EntityManager,
   ): Promise<Submission | null>;
   save(
@@ -21,7 +21,7 @@ export interface SubmissionRepositoryPort {
   findAll(manager?: EntityManager): Promise<Submission[]>;
   findOneById(id: string, manager?: EntityManager): Promise<Submission | null>;
   findAllByUserId(
-    id_user: string,
+    idUser: string,
     manager?: EntityManager,
   ): Promise<Submission[]>;
   updateById(

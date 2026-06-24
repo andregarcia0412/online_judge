@@ -45,9 +45,9 @@ describe.skip('Load and Concurrency Testing: POST /submission', () => {
       expect(response.body.status).toBe('accepted');
       expect(response.body.error).toBeNull();
 
-      if (response.body.execution_time > 500) {
+      if (response.body.executionTime > 500) {
         console.warn(
-          `⚠️ Warning: The requisition ${index} had a high execution_time: ${response.body.execution_time}ms`,
+          `⚠️ Warning: The requisition ${index} had a high executionTime: ${response.body.executionTime}ms`,
         );
       }
     });

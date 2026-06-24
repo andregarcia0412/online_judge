@@ -20,10 +20,10 @@ export class CreatePlaygroundSubmissionUseCase {
   ) {}
 
   async execute(createSubmissionDto: CreateSubmissionDto): Promise<TestResult> {
-    await this.getProblemOrThrow(createSubmissionDto.id_problem);
+    await this.getProblemOrThrow(createSubmissionDto.idProblem);
 
     const testCases = await this.getTestCasesOrThrow(
-      createSubmissionDto.id_problem,
+      createSubmissionDto.idProblem,
     );
 
     const testResults = await this.testRunnerService.runTests(
@@ -48,11 +48,11 @@ export class CreatePlaygroundSubmissionUseCase {
   }
 
   private async getTestCasesOrThrow(
-    id_problem: number,
+    idProblem: number,
     manager?: EntityManager,
   ): Promise<TestCase[]> {
     const testCases = await this.testCaseRepository.findByProblemId(
-      id_problem,
+      idProblem,
       manager,
     );
 

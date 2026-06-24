@@ -9,7 +9,7 @@ export class FindAllSubmissionByUserIdUseCase {
     private submissionRepository: SubmissionRepositoryPort,
   ) {}
 
-  async execute(id_user: string): Promise<Submission[]> {
-    return await this.submissionRepository.findAllByUserId(id_user);
+  async execute(idUser: string): Promise<Submission[]> {
+    return await this.submissionRepository.findAllByUserId(idUser);
   }
 }

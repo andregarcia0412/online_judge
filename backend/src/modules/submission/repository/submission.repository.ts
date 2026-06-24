@@ -13,32 +13,32 @@ export class SubmissionRepository implements SubmissionRepositoryPort {
     private readonly submissionRepository: Repository<Submission>,
   ) {}
   async findOneUserAcceptedSubmission(
-    id_user: string,
+    idUser: string,
     language: string,
-    id_problem: number,
+    idProblem: number,
     manager?: EntityManager,
   ): Promise<Submission | null> {
     const repository = this.getRepository(manager);
     return await repository.findOne({
       where: {
-        id_user,
+        idUser,
         status: StatusEnum.ACCEPTED,
         language,
-        id_problem,
+        idProblem,
       },
     });
   }
   async findLastUserSubmission(
-    id_user: string,
+    idUser: string,
     manager?: EntityManager,
   ): Promise<Submission | null> {
     const repository = this.getRepository(manager);
     return await repository.findOne({
       where: {
-        id_user,
+        idUser,
       },
       order: {
-        submission_date: 'DESC',
+        submissionDate: 'DESC',
       },
     });
   }
@@ -51,10 +51,10 @@ export class SubmissionRepository implements SubmissionRepositoryPort {
     const createdSubmission = repository.create({
       ...submission,
       status: testResult.status,
-      execution_time: testResult.execution_time,
+      executionTime: testResult.executionTime,
       error: testResult.error,
-      memory_usage_MB: testResult.memory_usage_MB,
-      test_cases_passed: testResult.test_cases_passed,
+      memoryUsageMB: testResult.memoryUsageMB,
+      testCasesPassed: testResult.testCasesPassed,
     });
     return await repository.save(createdSubmission);
   }
@@ -70,11 +70,11 @@ export class SubmissionRepository implements SubmissionRepositoryPort {
     return await repository.findOneBy({ id });
   }
   async findAllByUserId(
-    id_user: string,
+    idUser: string,
     manager?: EntityManager,
   ): Promise<Submission[]> {
     const repository = this.getRepository(manager);
-    return await repository.findBy({ id_user });
+    return await repository.findBy({ idUser });
   }
   async updateById(
     id: string,

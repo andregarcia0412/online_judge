@@ -1,19 +1,14 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { Type } from 'class-transformer';
-import {
-  IsString,
-  IsNotEmpty,
-  IsNumber,
-  IsPositive,
-  IsUUID,
-} from 'class-validator';
+import { Expose, Type } from 'class-transformer';
+import { IsString, IsNotEmpty, IsNumber, IsPositive } from 'class-validator';
 
 export class CreateSubmissionDto {
+  @Expose({ name: 'id_problem' })
   @Type(() => Number)
   @IsNumber()
   @IsPositive()
-  @ApiProperty()
-  id_problem: number;
+  @ApiProperty({ name: 'id_problem' })
+  idProblem: number;
 
   @IsString()
   @ApiProperty()
@@ -24,8 +19,8 @@ export class CreateSubmissionDto {
   @ApiProperty()
   language: string;
 
-  constructor(id_problem: number, text: string, language: string) {
-    this.id_problem = id_problem;
+  constructor(idProblem: number, text: string, language: string) {
+    this.idProblem = idProblem;
     this.text = text;
     this.language = language;
   }
