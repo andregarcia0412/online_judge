@@ -73,7 +73,7 @@ describe('TestCaseService', () => {
       expect(result[0]).toBeInstanceOf(ReturnTestCaseDto);
       expect(result[0]).toMatchObject({
         id: testCaseEntity.id,
-        id_problem: testCaseEntity.id_problem,
+        idProblem: testCaseEntity.idProblem,
         input: testCaseEntity.input,
         output: testCaseEntity.output,
       });
@@ -92,7 +92,7 @@ describe('TestCaseService', () => {
       expect(result).toBeInstanceOf(ReturnTestCaseDto);
       expect(result).toMatchObject({
         id: testCaseEntity.id,
-        id_problem: testCaseEntity.id_problem,
+        idProblem: testCaseEntity.idProblem,
         input: testCaseEntity.input,
         output: testCaseEntity.output,
       });
@@ -126,7 +126,7 @@ describe('TestCaseService', () => {
 
       expect(result[0]).toMatchObject({
         id: testCaseEntity.id,
-        id_problem: testCaseEntity.id_problem,
+        idProblem: testCaseEntity.idProblem,
         input: testCaseEntity.input,
         output: testCaseEntity.output,
       });
@@ -159,7 +159,7 @@ describe('TestCaseService', () => {
       expect(result).toBeInstanceOf(ReturnTestCaseDto);
       expect(result).toMatchObject({
         id: updatedTestCase.id,
-        id_problem: updatedTestCase.id_problem,
+        idProblem: updatedTestCase.idProblem,
         input: updatedTestCase.input,
         output: updatedTestCase.output,
       });

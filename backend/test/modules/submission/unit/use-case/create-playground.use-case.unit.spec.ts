@@ -47,11 +47,11 @@ describe('CreatePlaygroundSubmissionUseCase', () => {
     const result = await useCase.execute(createSubmissionDto);
 
     expect(problemRepositoryMock.findById).toHaveBeenCalledWith(
-      createSubmissionDto.id_problem,
+      createSubmissionDto.idProblem,
       undefined,
     );
     expect(testCaseRepositoryMock.findByProblemId).toHaveBeenCalledWith(
-      createSubmissionDto.id_problem,
+      createSubmissionDto.idProblem,
       undefined,
     );
     expect(testRunnerServiceMock.runTests).toHaveBeenCalledWith(

@@ -5,7 +5,7 @@ import { UpdateSubmissionDto } from '../dto/update-submission.dto';
 
 export interface SubmissionServicePort {
   create(
-    userId: string,
+    idUser: string,
     createSubmissionDto: CreateSubmissionDto,
   ): Promise<ReturnSubmissionDto>;
   createPlaygroundSubmission(

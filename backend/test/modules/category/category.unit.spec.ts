@@ -22,7 +22,6 @@ describe('CategoryService', () => {
       useCaseMocks.findAllCategoriesByProblemIdUseCase as any,
       useCaseMocks.updateCategoryUseCase as any,
       useCaseMocks.removeCategoryUseCase as any,
-      useCaseMocks.removeCategoryByProblemIdUseCase as any,
     );
   });
 
@@ -78,7 +77,7 @@ describe('CategoryService', () => {
       expect(result[0]).toBeInstanceOf(ReturnCategoryDto);
       expect(result[0]).toMatchObject({
         id: savedCategory.id,
-        id_problem: savedCategory.id_problem,
+        idProblem: savedCategory.idProblem,
         category: savedCategory.category,
       });
     });
@@ -100,7 +99,7 @@ describe('CategoryService', () => {
       expect(result).toBeInstanceOf(ReturnCategoryDto);
       expect(result).toMatchObject({
         id: savedCategory.id,
-        id_problem: savedCategory.id_problem,
+        idProblem: savedCategory.idProblem,
         category: savedCategory.category,
       });
     });
@@ -123,17 +122,17 @@ describe('CategoryService', () => {
       );
 
       const result = await service.findCategoriesByProblemId(
-        savedCategory.id_problem,
+        savedCategory.idProblem,
       );
 
       expect(
         useCaseMocks.findAllCategoriesByProblemIdUseCase.execute,
-      ).toHaveBeenCalledWith(savedCategory.id_problem);
+      ).toHaveBeenCalledWith(savedCategory.idProblem);
       expect(result).toHaveLength(1);
       expect(result[0]).toBeInstanceOf(ReturnCategoryDto);
       expect(result[0]).toMatchObject({
         id: savedCategory.id,
-        id_problem: savedCategory.id_problem,
+        idProblem: savedCategory.idProblem,
         category: savedCategory.category,
       });
     });
@@ -175,7 +174,7 @@ describe('CategoryService', () => {
       expect(result).toBeInstanceOf(ReturnCategoryDto);
       expect(result).toMatchObject({
         id: updatedCategory.id,
-        id_problem: updatedCategory.id_problem,
+        idProblem: updatedCategory.idProblem,
         category: updatedCategory.category,
       });
     });
@@ -195,26 +194,6 @@ describe('CategoryService', () => {
       expect(useCaseMocks.removeCategoryUseCase.execute).toHaveBeenCalledTimes(
         1,
       );
-      expect(result).toBeUndefined();
-    });
-  });
-
-  describe('Delete Categories By Problem Id', () => {
-    it('should delegate to RemoveCategoryByProblemIdUseCase and resolve void', async () => {
-      const problemId = 1;
-
-      useCaseMocks.removeCategoryByProblemIdUseCase.execute.mockResolvedValue(
-        undefined,
-      );
-
-      const result = await service.removeByProblemId(problemId);
-
-      expect(
-        useCaseMocks.removeCategoryByProblemIdUseCase.execute,
-      ).toHaveBeenCalledWith(problemId);
-      expect(
-        useCaseMocks.removeCategoryByProblemIdUseCase.execute,
-      ).toHaveBeenCalledTimes(1);
       expect(result).toBeUndefined();
     });
   });

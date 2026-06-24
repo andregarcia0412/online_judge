@@ -1,5 +1,5 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { Type } from 'class-transformer';
+import { Expose, Type } from 'class-transformer';
 import {
   IsArray,
   IsEnum,
@@ -7,7 +7,7 @@ import {
   IsNumber,
   IsString,
   MaxLength,
-  ValidateNested
+  ValidateNested,
 } from 'class-validator';
 import { ProblemDifficultyEnum } from '../../enum/problem-difficulty.enum';
 import { CreateCategoryDto } from '../category/create-category.dto';
@@ -37,29 +37,33 @@ export class CreateProblemDto {
   @ApiProperty()
   description: string;
 
+  @Expose({ name: 'input_description' })
   @IsString()
   @IsNotEmpty()
   @MaxLength(512)
-  @ApiProperty()
-  input_description: string;
+  @ApiProperty({ name: 'input_description' })
+  inputDescription: string;
 
+  @Expose({ name: 'output_description' })
   @IsString()
   @IsNotEmpty()
   @MaxLength(512)
-  @ApiProperty()
-  output_description: string;
+  @ApiProperty({ name: 'output_description' })
+  outputDescription: string;
 
+  @Expose({ name: 'input_example' })
   @IsString()
   @IsNotEmpty()
   @MaxLength(512)
-  @ApiProperty()
-  input_example: string;
+  @ApiProperty({ name: 'input_example' })
+  inputExample: string;
 
+  @Expose({ name: 'output_example' })
   @IsString()
   @IsNotEmpty()
   @MaxLength(512)
-  @ApiProperty()
-  output_example: string;
+  @ApiProperty({ name: 'output_example' })
+  outputExample: string;
 
   @IsEnum(ProblemDifficultyEnum)
   @ApiProperty({ enum: ProblemDifficultyEnum })
@@ -71,35 +75,36 @@ export class CreateProblemDto {
   @ApiProperty({ type: [CreateCategoryDto] })
   category: CreateCategoryDto[];
 
+  @Expose({ name: 'test_cases' })
   @IsArray()
   @ValidateNested({ each: true })
   @Type(() => CreateTestCaseDto)
-  @ApiProperty({ type: [CreateTestCaseDto] })
-  test_cases: CreateTestCaseDto[];
+  @ApiProperty({ name: 'test_cases', type: [CreateTestCaseDto] })
+  testCases: CreateTestCaseDto[];
 
   constructor(
     title: string,
     points: number,
     author: string,
     description: string,
-    input_description: string,
-    output_description: string,
-    input_example: string,
-    output_example: string,
+    inputDescription: string,
+    outputDescription: string,
+    inputExample: string,
+    outputExample: string,
     difficulty: ProblemDifficultyEnum,
     category: CreateCategoryDto[],
-    test_cases: CreateTestCaseDto[],
+    testCases: CreateTestCaseDto[],
   ) {
     this.title = title;
     this.points = points;
     this.author = author;
     this.description = description;
-    this.input_description = input_description;
-    this.output_description = output_description;
-    this.input_example = input_example;
-    this.output_example = output_example;
+    this.inputDescription = inputDescription;
+    this.outputDescription = outputDescription;
+    this.inputExample = inputExample;
+    this.outputExample = outputExample;
     this.difficulty = difficulty;
     this.category = category;
-    this.test_cases = test_cases;
+    this.testCases = testCases;
   }
 }

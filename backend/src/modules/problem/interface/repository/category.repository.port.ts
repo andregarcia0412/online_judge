@@ -24,7 +24,6 @@ export interface CategoryRepositoryPort {
     manager?: EntityManager,
   ): Promise<Category | null>;
   delete(id: number, manager?: EntityManager): Promise<void>;
-  deleteByProblemId(id_problem: number, manager?: EntityManager): Promise<void>;
 }
 
 export const CategoryRepositoryPort = Symbol('CategoryRepositoryPort');

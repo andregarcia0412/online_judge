@@ -11,11 +11,11 @@ export class CategoryRepository implements CategoryRepositoryPort {
     private readonly categoryRepository: Repository<Category>,
   ) {}
   async findByProblemId(
-    id_problem: number,
+    idProblem: number,
     manager?: EntityManager,
   ): Promise<Category[]> {
     const repository = this.getRepository(manager);
-    return await repository.findBy({ id_problem });
+    return await repository.findBy({ idProblem });
   }
   async createAndSave(
     createCategory: Partial<Category>,
@@ -25,7 +25,7 @@ export class CategoryRepository implements CategoryRepositoryPort {
     const repository = this.getRepository(manager);
     const createdCategory = repository.create({
       category: createCategory.category,
-      id_problem: problemId,
+      idProblem: problemId,
     });
     return await repository.save(createdCategory);
   }
@@ -38,7 +38,7 @@ export class CategoryRepository implements CategoryRepositoryPort {
     const createdCategories = repository.create(
       createCategories.map((dto) => ({
         category: dto.category,
-        id_problem: problemId,
+        idProblem: problemId,
       })),
     );
     return await repository.save(createdCategories);
@@ -75,11 +75,11 @@ export class CategoryRepository implements CategoryRepositoryPort {
     await repository.delete(id);
   }
   async deleteByProblemId(
-    id_problem: number,
+    idProblem: number,
     manager?: EntityManager,
   ): Promise<void> {
     const repository = this.getRepository(manager);
-    await repository.delete({ id_problem });
+    await repository.delete({ idProblem });
   }
   private getRepository(manager?: EntityManager): Repository<Category> {
     return manager ? manager.getRepository(Category) : this.categoryRepository;

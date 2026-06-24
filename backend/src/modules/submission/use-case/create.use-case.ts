@@ -32,19 +32,19 @@ export class CreateSubmissionUseCase {
   ) {}
 
   async execute(
-    userId: string,
+    idUser: string,
     createSubmissionDto: CreateSubmissionDto,
   ): Promise<ReturnSubmissionDto> {
     return await this.datasource.transaction(async (manager) => {
-      const user = await this.getUserOrThrow(userId, manager);
+      const user = await this.getUserOrThrow(idUser, manager);
 
       const problem = await this.getProblemOrThrow(
-        createSubmissionDto.id_problem,
+        createSubmissionDto.idProblem,
         manager,
       );
 
       const testCases = await this.getTestCasesOrThrow(
-        createSubmissionDto.id_problem,
+        createSubmissionDto.idProblem,
         manager,
       );
 
@@ -58,18 +58,18 @@ export class CreateSubmissionUseCase {
         await this.submissionRepository.findOneUserAcceptedSubmission(
           user.id,
           createSubmissionDto.language,
-          createSubmissionDto.id_problem,
+          createSubmissionDto.idProblem,
           manager,
         );
 
       if (!submission && testResult.status == StatusEnum.ACCEPTED) {
         user.points = Number(user.points) + Number(problem.points);
-        user.total_resolved = Number(user.total_resolved) + 1;
-        problem.total_accepted = Number(problem.total_accepted) + 1;
+        user.totalResolved = Number(user.totalResolved) + 1;
+        problem.totalAccepted = Number(problem.totalAccepted) + 1;
       }
 
-      problem.total_submitted = Number(problem.total_submitted) + 1;
-      user.total_submissions = Number(user.total_submissions) + 1;
+      problem.totalSubmitted = Number(problem.totalSubmitted) + 1;
+      user.totalSubmissions = Number(user.totalSubmissions) + 1;
 
       await this.userService.updateUserStreakOnSubmission(user, manager);
       await this.userRepository.save(user, manager);
@@ -77,12 +77,12 @@ export class CreateSubmissionUseCase {
 
       const returnSubmissionDto = ReturnSubmissionDto.fromEntity(
         await this.submissionRepository.save(
-          { ...createSubmissionDto, id_user: user.id },
+          { ...createSubmissionDto, idUser: user.id },
           testResult,
           manager,
         ),
       );
-      returnSubmissionDto.last_stdout = testResult.stdout;
+      returnSubmissionDto.lastStdout = testResult.stdout;
 
       return returnSubmissionDto;
     });
@@ -113,11 +113,11 @@ export class CreateSubmissionUseCase {
   }
 
   private async getTestCasesOrThrow(
-    id_problem: number,
+    idProblem: number,
     manager?: EntityManager,
   ): Promise<TestCase[]> {
     const testCases = await this.testCaseRepository.findByProblemId(
-      id_problem,
+      idProblem,
       manager,
     );
 

@@ -6,11 +6,11 @@ export class Submission {
   @PrimaryGeneratedColumn('uuid')
   id: string;
 
-  @Column('uuid')
-  id_user: string;
+  @Column({ name: 'id_user', type: 'uuid' })
+  idUser: string;
 
-  @Column({ type: 'integer' })
-  id_problem: number;
+  @Column({ name: 'id_problem', type: 'integer' })
+  idProblem: number;
 
   @Column({ type: 'text' })
   text: string;
@@ -21,44 +21,48 @@ export class Submission {
   @Column({ type: 'enum', enum: StatusEnum, default: StatusEnum.PENDING })
   status: StatusEnum;
 
-  @Column({ type: 'integer' })
-  execution_time: number;
+  @Column({ name: 'execution_time', type: 'integer' })
+  executionTime: number;
 
-  @Column({ type: 'timestamp', default: () => 'CURRENT_TIMESTAMP' })
-  submission_date: Date;
+  @Column({
+    name: 'submission_date',
+    type: 'timestamp',
+    default: () => 'CURRENT_TIMESTAMP',
+  })
+  submissionDate: Date;
 
   @Column({ type: 'text', nullable: true })
   error: string | null;
 
-  @Column({ type: 'decimal', precision: 10, scale: 2 })
-  memory_usage_MB: number;
+  @Column({ name: 'memory_usage_MB', type: 'decimal', precision: 10, scale: 2 })
+  memoryUsageMB: number;
 
-  @Column({ type: 'integer' })
-  test_cases_passed: number;
+  @Column({ name: 'test_cases_passed', type: 'integer' })
+  testCasesPassed: number;
 
   constructor(
     id: string,
-    id_user: string,
-    id_problem: number,
+    idUser: string,
+    idProblem: number,
     text: string,
     language: string,
     status: StatusEnum,
-    execution_time: number,
-    submission_date: Date,
+    executionTime: number,
+    submissionDate: Date,
     error: string | null,
-    memory_usage_MB: number,
-    test_cases_passed: number,
+    memoryUsageMB: number,
+    testCasesPassed: number,
   ) {
     this.id = id;
-    this.id_user = id_user;
-    this.id_problem = id_problem;
+    this.idUser = idUser;
+    this.idProblem = idProblem;
     this.text = text;
     this.language = language;
     this.status = status;
-    this.execution_time = execution_time;
-    this.submission_date = submission_date;
+    this.executionTime = executionTime;
+    this.submissionDate = submissionDate;
     this.error = error;
-    this.memory_usage_MB = memory_usage_MB;
-    this.test_cases_passed = test_cases_passed;
+    this.memoryUsageMB = memoryUsageMB;
+    this.testCasesPassed = testCasesPassed;
   }
 }

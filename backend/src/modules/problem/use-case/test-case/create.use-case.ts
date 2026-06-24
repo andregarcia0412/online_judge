@@ -19,12 +19,10 @@ export class CreateTestCaseUseCase {
   ) {}
 
   async execute(createTestCaseDto: CreateTestCaseDto): Promise<TestCase> {
-    if (!createTestCaseDto.id_problem) {
+    if (!createTestCaseDto.idProblem) {
       throw new BadRequestException('Problem Id is missing');
     }
-    if (
-      !(await this.problemRepository.findById(createTestCaseDto.id_problem))
-    ) {
+    if (!(await this.problemRepository.findById(createTestCaseDto.idProblem))) {
       throw new NotFoundException('Problem not found');
     }
 

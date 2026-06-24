@@ -61,8 +61,8 @@ export class SubmissionService implements SubmissionServicePort {
     );
   }
 
-  async findAllByUserId(id_user: string): Promise<ReturnSubmissionDto[]> {
-    return (await this.findAllSubmissionByUserIdUseCase.execute(id_user)).map(
+  async findAllByUserId(idUser: string): Promise<ReturnSubmissionDto[]> {
+    return (await this.findAllSubmissionByUserIdUseCase.execute(idUser)).map(
       ReturnSubmissionDto.fromEntity,
     );
   }

@@ -65,10 +65,10 @@ describe('CreateSubmissionUseCase', () => {
     const createSubmissionDto = SubmissionFactory.makeCreateSubmissionDto();
     const savedUser = UserFactory.makeUserEntity();
     const savedProblem = ProblemFactory.makeProblemEntity();
-    savedUser.total_submissions = 3;
-    savedUser.total_resolved = 0;
-    savedProblem.total_submitted = 3;
-    savedProblem.total_accepted = 1;
+    savedUser.totalSubmissions = 3;
+    savedUser.totalResolved = 0;
+    savedProblem.totalSubmitted = 3;
+    savedProblem.totalAccepted = 1;
     const savedTestCase = TestCaseFactory.makeTestCaseEntity();
 
     const savedSubmission = SubmissionFactory.makeSubmissionEntity();
@@ -93,11 +93,11 @@ describe('CreateSubmissionUseCase', () => {
       expect.any(Object),
     );
     expect(problemRepositoryMock.findById).toHaveBeenCalledWith(
-      createSubmissionDto.id_problem,
+      createSubmissionDto.idProblem,
       expect.any(Object),
     );
     expect(testCaseRepositoryMock.findByProblemId).toHaveBeenCalledWith(
-      createSubmissionDto.id_problem,
+      createSubmissionDto.idProblem,
       expect.any(Object),
     );
     expect(testRunnerServiceMock.runTests).toHaveBeenCalledWith(
@@ -115,42 +115,42 @@ describe('CreateSubmissionUseCase', () => {
     ).toHaveBeenCalledWith(
       savedUser.id,
       createSubmissionDto.language,
-      createSubmissionDto.id_problem,
+      createSubmissionDto.idProblem,
       expect.any(Object),
     );
     expect(submissionRepositoryMock.save).toHaveBeenCalledWith(
-      { ...createSubmissionDto, id_user: savedUser.id },
+      { ...createSubmissionDto, idUser: savedUser.id },
       testResult,
       expect.any(Object),
     );
     expect(userRepositoryMock.save).toHaveBeenCalledWith(
       expect.objectContaining({
         points: Number(savedProblem.points),
-        total_submissions: 4,
-        total_resolved: 1,
+        totalSubmissions: 4,
+        totalResolved: 1,
       }),
       expect.any(Object),
     );
     expect(problemRepositoryMock.saveExistingEntity).toHaveBeenCalledWith(
       expect.objectContaining({
-        total_submitted: 4,
-        total_accepted: 2,
+        totalSubmitted: 4,
+        totalAccepted: 2,
       }),
       expect.any(Object),
     );
 
     expect(result).toMatchObject({
       id: savedSubmission.id,
-      id_user: savedSubmission.id_user,
-      id_problem: savedSubmission.id_problem,
+      idUser: savedSubmission.idUser,
+      idProblem: savedSubmission.idProblem,
       text: savedSubmission.text,
       language: savedSubmission.language,
       status: savedSubmission.status,
-      execution_time: savedSubmission.execution_time,
+      executionTime: savedSubmission.executionTime,
       error: savedSubmission.error,
-      memory_usage_MB: savedSubmission.memory_usage_MB,
-      test_cases_passed: savedSubmission.test_cases_passed,
-      last_stdout: testResult.stdout,
+      memoryUsageMB: savedSubmission.memoryUsageMB,
+      testCasesPassed: savedSubmission.testCasesPassed,
+      lastStdout: testResult.stdout,
     });
   });
 
@@ -207,10 +207,10 @@ describe('CreateSubmissionUseCase', () => {
     const createSubmissionDto = SubmissionFactory.makeCreateSubmissionDto();
     const savedUser = UserFactory.makeUserEntity();
     const savedProblem = ProblemFactory.makeProblemEntity();
-    savedUser.total_submissions = 5;
-    savedUser.total_resolved = 3;
-    savedProblem.total_submitted = 8;
-    savedProblem.total_accepted = 5;
+    savedUser.totalSubmissions = 5;
+    savedUser.totalResolved = 3;
+    savedProblem.totalSubmitted = 8;
+    savedProblem.totalAccepted = 5;
     const savedTestCase = TestCaseFactory.makeTestCaseEntity();
     const savedSubmission = SubmissionFactory.makeSubmissionEntity();
     const existingAcceptedSubmission = SubmissionFactory.makeSubmissionEntity();
@@ -233,15 +233,15 @@ describe('CreateSubmissionUseCase', () => {
     expect(userRepositoryMock.save).toHaveBeenCalledWith(
       expect.objectContaining({
         points: initialPoints,
-        total_submissions: 6,
-        total_resolved: 3,
+        totalSubmissions: 6,
+        totalResolved: 3,
       }),
       expect.any(Object),
     );
     expect(problemRepositoryMock.saveExistingEntity).toHaveBeenCalledWith(
       expect.objectContaining({
-        total_submitted: 9,
-        total_accepted: 5,
+        totalSubmitted: 9,
+        totalAccepted: 5,
       }),
       expect.any(Object),
     );
@@ -251,10 +251,10 @@ describe('CreateSubmissionUseCase', () => {
     const createSubmissionDto = SubmissionFactory.makeCreateSubmissionDto();
     const savedUser = UserFactory.makeUserEntity();
     const savedProblem = ProblemFactory.makeProblemEntity();
-    savedUser.total_resolved = 1;
-    savedUser.total_submissions = 3;
-    savedProblem.total_submitted = 2;
-    savedProblem.total_accepted = 1;
+    savedUser.totalResolved = 1;
+    savedUser.totalSubmissions = 3;
+    savedProblem.totalSubmitted = 2;
+    savedProblem.totalAccepted = 1;
     const savedTestCase = TestCaseFactory.makeTestCaseEntity();
     const savedSubmission = SubmissionFactory.makeSubmissionEntity();
     const rejectedResult = new TestResult(
@@ -283,15 +283,15 @@ describe('CreateSubmissionUseCase', () => {
     expect(userRepositoryMock.save).toHaveBeenCalledWith(
       expect.objectContaining({
         points: initialPoints,
-        total_submissions: 4,
-        total_resolved: 1,
+        totalSubmissions: 4,
+        totalResolved: 1,
       }),
       expect.any(Object),
     );
     expect(problemRepositoryMock.saveExistingEntity).toHaveBeenCalledWith(
       expect.objectContaining({
-        total_submitted: 3,
-        total_accepted: 1,
+        totalSubmitted: 3,
+        totalAccepted: 1,
       }),
       expect.any(Object),
     );

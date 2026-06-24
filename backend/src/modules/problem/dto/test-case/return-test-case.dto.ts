@@ -1,12 +1,14 @@
 import { ApiProperty } from '@nestjs/swagger';
+import { Expose } from 'class-transformer';
 import { TestCase } from '../../entities/test-case.entity';
 
 export class ReturnTestCaseDto {
   @ApiProperty()
   id: string;
 
-  @ApiProperty()
-  id_problem: number;
+  @Expose({ name: 'id_problem' })
+  @ApiProperty({ name: 'id_problem' })
+  idProblem: number;
 
   @ApiProperty()
   input: string;
@@ -14,9 +16,9 @@ export class ReturnTestCaseDto {
   @ApiProperty()
   output: string;
 
-  constructor(id: string, id_problem: number, input: string, output: string) {
+  constructor(id: string, idProblem: number, input: string, output: string) {
     this.id = id;
-    this.id_problem = id_problem;
+    this.idProblem = idProblem;
     this.input = input;
     this.output = output;
   }
@@ -24,7 +26,7 @@ export class ReturnTestCaseDto {
   static fromEntity(testCase: TestCase): ReturnTestCaseDto {
     return new ReturnTestCaseDto(
       testCase.id,
-      testCase.id_problem,
+      testCase.idProblem,
       testCase.input,
       testCase.output,
     );

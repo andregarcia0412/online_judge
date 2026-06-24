@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { EntityManager, Repository } from 'typeorm';
+import { DeepPartial, EntityManager, Repository } from 'typeorm';
 import { Problem } from '../entities/problem.entity';
 import { ProblemRepositoryPort } from '../interface/repository/problem.repository.port';
 
@@ -18,7 +18,7 @@ export class ProblemRepository implements ProblemRepositoryPort {
     return await repository.findOneBy({ title });
   }
   async createAndSave(
-    createProblem: Partial<Problem>,
+    createProblem: DeepPartial<Problem>,
     manager?: EntityManager,
   ): Promise<Problem> {
     const repository = this.getRepository(manager);
@@ -46,7 +46,7 @@ export class ProblemRepository implements ProblemRepositoryPort {
   }
   async updateById(
     id: number,
-    updateProblem: Partial<Problem>,
+    updateProblem: DeepPartial<Problem>,
     manager?: EntityManager,
   ): Promise<Problem | null> {
     const repository = this.getRepository(manager);

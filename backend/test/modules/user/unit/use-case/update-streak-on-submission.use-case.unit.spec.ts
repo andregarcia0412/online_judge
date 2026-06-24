@@ -42,7 +42,7 @@ describe('UpdateUserStreakOnSubmissionUseCase', () => {
     user.streak = 3;
 
     submissionRepositoryMock.findLastUserSubmission.mockResolvedValue({
-      submission_date: new Date('2026-01-10T01:00:00.000Z'),
+      submissionDate: new Date('2026-01-10T01:00:00.000Z'),
     } as any);
 
     await useCase.execute(user);
@@ -58,7 +58,7 @@ describe('UpdateUserStreakOnSubmissionUseCase', () => {
     user.streak = 2;
 
     submissionRepositoryMock.findLastUserSubmission.mockResolvedValue({
-      submission_date: new Date('2026-01-09T01:00:00.000Z'),
+      submissionDate: new Date('2026-01-09T01:00:00.000Z'),
     } as any);
 
     await useCase.execute(user);
@@ -74,7 +74,7 @@ describe('UpdateUserStreakOnSubmissionUseCase', () => {
     user.streak = 5;
 
     submissionRepositoryMock.findLastUserSubmission.mockResolvedValue({
-      submission_date: new Date('2026-01-08T01:00:00.000Z'),
+      submissionDate: new Date('2026-01-08T01:00:00.000Z'),
     } as any);
 
     await useCase.execute(user);

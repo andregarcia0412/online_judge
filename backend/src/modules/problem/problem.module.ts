@@ -6,6 +6,9 @@ import { TestCase } from './entities/test-case.entity';
 import { CategoryRepositoryPort } from './interface/repository/category.repository.port';
 import { ProblemRepositoryPort } from './interface/repository/problem.repository.port';
 import { TestCaseRepositoryPort } from './interface/repository/test-case.repository.port';
+import { CategoryServicePort } from './interface/service/category.service.port';
+import { ProblemServicePort } from './interface/service/problem.service.port';
+import { TestCaseServicePort } from './interface/service/test-case.service.port';
 import { ProblemController } from './problem.controller';
 import { CategoryRepository } from './repository/category.repository';
 import { ProblemRepository } from './repository/problem.repository';
@@ -17,7 +20,6 @@ import { CreateCategoryUseCase } from './use-case/category/create.use-case';
 import { FindAllCategoriesByProblemIdUseCase } from './use-case/category/find-all-by-problem-id.use-case';
 import { FindAllCategoriesUseCase } from './use-case/category/find-all.use-case';
 import { FindCategoryByIdUseCase } from './use-case/category/find-by-id.use-case';
-import { RemoveCategoryByProblemIdUseCase } from './use-case/category/remove-by-problem-id.use-case';
 import { RemoveCategoryUseCase } from './use-case/category/remove.use-case';
 import { UpdateCategoryUseCase } from './use-case/category/update.use-case';
 import { CreateProblemUseCase } from './use-case/problem/create.use-case';
@@ -32,9 +34,6 @@ import { FindAllTestCasesUseCase } from './use-case/test-case/find-all.use-case'
 import { FindTestCaseByIdUseCase } from './use-case/test-case/find-one.use-case';
 import { RemoveTestCaseUseCase } from './use-case/test-case/remove.use-case';
 import { UpdateTestCaseUseCase } from './use-case/test-case/update.use-case';
-import { ProblemServicePort } from './interface/service/problem.service.port';
-import { CategoryServicePort } from './interface/service/category.service.port';
-import { TestCaseServicePort } from './interface/service/test-case.service.port';
 
 @Module({
   imports: [TypeOrmModule.forFeature([Problem, Category, TestCase])],
@@ -50,7 +49,6 @@ import { TestCaseServicePort } from './interface/service/test-case.service.port'
     FindAllCategoriesUseCase,
     FindAllCategoriesByProblemIdUseCase,
     FindCategoryByIdUseCase,
-    RemoveCategoryByProblemIdUseCase,
     RemoveCategoryUseCase,
     UpdateCategoryUseCase,
     CreateProblemUseCase,

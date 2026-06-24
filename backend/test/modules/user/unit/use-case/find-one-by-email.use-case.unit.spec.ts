@@ -1,4 +1,3 @@
-import { NotFoundException } from '@nestjs/common';
 import { FindOneByEmailUseCase } from 'src/modules/user/use-case/find-one-by-email.use-case';
 import { UserFactory } from 'test/factories/user.factory';
 
@@ -25,12 +24,14 @@ describe('FindOneByEmailUseCase', () => {
     expect(result).toBe(user);
   });
 
-  it('should throw not found when email does not match', async () => {
+  it('should return null when email does not match', async () => {
     userRepositoryMock.findOneByEmail.mockResolvedValue(null);
 
-    const findPromise = useCase.execute('missing@example.com');
+    const result = await useCase.execute('missing@example.com');
 
-    await expect(findPromise).rejects.toThrow(NotFoundException);
-    await expect(findPromise).rejects.toThrow('User not found');
+    expect(userRepositoryMock.findOneByEmail).toHaveBeenCalledWith(
+      'missing@example.com',
+    );
+    expect(result).toBeNull();
   });
 });

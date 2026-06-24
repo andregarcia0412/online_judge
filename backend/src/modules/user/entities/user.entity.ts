@@ -3,51 +3,33 @@ import { Entity, PrimaryGeneratedColumn, Column } from 'typeorm';
 @Entity('User')
 export class User {
   @PrimaryGeneratedColumn('uuid')
-  id: string;
+  id!: string;
 
   @Column({ type: 'text', unique: true })
-  email: string;
+  email!: string;
 
   @Column({ type: 'text', unique: true })
-  username: string;
+  username!: string;
 
   @Column({ type: 'text' })
-  password: string;
+  password!: string;
 
   @Column({ type: 'decimal', precision: 10, scale: 2, default: 0 })
-  points: number;
+  points!: number;
+
+  @Column({ name: 'total_submissions', type: 'integer', default: 0 })
+  totalSubmissions!: number;
+
+  @Column({ name: 'total_resolved', type: 'integer', default: 0 })
+  totalResolved!: number;
 
   @Column({ type: 'integer', default: 0 })
-  total_submissions: number;
+  streak!: number;
 
-  @Column({ type: 'integer', default: 0 })
-  total_resolved: number;
-
-  @Column({ type: 'integer', default: 0 })
-  streak: number;
-
-  @Column({ type: 'timestamp', default: () => 'CURRENT_TIMESTAMP' })
-  creation_date: Date;
-
-  constructor(
-    id: string,
-    email: string,
-    username: string,
-    password: string,
-    points: number,
-    total_submissions: number,
-    total_resolved: number,
-    streak: number,
-    creation_date: Date,
-  ) {
-    this.id = id;
-    this.email = email;
-    this.username = username;
-    this.password = password;
-    this.points = points;
-    this.total_submissions = total_submissions;
-    this.total_resolved = total_resolved;
-    this.streak = streak;
-    this.creation_date = creation_date;
-  }
+  @Column({
+    name: 'created_at',
+    type: 'timestamp',
+    default: () => 'CURRENT_TIMESTAMP',
+  })
+  createdAt!: Date;
 }

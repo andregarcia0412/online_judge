@@ -1,23 +1,29 @@
-import { Column, Entity, PrimaryGeneratedColumn } from 'typeorm';
+import {
+  Column,
+  Entity,
+  JoinColumn,
+  ManyToOne,
+  PrimaryGeneratedColumn,
+} from 'typeorm';
+import { Problem } from './problem.entity';
 
 @Entity('TestCase')
 export class TestCase {
   @PrimaryGeneratedColumn('uuid')
-  id: string;
+  id!: string;
 
-  @Column({ type: 'integer' })
-  id_problem: number;
+  @ManyToOne(() => Problem, (problem) => problem.testCases, {
+    onDelete: 'CASCADE',
+  })
+  @JoinColumn({ name: 'id_problem' })
+  problem!: Problem;
+
+  @Column({ name: 'id_problem', type: 'integer' })
+  idProblem!: number;
 
   @Column({ type: 'text', nullable: true })
-  input: string;
+  input!: string;
 
   @Column({ type: 'text', nullable: true })
-  output: string;
-
-  constructor(id: string, id_problem: number, input: string, output: string) {
-    this.id = id;
-    this.id_problem = id_problem;
-    this.input = input;
-    this.output = output;
-  }
+  output!: string;
 }

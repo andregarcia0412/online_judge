@@ -47,9 +47,9 @@ export class TestCaseService implements TestCaseServicePort {
     );
   }
 
-  async findAllByProblemId(id_problem: number): Promise<ReturnTestCaseDto[]> {
+  async findAllByProblemId(idProblem: number): Promise<ReturnTestCaseDto[]> {
     return ReturnTestCaseDto.fromEntityList(
-      await this.findAllTestCasesByProblemIdUseCase.execute(id_problem),
+      await this.findAllTestCasesByProblemIdUseCase.execute(idProblem),
     );
   }
 

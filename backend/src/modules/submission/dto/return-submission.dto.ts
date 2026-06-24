@@ -1,15 +1,18 @@
 import { ApiProperty } from '@nestjs/swagger';
 import { Submission } from '../entities/submission.entity';
+import { Expose } from 'class-transformer';
 
 export class ReturnSubmissionDto {
   @ApiProperty()
   id: string;
 
-  @ApiProperty()
-  id_user: string;
+  @Expose({ name: 'id_user' })
+  @ApiProperty({ name: 'id_user' })
+  idUser: string;
 
-  @ApiProperty()
-  id_problem: number;
+  @Expose({ name: 'id_problem' })
+  @ApiProperty({ name: 'id_problem' })
+  idProblem: number;
 
   @ApiProperty()
   text: string;
@@ -20,66 +23,71 @@ export class ReturnSubmissionDto {
   @ApiProperty()
   status: string;
 
-  @ApiProperty()
-  execution_time: number;
+  @Expose({ name: 'execution_time' })
+  @ApiProperty({ name: 'execution_time' })
+  executionTime: number;
 
-  @ApiProperty()
-  submission_date: Date;
+  @Expose({ name: 'submission_date' })
+  @ApiProperty({ name: 'submission_date' })
+  submissionDate: Date;
 
   @ApiProperty()
   error: string | null;
 
-  @ApiProperty()
-  last_stdout: string | null;
+  @Expose({ name: 'last_stdout' })
+  @ApiProperty({ name: 'last_stdout' })
+  lastStdout: string | null;
 
-  @ApiProperty()
-  memory_usage_MB: number;
+  @Expose({ name: 'memory_usage_MB' })
+  @ApiProperty({ name: 'memory_usage_MB' })
+  memoryUsageMB: number;
 
-  @ApiProperty()
-  test_cases_passed: number;
+  @Expose({ name: 'test_cases_passed' })
+  @ApiProperty({ name: 'test_cases_passed' })
+  testCasesPassed: number;
 
   constructor(
     id: string,
-    id_user: string,
-    id_problem: number,
+    idUser: string,
+    idProblem: number,
     text: string,
     language: string,
     status: string,
-    execution_time: number,
-    submission_date: Date,
+    executionTime: number,
+    submissionDate: Date,
     error: string | null,
-    last_stdout: string | null,
-    memory_usage_MB: number,
-    test_cases_passed: number,
+    lastStdout: string | null,
+    memoryUsageMB: number,
+    testCasesPassed: number,
   ) {
     this.id = id;
-    this.id_user = id_user;
-    this.id_problem = id_problem;
+    this.idUser = idUser;
+    this.idProblem = idProblem;
     this.text = text;
     this.language = language;
     this.status = status;
-    this.execution_time = execution_time;
-    this.submission_date = submission_date;
+    this.executionTime = executionTime;
+    this.submissionDate = submissionDate;
     this.error = error;
-    this.last_stdout = last_stdout;
-    this.memory_usage_MB = memory_usage_MB;
-    this.test_cases_passed = test_cases_passed;
+    this.lastStdout = lastStdout;
+    this.memoryUsageMB = memoryUsageMB;
+    this.testCasesPassed = testCasesPassed;
   }
 
   static fromEntity(submission: Submission): ReturnSubmissionDto {
     return new ReturnSubmissionDto(
       submission.id,
-      submission.id_user,
-      submission.id_problem,
+      submission.idUser,
+      submission.idProblem,
       submission.text,
       submission.language,
       submission.status,
-      submission.execution_time,
-      submission.submission_date,
+      submission.executionTime,
+      submission.submissionDate,
       submission.error,
       null,
-      submission.memory_usage_MB,
-      submission.test_cases_passed,
+      submission.memoryUsageMB,
+      submission.testCasesPassed,
     );
   }
 }

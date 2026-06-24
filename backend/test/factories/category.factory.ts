@@ -24,7 +24,6 @@ export class CategoryFactory {
     const findAllCategoriesByProblemIdUseCase = { execute: jest.fn() };
     const updateCategoryUseCase = { execute: jest.fn() };
     const removeCategoryUseCase = { execute: jest.fn() };
-    const removeCategoryByProblemIdUseCase = { execute: jest.fn() };
 
     return {
       createCategoryUseCase,
@@ -33,7 +32,6 @@ export class CategoryFactory {
       findAllCategoriesByProblemIdUseCase,
       updateCategoryUseCase,
       removeCategoryUseCase,
-      removeCategoryByProblemIdUseCase,
     };
   }
 
@@ -41,8 +39,12 @@ export class CategoryFactory {
     return new CreateCategoryDto(CategoryEnum.MATH);
   }
 
-  static makeCategoryEntity() {
-    return new Category(1, 1, CategoryEnum.MATH);
+  static makeCategoryEntity(): Category {
+    const category = new Category();
+    category.id = 1;
+    category.idProblem = 1;
+    category.category = CategoryEnum.MATH;
+    return category;
   }
 
   static makeReturnCategoryDto() {
