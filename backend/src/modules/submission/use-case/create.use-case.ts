@@ -64,12 +64,12 @@ export class CreateSubmissionUseCase {
 
       if (!submission && testResult.status == StatusEnum.ACCEPTED) {
         user.points = Number(user.points) + Number(problem.points);
-        user.total_resolved = Number(user.total_resolved) + 1;
+        user.totalResolved = Number(user.totalResolved) + 1;
         problem.totalAccepted = Number(problem.totalAccepted) + 1;
       }
 
       problem.totalSubmitted = Number(problem.totalSubmitted) + 1;
-      user.total_submissions = Number(user.total_submissions) + 1;
+      user.totalSubmissions = Number(user.totalSubmissions) + 1;
 
       await this.userService.updateUserStreakOnSubmission(user, manager);
       await this.userRepository.save(user, manager);

@@ -1,4 +1,5 @@
 import { ApiProperty } from '@nestjs/swagger';
+import { Expose } from 'class-transformer';
 import { TestCase } from '../../entities/test-case.entity';
 
 export class ReturnTestCaseDto {

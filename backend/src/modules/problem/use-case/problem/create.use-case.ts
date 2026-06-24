@@ -40,7 +40,7 @@ export class CreateProblemUseCase {
         manager,
       );
 
-      createProblemDto.test_cases.map(
+      createProblemDto.testCases.map(
         (testCase) => (testCase.idProblem = savedProblem.id),
       );
 
