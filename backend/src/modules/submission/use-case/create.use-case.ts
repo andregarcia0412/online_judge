@@ -62,10 +62,12 @@ export class CreateSubmissionUseCase {
           manager,
         );
 
-      if (!submission && testResult.status == StatusEnum.ACCEPTED) {
-        user.points = Number(user.points) + Number(problem.points);
-        user.totalResolved = Number(user.totalResolved) + 1;
+      if (testResult.status === StatusEnum.ACCEPTED) {
         problem.totalAccepted = Number(problem.totalAccepted) + 1;
+        if (!submission) {
+          user.points = Number(user.points) + Number(problem.points);
+          user.totalResolved = Number(user.totalResolved) + 1;
+        }
       }
 
       problem.totalSubmitted = Number(problem.totalSubmitted) + 1;
