@@ -1,6 +1,6 @@
 import type {
   Submission,
-  SubmissionRequestDto
+  SubmissionRequestDto,
 } from "../../data/dto/submission.dto";
 import type { TestCase } from "../../data/dto/problem.dto";
 import { api } from "../api.client";
@@ -9,7 +9,6 @@ export const submissionService = {
   async createSubmission(payload: SubmissionRequestDto): Promise<Submission> {
     try {
       const { data } = await api.post<Submission>("/submission", {
-        id_user: payload.id_user,
         id_problem: payload.id_problem,
         text: payload.text,
         language: payload.language,
@@ -28,7 +27,6 @@ export const submissionService = {
   async submitPlayground(payload: SubmissionRequestDto): Promise<TestCase> {
     try {
       const { data } = await api.post<TestCase>("/submission/playground", {
-        id_user: payload.id_user,
         id_problem: payload.id_problem,
         text: payload.text,
         language: payload.language,

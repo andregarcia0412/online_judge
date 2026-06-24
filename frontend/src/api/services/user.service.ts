@@ -14,9 +14,9 @@ export const userService = {
     }
   },
 
-  async getUserById(id: string) {
+  async getCurrentUser() {
     try {
-      const { data } = await api.get(`/user/${id}`);
+      const { data } = await api.get(`/user/me`);
       return data;
     } catch (e) {
       console.error(

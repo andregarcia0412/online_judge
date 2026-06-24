@@ -2,13 +2,13 @@ import { Navigate, Outlet } from "react-router-dom";
 import { useAuthContext } from "../contexts/AuthContext";
 
 export const PrivateRoute = () => {
-  const { userData, isLoading } = useAuthContext();
+  const { tokens, isLoading } = useAuthContext();
 
   if (isLoading) {
     return <div>Carregando...</div>;
   }
 
-  if (!userData) {
+  if (!tokens) {
     return <Navigate to="/auth" replace />;
   }
 

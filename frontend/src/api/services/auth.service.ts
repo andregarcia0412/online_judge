@@ -1,33 +1,32 @@
 import type {
+  AuthResponseDto,
   LoginDto,
-  LoginResponseDto,
   RegisterDto,
-  RegisterResponseDto,
 } from "../../data/dto/auth.dto";
 import { api } from "../api.client";
 
 export const loginService = async (
   loginData: LoginDto,
-): Promise<LoginResponseDto> => {
+): Promise<AuthResponseDto> => {
   const { email, password } = loginData;
-  const response = await api.post<LoginResponseDto>("/auth/login", {
+  const { data } = await api.post<AuthResponseDto>("/auth/login", {
     email: email,
     password: password,
   });
 
-  return response.data;
+  return data;
 };
 
 export const registerService = async (
   registerData: RegisterDto,
-): Promise<RegisterResponseDto> => {
+): Promise<AuthResponseDto> => {
   const { username, email, password } = registerData;
 
-  const response = await api.post<RegisterResponseDto>("/auth/register", {
+  const { data } = await api.post<AuthResponseDto>("/auth/register", {
     username: username,
     email: email,
     password: password,
   });
 
-  return response.data;
+  return data;
 };

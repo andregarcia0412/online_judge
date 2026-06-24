@@ -1,14 +1,21 @@
 import React from "react";
-import type { LoginDto, LoginResponseDto } from "../data/dto/auth.dto";
+import type {
+  AuthResponseDto,
+  LoginDto,
+  RegisterDto,
+} from "../data/dto/auth.dto";
 import { api } from "../api/api.client";
-import { loginService } from "../api/services/auth.service";
+import { loginService, registerService } from "../api/services/auth.service";
 import { userService } from "../api/services/user.service";
+import type { User } from "../data/dto/user.dto";
 
 type AuthContextType = {
-  userData: LoginResponseDto | null;
+  tokens: AuthResponseDto | null;
+  user: User | null;
   isLoading: boolean;
   login: (data: LoginDto, rememberMe: boolean) => Promise<void>;
-  getUserData: (id: string) => Promise<void>;
+  register: (data: RegisterDto, rememberMe: boolean) => Promise<void>;
+  getUserData: () => Promise<void>;
 };
 
 type AuthProviderProps = {
@@ -18,25 +25,27 @@ type AuthProviderProps = {
 export const AuthContext = React.createContext<AuthContextType | null>(null);
 
 export const AuthProvider = ({ children }: AuthProviderProps) => {
-  const [userData, setUserData] = React.useState<LoginResponseDto | null>(null);
+  const [tokens, setTokens] = React.useState<AuthResponseDto | null>(null);
+  const [user, setUser] = React.useState<User | null>(null);
   const [isLoading, setLoading] = React.useState<boolean>(true);
 
   React.useEffect(() => {
     const loadUserData = async () => {
       try {
         const storedData =
-          localStorage.getItem("userData") ||
-          sessionStorage.getItem("userData");
+          localStorage.getItem("tokens") || sessionStorage.getItem("tokens");
 
         if (!storedData) {
           return;
         }
 
-        const parsedStoredData: LoginResponseDto = JSON.parse(storedData);
-        setUserData(parsedStoredData);
+        const parsedStoredData: AuthResponseDto = JSON.parse(storedData);
+        setTokens(parsedStoredData);
 
         api.defaults.headers.common["Authorization"] =
-          `Bearer ${parsedStoredData.accessToken}`;
+          `Bearer ${parsedStoredData.access_token}`;
+
+        await getUserData();
       } catch (e) {
         console.error(
           "Error loading token:",
@@ -50,59 +59,58 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
   }, []);
 
   const login = async (loginData: LoginDto, rememberMe: boolean) => {
-    try {
-      const response = await loginService(loginData);
+    const response = await loginService(loginData);
 
-      if (!response) {
-        throw new Error("Email ou senha incorretos");
-      }
-
-      setUserData(response);
-      api.defaults.headers.common["Authorization"] =
-        `Bearer ${response.accessToken}`;
-
-      if (rememberMe) {
-        localStorage.setItem("userData", JSON.stringify(response));
-        sessionStorage.removeItem("userData");
-      } else {
-        sessionStorage.setItem("userData", JSON.stringify(response));
-        localStorage.removeItem("userData");
-      }
-    } catch (e) {
-      throw e;
+    if (!response) {
+      throw new Error("Email ou senha incorretos");
     }
+
+    setTokens(response);
+    api.defaults.headers.common["Authorization"] =
+      `Bearer ${response.access_token}`;
+
+    if (rememberMe) {
+      localStorage.setItem("tokens", JSON.stringify(response));
+      sessionStorage.removeItem("tokens");
+    } else {
+      sessionStorage.setItem("tokens", JSON.stringify(response));
+      localStorage.removeItem("tokens");
+    }
+
+    await getUserData();
   };
 
-  const getUserData = async (id: string) => {
-    try {
-      const response = await userService.getUserById(id);
-      setUserData((prev) =>
-        prev
-          ? {
-              ...prev,
-              user: response,
-            }
-          : prev,
-      );
+  const register = async (registerData: RegisterDto, rememberMe: boolean) => {
+    const response = await registerService(registerData);
 
-      const storage = localStorage.getItem("userData")
-        ? localStorage
-        : sessionStorage;
-
-      const savedData = storage.getItem("userData");
-
-      if (savedData) {
-        const parsedData: LoginResponseDto = JSON.parse(savedData);
-        parsedData.user = response;
-        storage.setItem("userData", JSON.stringify(parsedData));
-      }
-    } catch (e) {
-      throw e;
+    if (!response) {
+      throw new Error("Erro ao registrar");
     }
+
+    setTokens(response);
+    api.defaults.headers.common["Authorization"] =
+      `Bearer ${response.access_token}`;
+
+    if (rememberMe) {
+      localStorage.setItem("tokens", JSON.stringify(response));
+      sessionStorage.removeItem("tokens");
+    } else {
+      sessionStorage.setItem("tokens", JSON.stringify(response));
+      localStorage.removeItem("tokens");
+    }
+
+    await getUserData();
+  };
+
+  const getUserData = async () => {
+    const response = await userService.getCurrentUser();
+    setUser(response);
   };
 
   return (
-    <AuthContext.Provider value={{ userData, isLoading, login, getUserData }}>
+    <AuthContext.Provider
+      value={{ tokens, user, isLoading, login, register, getUserData }}
+    >
       {children}
     </AuthContext.Provider>
   );

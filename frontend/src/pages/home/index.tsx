@@ -16,7 +16,7 @@ import { userService } from "../../api/services/user.service";
 import { useNavigate } from "react-router-dom";
 
 export const Home = () => {
-  const { userData, getUserData } = useAuthContext();
+  const { user } = useAuthContext();
   const navigate = useNavigate();
   const [quickSearchText, setQuickSearchText] = React.useState<string>("");
   const [homeSearchText, setHomeSearchText] = React.useState<string>("");
@@ -29,43 +29,40 @@ export const Home = () => {
     console.log("pesquisou");
   };
 
-  if (!userData) {
-    return;
-  }
-
   React.useEffect(() => {
+    if (!user) return;
+
     const getProblems = async () => {
       try {
         const response = await problemService.findAll();
         setProblems(response);
       } catch (e) {
-        throw e;
-      }
-    };
-
-    const reloadUser = async () => {
-      try {
-        getUserData(userData.user.id);
-      } catch (e) {
+        console.error(
+          "Error while getting problems:",
+          e instanceof Error ? e.message : "Unknown Error",
+        );
         throw e;
       }
     };
 
     const getUserSubmissions = async () => {
       try {
-        const response = await userService.getSubmissionsById(userData.user.id);
+        const response = await userService.getSubmissionsById(user.id);
         setUserSubmissions(response);
       } catch (e) {
+        console.error(
+          "Error while getting user submissions:",
+          e instanceof Error ? e.message : "Unknown error",
+        );
         throw e;
       }
     };
 
-    reloadUser();
     getProblems();
     getUserSubmissions();
-  }, []);
+  }, [user]);
 
-  if (!userSubmissions) {
+  if (!user || !userSubmissions) {
     return null;
   }
 
@@ -102,28 +99,28 @@ export const Home = () => {
           <StatCard
             color="green"
             title="Problems Solved"
-            value={userData!.user.total_resolved.toString()}
+            value={user.total_resolved.toString()}
             icon={TrackChanges}
             description="of 2,342 problems"
           />
           <StatCard
             color="blue"
             title="Points"
-            value={userData!.user.points.toString()}
+            value={user.points.toString()}
             icon={TrendingUp}
             description="Top 3.5%"
           />
           <StatCard
             color="pink"
             title="Global Ranking"
-            value={userData!.user.total_resolved.toString()}
+            value={user.total_resolved.toString()}
             icon={Trophy}
             description="Top 1.2%"
           />
           <StatCard
             color="orange"
             title="Current Streak"
-            value={userData!.user.streak.toString()}
+            value={user.streak.toString()}
             icon={Fire}
             description="Keep Going!"
           />
@@ -135,7 +132,7 @@ export const Home = () => {
             <p>Challenge yourself with coding problems</p>
           </div>
 
-          <div style={{display:"flex", flexDirection: "column"}}>
+          <div style={{ display: "flex", flexDirection: "column" }}>
             <div className="home-problem-card-title">
               <p>Status</p>
               <p>Title</p>

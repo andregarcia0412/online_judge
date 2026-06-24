@@ -14,7 +14,6 @@ export type Submission = {
 };
 
 export type SubmissionRequestDto = {
-  id_user: string;
   id_problem: number;
   text: string;
   language: string;

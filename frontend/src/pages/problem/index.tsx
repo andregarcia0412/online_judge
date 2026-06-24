@@ -21,7 +21,7 @@ export const ProblemScreen = () => {
   const safeIdProblem = Number(idProblem);
   const isInvalidId = Number.isNaN(safeIdProblem);
 
-  const { userData } = useAuthContext();
+  const { user } = useAuthContext();
   const [language, setLanguage] = React.useState<string>("java");
   const [code, setCode] = React.useState<string>(
     LanguageConstants[language].text,
@@ -38,7 +38,7 @@ export const ProblemScreen = () => {
   const [quickSearchText, setQuickSearchText] = React.useState<string>("");
 
   React.useEffect(() => {
-    if (isInvalidId || !userData) return;
+    if (isInvalidId || !user) return;
 
     const findProblem = async () => {
       try {
@@ -52,9 +52,9 @@ export const ProblemScreen = () => {
     };
 
     findProblem();
-  }, [safeIdProblem, isInvalidId, userData]);
+  }, [safeIdProblem, isInvalidId, user]);
 
-  if (!userData || isInvalidId || problem === null) {
+  if (!user || isInvalidId || problem === null) {
     return <Navigate to="/not-found" replace />;
   }
 
@@ -71,7 +71,6 @@ export const ProblemScreen = () => {
     try {
       const response = await submissionService.createSubmission({
         id_problem: safeIdProblem,
-        id_user: userData?.user.id,
         language: language,
         text: code,
       });
@@ -97,7 +96,6 @@ export const ProblemScreen = () => {
     try {
       const response = await submissionService.submitPlayground({
         id_problem: safeIdProblem,
-        id_user: userData?.user.id,
         language: language,
         text: code,
       });

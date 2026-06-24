@@ -1,5 +1,5 @@
 import axios from "axios";
-import type { LoginResponseDto } from "../data/dto/auth.dto";
+import type { AuthResponseDto } from "../data/dto/auth.dto";
 
 export const api = axios.create({
   baseURL: import.meta.env.VITE_API_URL,
@@ -25,21 +25,21 @@ api.interceptors.response.use(
     originalRequest._retry = true;
 
     const storedData =
-      sessionStorage.getItem("userData") || localStorage.getItem("userData");
+      sessionStorage.getItem("tokens") || localStorage.getItem("tokens");
 
-    let userData: LoginResponseDto | null = null;
+    let tokens: AuthResponseDto | null = null;
 
     if (storedData) {
       try {
-        userData = JSON.parse(storedData);
+        tokens = JSON.parse(storedData);
       } catch (e) {
-        sessionStorage.removeItem("userData");
-        localStorage.removeItem("userData");
+        sessionStorage.removeItem("tokens");
+        localStorage.removeItem("tokens");
         return Promise.reject(e);
       }
     }
 
-    if (!userData?.refreshToken) {
+    if (!tokens?.refresh_token) {
       return Promise.reject(error);
     }
 
@@ -60,25 +60,25 @@ api.interceptors.response.use(
       const response = await axios.post(
         `${api.defaults.baseURL}/auth/refresh`,
         {
-          refresh_token: userData.refreshToken,
+          refresh_token: tokens.refresh_token,
         },
       );
 
-      const newToken = response.data.accessToken;
+      const newToken = response.data.access_token;
       const newRefreshToken =
-        response.data.refreshToken || userData.refreshToken;
+        response.data.refresh_token || tokens.refresh_token;
 
       const updatedData = {
-        ...userData,
-        accessToken: newToken,
-        refreshToken: newRefreshToken,
+        ...tokens,
+        access_token: newToken,
+        refresh_token: newRefreshToken,
       };
 
-      const storage = localStorage.getItem("userData")
+      const storage = localStorage.getItem("tokens")
         ? localStorage
         : sessionStorage;
 
-      storage.setItem("userData", JSON.stringify(updatedData));
+      storage.setItem("tokens", JSON.stringify(updatedData));
 
       api.defaults.headers.common["Authorization"] = `Bearer ${newToken}`;
       originalRequest.headers["Authorization"] = `Bearer ${newToken}`;
@@ -87,8 +87,8 @@ api.interceptors.response.use(
 
       return api(originalRequest);
     } catch (e) {
-      sessionStorage.removeItem("userData");
-      localStorage.removeItem("userData");
+      sessionStorage.removeItem("tokens");
+      localStorage.removeItem("tokens");
       return Promise.reject(e);
     } finally {
       isRefreshing = false;

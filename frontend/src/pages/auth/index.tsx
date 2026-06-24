@@ -1,15 +1,14 @@
-import React from "react";
-import { LoginCard } from "../../components/card/auth-card/LoginCard";
-import { LoginSchema } from "../../validations/login.schema";
-import { useAuthContext } from "../../contexts/AuthContext";
 import { AxiosError } from "axios";
-import { RegisterCard } from "../../components/card/auth-card/RegisterCard";
-import { RegisterSchema } from "../../validations/register.schema";
-import { registerService } from "../../api/services/auth.service";
+import React from "react";
 import { useNavigate } from "react-router-dom";
+import { LoginCard } from "../../components/card/auth-card/LoginCard";
+import { RegisterCard } from "../../components/card/auth-card/RegisterCard";
+import { useAuthContext } from "../../contexts/AuthContext";
+import { LoginSchema } from "../../validations/login.schema";
+import { RegisterSchema } from "../../validations/register.schema";
 
 export const Auth = () => {
-  const { login } = useAuthContext();
+  const { login, register } = useAuthContext();
   const navigate = useNavigate();
 
   const [isRegister, setIsRegister] = React.useState<boolean>(false);
@@ -69,8 +68,7 @@ export const Auth = () => {
     setLoading(true);
 
     try {
-      await registerService({ username, email, password });
-      await login({ email, password }, checked);
+      await register({ username, email, password }, checked);
       setErrorMessage("");
 
       navigate("/");

@@ -1,4 +1,5 @@
 import { ApiProperty } from '@nestjs/swagger';
+import { Expose } from 'class-transformer';
 
 export class AuthResponseDto {
   constructor(accessToken: string, refreshToken: string) {
@@ -6,9 +7,11 @@ export class AuthResponseDto {
     this.refreshToken = refreshToken;
   }
 
-  @ApiProperty()
+  @Expose({ name: 'access_token' })
+  @ApiProperty({ name: 'access_token' })
   accessToken: string;
 
-  @ApiProperty()
+  @Expose({ name: 'refresh_token' })
+  @ApiProperty({ name: 'refresh_token' })
   refreshToken: string;
 }
