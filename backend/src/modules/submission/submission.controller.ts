@@ -42,6 +42,8 @@ export class SubmissionController {
   }
 
   @Post('/playground')
+  @UseGuards(JwtAuthGuard)
+  @ApiBearerAuth()
   @ApiCreatedResponse({ type: TestResult })
   async createPlaygroundSubmission(
     @Body() createSubmissionDto: CreateSubmissionDto,
@@ -52,18 +54,24 @@ export class SubmissionController {
   }
 
   @Get()
+  @UseGuards(JwtAuthGuard)
+  @ApiBearerAuth()
   @ApiOkResponse({ type: [ReturnSubmissionDto] })
   async findAll(): Promise<ReturnSubmissionDto[]> {
     return await this.submissionService.findAll();
   }
 
   @Get(':id')
+  @UseGuards(JwtAuthGuard)
+  @ApiBearerAuth()
   @ApiOkResponse({ type: ReturnSubmissionDto })
   async findOne(@Param('id') id: string): Promise<ReturnSubmissionDto> {
     return await this.submissionService.findOneById(id);
   }
 
   @Patch(':id')
+  @UseGuards(JwtAuthGuard)
+  @ApiBearerAuth()
   @ApiOkResponse({ type: ReturnSubmissionDto })
   async update(
     @Param('id') id: string,
@@ -73,6 +81,8 @@ export class SubmissionController {
   }
 
   @Delete(':id')
+  @UseGuards(JwtAuthGuard)
+  @ApiBearerAuth()
   @ApiNoContentResponse()
   async remove(@Param('id') id: string): Promise<void> {
     await this.submissionService.remove(id);
