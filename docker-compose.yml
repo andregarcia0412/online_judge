@@ -46,13 +46,13 @@ services:
 
   microservice:
     build:
-      context: ./llm-gateway
+      context: ./llm-microservice
       dockerfile: Dockerfile
-    container_name: online_judge_llm_gateway
+    container_name: online_judge_llm_microservice
     ports:
     - "8000:8000"
     volumes: 
-      - ./llm-gateway:/app
+      - ./llm-microservice:/app
     command: python -m fastapi dev src/main.py --host 0.0.0.0 --port 8000
     environment:
       - PYTHONUNBUFFERED=1
