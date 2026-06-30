@@ -5,15 +5,15 @@ export class AskRequestDto {
   @IsString()
   @IsNotEmpty()
   @ApiProperty()
-  language: string;
+  language!: string;
 
   @IsString()
   @IsNotEmpty()
   @ApiProperty()
-  code: string;
+  code!: string;
 
   @IsString()
   @IsNotEmpty()
   @ApiProperty()
-  question: string;
+  message!: string;
 }

@@ -7,12 +7,11 @@ import {
   Post,
   UseGuards,
 } from '@nestjs/common';
-import { ApiOkResponse } from '@nestjs/swagger';
+import { ApiBearerAuth, ApiOkResponse } from '@nestjs/swagger';
 import { JwtAuthGuard } from 'src/modules/auth/common/jwt-auth.guard';
 import { AnalyzeRequestDto } from './dto/analyze-request.dto';
-import { AnalyzeResponseDto } from './dto/analyze-response.dto';
 import { AskRequestDto } from './dto/ask-request.dto';
-import { AskResponseDto } from './dto/ask-response.dto';
+import { ModelResponseDto } from './dto/model-response.dto';
 import { LlmServicePort } from './interface/llm.service.port';
 
 @Controller('llm')
@@ -24,7 +23,8 @@ export class LlmController {
 
   @HttpCode(HttpStatus.OK)
   @Post('/analyze')
-  @ApiOkResponse({ type: AnalyzeResponseDto })
+  @ApiBearerAuth()
+  @ApiOkResponse({ type: ModelResponseDto })
   @UseGuards(JwtAuthGuard)
   analyze(@Body() analyzeRequestDto: AnalyzeRequestDto) {
     return this.llmService.analyze(analyzeRequestDto);
@@ -32,7 +32,8 @@ export class LlmController {
 
   @HttpCode(HttpStatus.OK)
   @Post('/ask')
-  @ApiOkResponse({ type: AskResponseDto })
+  @ApiBearerAuth()
+  @ApiOkResponse({ type: ModelResponseDto })
   @UseGuards(JwtAuthGuard)
   ask(@Body() askRequestDto: AskRequestDto) {
     return this.llmService.ask(askRequestDto);
