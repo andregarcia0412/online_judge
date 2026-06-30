@@ -9,8 +9,10 @@ import {
   Param,
   Patch,
   Post,
+  UseGuards,
 } from '@nestjs/common';
 import {
+  ApiBearerAuth,
   ApiCreatedResponse,
   ApiNoContentResponse,
   ApiOkResponse,
@@ -28,6 +30,7 @@ import { UpdateTestCaseDto } from './dto/test-case/update-test-case.dto';
 import { CategoryServicePort } from './interface/service/category.service.port';
 import { ProblemServicePort } from './interface/service/problem.service.port';
 import { TestCaseServicePort } from './interface/service/test-case.service.port';
+import { JwtAuthGuard } from '../auth/common/jwt-auth.guard';
 
 @Controller()
 export class ProblemController {
@@ -41,6 +44,8 @@ export class ProblemController {
   ) {}
 
   @Post('/problem')
+  @UseGuards(JwtAuthGuard)
+  @ApiBearerAuth()
   @ApiCreatedResponse({ type: ReturnProblemDto })
   async create(
     @Body() createProblemDto: CreateProblemDto,
@@ -49,18 +54,24 @@ export class ProblemController {
   }
 
   @Get('/problem')
+  @UseGuards(JwtAuthGuard)
+  @ApiBearerAuth()
   @ApiOkResponse({ type: [ReturnProblemDto] })
   async findAll(): Promise<ReturnProblemDto[]> {
     return await this.problemService.findAll();
   }
 
   @Get('/problem/:id')
+  @UseGuards(JwtAuthGuard)
+  @ApiBearerAuth()
   @ApiOkResponse({ type: ReturnProblemDto })
   async findOne(@Param('id') id: string): Promise<ReturnProblemDto> {
     return await this.problemService.findOneById(+id);
   }
 
   @Get('/problem/:id/test-case')
+  @UseGuards(JwtAuthGuard)
+  @ApiBearerAuth()
   @ApiOkResponse({ type: [ReturnTestCaseDto] })
   async findAllTestCaseById(
     @Param('id') id: string,
@@ -69,6 +80,8 @@ export class ProblemController {
   }
 
   @Patch('/problem/:id')
+  @UseGuards(JwtAuthGuard)
+  @ApiBearerAuth()
   @ApiOkResponse({ type: ReturnProblemDto })
   async update(
     @Param('id') id: string,
@@ -79,12 +92,16 @@ export class ProblemController {
 
   @HttpCode(HttpStatus.OK)
   @Delete('/problem/:id')
+  @UseGuards(JwtAuthGuard)
+  @ApiBearerAuth()
   @ApiNoContentResponse()
   async remove(@Param('id') id: string): Promise<void> {
     return await this.problemService.remove(+id);
   }
 
   @Post('/problem/:id/category')
+  @UseGuards(JwtAuthGuard)
+  @ApiBearerAuth()
   @ApiCreatedResponse({ type: ReturnCategoryDto })
   async createCategory(
     @Param('id') id: string,
@@ -94,6 +111,8 @@ export class ProblemController {
   }
 
   @Get('/problem/:id/category')
+  @UseGuards(JwtAuthGuard)
+  @ApiBearerAuth()
   @ApiOkResponse({ type: [ReturnCategoryDto] })
   async findCategoriesByProblemId(
     @Param('id') id: string,
@@ -102,18 +121,24 @@ export class ProblemController {
   }
 
   @Get('/category')
+  @UseGuards(JwtAuthGuard)
+  @ApiBearerAuth()
   @ApiOkResponse({ type: [ReturnCategoriesDto] })
   getAllAvailableCategories(): ReturnCategoriesDto[] {
     return this.categoryService.getAvailableCategories();
   }
 
   @Get('/category/:id')
+  @UseGuards(JwtAuthGuard)
+  @ApiBearerAuth()
   @ApiOkResponse({ type: ReturnCategoryDto })
   async findCategoryById(@Param('id') id: string): Promise<ReturnCategoryDto> {
     return await this.categoryService.findOneById(+id);
   }
 
   @Patch('/category/:id')
+  @UseGuards(JwtAuthGuard)
+  @ApiBearerAuth()
   @ApiOkResponse({ type: ReturnCategoryDto })
   async updateCategory(
     @Param('id') id: string,
@@ -124,12 +149,16 @@ export class ProblemController {
 
   @HttpCode(HttpStatus.OK)
   @Delete('/category/:id')
+  @UseGuards(JwtAuthGuard)
+  @ApiBearerAuth()
   @ApiNoContentResponse()
   async removeCategory(@Param('id') id: string): Promise<void> {
     await this.categoryService.remove(+id);
   }
 
   @Post('/test-case')
+  @UseGuards(JwtAuthGuard)
+  @ApiBearerAuth()
   @ApiCreatedResponse({ type: ReturnTestCaseDto })
   async createTestCase(
     @Body() createTestCaseDto: CreateTestCaseDto,
@@ -138,18 +167,24 @@ export class ProblemController {
   }
 
   @Get('/test-case')
+  @UseGuards(JwtAuthGuard)
+  @ApiBearerAuth()
   @ApiOkResponse({ type: [ReturnTestCaseDto] })
   async findAllTestCases(): Promise<ReturnTestCaseDto[]> {
     return await this.testCaseService.findAll();
   }
 
   @Get('/test-case/:id')
+  @UseGuards(JwtAuthGuard)
+  @ApiBearerAuth()
   @ApiOkResponse({ type: ReturnTestCaseDto })
   async findOneTestCase(@Param('id') id: string): Promise<ReturnTestCaseDto> {
     return await this.testCaseService.findOneById(id);
   }
 
   @Patch('/test-case/:id')
+  @UseGuards(JwtAuthGuard)
+  @ApiBearerAuth()
   @ApiOkResponse({ type: ReturnTestCaseDto })
   async updateTestCase(
     @Param('id') id: string,
@@ -160,6 +195,8 @@ export class ProblemController {
 
   @HttpCode(HttpStatus.OK)
   @Delete('/test-case/:id')
+  @UseGuards(JwtAuthGuard)
+  @ApiBearerAuth()
   @ApiNoContentResponse()
   async removeTestCase(@Param('id') id: string): Promise<void> {
     await this.testCaseService.remove(id);
