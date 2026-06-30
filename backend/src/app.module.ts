@@ -38,7 +38,7 @@ import * as Joi from 'joi';
         BCRYPT_SALT: Joi.number().integer().min(4).max(31).default(10),
 
         LLM_API_URL: Joi.string().required(),
-        X_API_PASSWORD: Joi.string().required(),
+        INTERNAL_API_KEY: Joi.string().required(),
       }),
       validationOptions: {
         abortEarly: false,

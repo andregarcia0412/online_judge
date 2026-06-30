@@ -16,7 +16,7 @@ export class LlmProvider implements LlmProviderPort {
     private readonly configService: ConfigService,
   ) {
     this.apiUrl = this.configService.get<string>('LLM_API_URL');
-    this.apiSecret = this.configService.get<string>('X_API_PASSWORD');
+    this.apiSecret = this.configService.get<string>('INTERNAL_API_KEY');
   }
 
   async analyze(analyzeRequestDto: AnalyzeRequestDto): Promise<LlmResponseDto> {
