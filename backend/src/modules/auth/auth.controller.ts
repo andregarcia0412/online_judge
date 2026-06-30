@@ -6,11 +6,7 @@ import {
   Inject,
   Post,
 } from '@nestjs/common';
-import {
-  ApiBearerAuth,
-  ApiCreatedResponse,
-  ApiOkResponse,
-} from '@nestjs/swagger';
+import { ApiCreatedResponse, ApiOkResponse } from '@nestjs/swagger';
 import { CreateUserDto } from 'src/modules/user/dto/create-user.dto';
 import { AuthResponseDto } from './dto/auth-response.dto';
 import { LoginDto } from './dto/login.dto';
@@ -34,7 +30,6 @@ export class AuthController {
   @HttpCode(HttpStatus.OK)
   @Post('/refresh')
   @ApiOkResponse({ type: AuthResponseDto })
-  @ApiBearerAuth('refresh-token')
   async refresh(
     @Body() refreshTokenDto: RefreshTokenDto,
   ): Promise<AuthResponseDto> {
