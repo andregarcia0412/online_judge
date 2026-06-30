@@ -5,10 +5,15 @@ import { AuthModule } from 'src/modules/auth/auth.module';
 import { LlmServicePort } from './interface/llm.service.port';
 import { LlmController } from './llm.controller';
 import { LlmService } from './llm.service';
+import { LlmProvider } from './provider/llm.provider';
+import { LlmProviderPort } from './provider/llm.provider.port';
 
 @Module({
   imports: [HttpModule, ConfigModule, AuthModule],
   controllers: [LlmController],
-  providers: [{ provide: LlmServicePort, useClass: LlmService }],
+  providers: [
+    { provide: LlmServicePort, useClass: LlmService },
+    { provide: LlmProviderPort, useClass: LlmProvider },
+  ],
 })
 export class LlmModule {}
