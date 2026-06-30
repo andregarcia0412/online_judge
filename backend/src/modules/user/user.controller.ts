@@ -31,17 +31,21 @@ export class UserController {
   ) {}
 
   @Post()
+  @UseGuards(JwtAuthGuard)
+  @ApiBearerAuth()
   @ApiCreatedResponse({ type: ReturnUserDto })
   async create(@Body() createUserDto: CreateUserDto): Promise<ReturnUserDto> {
     return await this.userService.create(createUserDto);
   }
 
-  @Get(':id/submission')
+  @Get('me/submission')
+  @UseGuards(JwtAuthGuard)
+  @ApiBearerAuth()
   @ApiOkResponse({ type: [ReturnSubmissionDto] })
   async findAllSubmissionsById(
-    @Param('id') id: string,
+    @GetUser('userId') userId: string,
   ): Promise<ReturnSubmissionDto[]> {
-    return await this.userService.findAllSubmissionsById(id);
+    return await this.userService.findAllSubmissionsById(userId);
   }
 
   @Get('me')
@@ -54,18 +58,22 @@ export class UserController {
     return await this.userService.findOneById(userId);
   }
 
-  @Patch(':id')
+  @Patch('me')
+  @UseGuards(JwtAuthGuard)
+  @ApiBearerAuth()
   @ApiOkResponse({ type: ReturnUserDto })
   async update(
-    @Param('id') id: string,
+    @GetUser('userId') userId: string,
     @Body() updateUserDto: UpdateUserDto,
   ): Promise<ReturnUserDto> {
-    return await this.userService.update(id, updateUserDto);
+    return await this.userService.update(userId, updateUserDto);
   }
 
-  @Delete(':id')
+  @Delete('me')
+  @UseGuards(JwtAuthGuard)
+  @ApiBearerAuth()
   @ApiNoContentResponse()
-  async remove(@Param('id') id: string): Promise<void> {
-    await this.userService.remove(id);
+  async remove(@GetUser('userId') userId: string): Promise<void> {
+    await this.userService.remove(userId);
   }
 }
