@@ -12,7 +12,7 @@ class OllamaProvider(ModelProviderPort):
     async def send_chat_message(self, message: str) -> str:
         try:
             return (await self.client.chat(
-                model="online_judge_model",
+                model="online_judge_chat_model",
                 messages=[
                     {
                         "role": "user",
@@ -23,6 +23,23 @@ class OllamaProvider(ModelProviderPort):
         except (ConnectionError):
             raise HTTPException(
                 status_code=503,
-                detail="Model offline"
+                detail="Chat model offline"
+            )
+    
+    async def send_evaluation_message(self, message: str) -> str:
+        try:
+            return(await self.client.chat(
+                model="online_judge_evaluation_model",
+                messages=[
+                    {
+                        "role": "user",
+                        "content": message
+                    }
+                ]
+            ))["message"]["content"]
+        except(ConnectionError):
+            raise HTTPException(
+                status_code=503,
+                detail="Evaluation model offline"
             )
         

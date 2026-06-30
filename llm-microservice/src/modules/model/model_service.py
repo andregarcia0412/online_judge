@@ -14,4 +14,4 @@ class ModelService:
     async def send_evaluation_message_to_llm(self, create_evaluation_message_dto: CreateEvaluationMessageDto):
         message = f"ANALYZE_COMPLEXITY {create_evaluation_message_dto.code}"
 
-        return await self.model_provider.send_chat_message(message)
+        return await self.model_provider.send_evaluation_message(message)
