@@ -1,12 +1,10 @@
 import { Injectable } from '@nestjs/common';
 import { AnalyzeRequestDto } from './dto/analyze-request.dto';
-
-import { ConfigService } from '@nestjs/config';
 import { HttpService } from '@nestjs/axios';
+import { ConfigService } from '@nestjs/config';
 import { lastValueFrom } from 'rxjs';
-import { AnalyzeResponseDto } from './dto/analyze-response.dto';
 import { AskRequestDto } from './dto/ask-request.dto';
-import { AskResponseDto } from './dto/ask-response.dto';
+import { ModelResponseDto } from './dto/model-response.dto';
 import { LlmServicePort } from './interface/llm.service.port';
 
 @Injectable()
@@ -23,10 +21,10 @@ export class LlmService implements LlmServicePort {
 
   async analyze(
     analyzeRequestDto: AnalyzeRequestDto,
-  ): Promise<AnalyzeResponseDto> {
-    const response = await lastValueFrom(
-      this.httpService.post(
-        `${this.apiUrl}/llm/analyze`,
+  ): Promise<ModelResponseDto> {
+    const { data } = await lastValueFrom(
+      this.httpService.post<ModelResponseDto>(
+        `${this.apiUrl}/model/evaluation`,
         {
           code: analyzeRequestDto.code,
         },
@@ -38,17 +36,17 @@ export class LlmService implements LlmServicePort {
         },
       ),
     );
-    return response.data;
+    return data;
   }
 
-  async ask(askRequestDto: AskRequestDto): Promise<AskResponseDto> {
-    const response = await lastValueFrom(
-      this.httpService.post(
-        `${this.apiUrl}/llm/ask`,
+  async ask(askRequestDto: AskRequestDto): Promise<ModelResponseDto> {
+    const { data } = await lastValueFrom(
+      this.httpService.post<ModelResponseDto>(
+        `${this.apiUrl}/model/chat`,
         {
           language: askRequestDto.language,
           code: askRequestDto.code,
-          question: askRequestDto.question,
+          message: askRequestDto.message,
         },
         {
           headers: {
@@ -59,6 +57,6 @@ export class LlmService implements LlmServicePort {
       ),
     );
 
-    return response.data;
+    return data;
   }
 }

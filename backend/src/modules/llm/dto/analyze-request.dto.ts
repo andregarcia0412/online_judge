@@ -5,5 +5,5 @@ export class AnalyzeRequestDto {
   @IsString()
   @IsNotEmpty()
   @ApiProperty()
-  code: string;
+  code!: string;
 }
