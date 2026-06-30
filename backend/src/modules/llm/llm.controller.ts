@@ -7,7 +7,7 @@ import {
   Post,
   UseGuards,
 } from '@nestjs/common';
-import { ApiOkResponse } from '@nestjs/swagger';
+import { ApiBearerAuth, ApiOkResponse } from '@nestjs/swagger';
 import { JwtAuthGuard } from 'src/modules/auth/common/jwt-auth.guard';
 import { AnalyzeRequestDto } from './dto/analyze-request.dto';
 import { AskRequestDto } from './dto/ask-request.dto';
@@ -23,6 +23,7 @@ export class LlmController {
 
   @HttpCode(HttpStatus.OK)
   @Post('/analyze')
+  @ApiBearerAuth()
   @ApiOkResponse({ type: ModelResponseDto })
   @UseGuards(JwtAuthGuard)
   analyze(@Body() analyzeRequestDto: AnalyzeRequestDto) {
@@ -31,6 +32,7 @@ export class LlmController {
 
   @HttpCode(HttpStatus.OK)
   @Post('/ask')
+  @ApiBearerAuth()
   @ApiOkResponse({ type: ModelResponseDto })
   @UseGuards(JwtAuthGuard)
   ask(@Body() askRequestDto: AskRequestDto) {
