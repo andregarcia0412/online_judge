@@ -68,7 +68,8 @@ services:
       - "11434:11434"
     volumes:
       - ollama_storage:/root/.ollama
-      - ./ollama/online_judge_modelfile:/root/online_judge_modelfile
+      - ./ollama/online_judge_chat_modelfile:/root/online_judge_chat_modelfile
+      - ./ollama/online_judge_evaluation_modelfile:/root/online_judge_evaluation_modelfile
       - ./ollama/entrypoint.sh:/entrypoint.sh
     entrypoint: ["/entrypoint.sh"]
     networks:
