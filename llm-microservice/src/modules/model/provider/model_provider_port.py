@@ -8,5 +8,5 @@ class ModelProviderPort(ABC):
         pass
 
     @abstractmethod
-    async def analyze_complexity(self, message: str) -> str:
+    async def send_evaluation_message(self, message: str) -> str:
         pass

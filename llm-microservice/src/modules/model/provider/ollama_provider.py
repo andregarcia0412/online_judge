@@ -26,10 +26,10 @@ class OllamaProvider(ModelProviderPort):
                 detail="Chat model offline"
             )
     
-    async def analyze_complexity(self, message: str) -> str:
+    async def send_evaluation_message(self, message: str) -> str:
         try:
             return(await self.client.chat(
-                model="online_judge_analysis_model",
+                model="online_judge_evaluation_model",
                 messages=[
                     {
                         "role": "user",
@@ -40,6 +40,6 @@ class OllamaProvider(ModelProviderPort):
         except(ConnectionError):
             raise HTTPException(
                 status_code=503,
-                detail="Analysis model offline"
+                detail="Evaluation model offline"
             )
         
