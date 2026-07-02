@@ -66,6 +66,10 @@ export const ProblemScreen = () => {
       }
       console.log(response);
     } catch (e) {
+      console.error(
+        "Error while creating submission:",
+        e instanceof Error ? e.message : "Unknown Error",
+      );
       throw e;
     } finally {
       setLoadingSubmit(false);
@@ -87,6 +91,10 @@ export const ProblemScreen = () => {
       });
       console.log(response);
     } catch (e) {
+      console.error(
+        "Error while creating playground submission:",
+        e instanceof Error ? e.message : "Unknown Error",
+      );
       throw e;
     } finally {
       setLoadingRun(false);
