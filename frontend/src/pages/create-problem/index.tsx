@@ -1,5 +1,5 @@
 import { ConfigProvider, notification, Select, theme } from "antd";
-import axios, { AxiosError } from "axios";
+import axios from "axios";
 import React from "react";
 import { problemService } from "../../api/services/problem.service";
 import Add from "../../assets/add.svg";
@@ -17,6 +17,7 @@ import type {
   CreateProblemDto,
   CreateProblemForm,
 } from "../../data/dto/problem.dto";
+import { useFetch } from "../../hooks/useFetch";
 import { normalizeNewLines } from "../../utils/normalizeNewLines";
 import { createProblemSchema } from "../../validations/create-problem.schema";
 import "./style.css";
@@ -57,32 +58,25 @@ export const CreateProblem = () => {
       testCaseOutput: "",
     });
   const [testCases, setTestCases] = React.useState<TestCase[]>([]);
-  const [availableCategories, setAvailableCategories] = React.useState<
-    CategoryDto[]
-  >([]);
   const [loadingCreate, setLoadingCreate] = React.useState<boolean>(false);
   const [visiblePopover, setVisiblePopover] = React.useState<boolean>(false);
 
-  React.useEffect(() => {
-    const loadCategories = async () => {
-      try {
-        const response = await problemService.findAllCategories();
-        console.log(response);
-        setAvailableCategories(response);
-      } catch (e) {
-        openNotificationWithIcon(
-          "error",
-          "Error",
-          "Error fetching available categories: " +
-            (e instanceof AxiosError && e.response
-              ? e.response?.data.message
-              : "Unknown Error"),
-        );
-      }
-    };
+  const { data: availableCategoriesData, error: categoriesError } = useFetch<
+    CategoryDto[]
+  >(() => problemService.findAllCategories(), []);
+  const availableCategories = availableCategoriesData ?? [];
 
-    loadCategories();
-  }, [openNotificationWithIcon]);
+  React.useEffect(() => {
+    if (categoriesError) {
+      openNotificationWithIcon(
+        "error",
+        "Error",
+        axios.isAxiosError(categoriesError) && categoriesError.response
+          ? categoriesError.response.data.message
+          : "Error fetching available categories",
+      );
+    }
+  }, [categoriesError, openNotificationWithIcon]);
 
   const handleCreateTestCase = () => {
     setTestCases((prev) => [
