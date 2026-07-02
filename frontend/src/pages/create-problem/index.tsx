@@ -28,16 +28,19 @@ type TestCase = {
 
 export const CreateProblem = () => {
   const [api, contextHolder] = notification.useNotification();
-  const openNotificationWithIcon = (
-    type: "success" | "info" | "warning" | "error",
-    title: string,
-    message: string,
-  ) => {
-    api[type]({
-      title: title,
-      description: message,
-    });
-  };
+  const openNotificationWithIcon = React.useCallback(
+    (
+      type: "success" | "info" | "warning" | "error",
+      title: string,
+      message: string,
+    ) => {
+      api[type]({
+        title: title,
+        description: message,
+      });
+    },
+    [api],
+  );
   const [createProblemForm, setCreateProblemForm] =
     React.useState<CreateProblemForm>({
       title: "",
@@ -79,7 +82,7 @@ export const CreateProblem = () => {
     };
 
     loadCategories();
-  }, []);
+  }, [openNotificationWithIcon]);
 
   const handleCreateTestCase = () => {
     setTestCases((prev) => [
