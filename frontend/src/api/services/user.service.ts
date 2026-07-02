@@ -1,9 +1,9 @@
 import { api } from "../api.client";
 
 export const userService = {
-  async getSubmissionsById(id: string) {
+  async getUserSubmissions() {
     try {
-      const { data } = await api.get(`/user/${id}/submission`);
+      const { data } = await api.get(`/user/me/submission`);
       return data;
     } catch (e) {
       console.error(

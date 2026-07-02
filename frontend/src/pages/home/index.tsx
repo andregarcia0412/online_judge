@@ -1,29 +1,26 @@
 import React from "react";
+import { useNavigate } from "react-router-dom";
+import { problemService } from "../../api/services/problem.service";
+import { userService } from "../../api/services/user.service";
 import Fire from "../../assets/fire.svg";
+import Search from "../../assets/search.svg";
 import TrackChanges from "../../assets/track_changes.svg";
 import TrendingUp from "../../assets/trending_up.svg";
 import Trophy from "../../assets/trophy.svg";
 import { StatCard } from "../../components/card/info-card/StatCard";
+import { ProblemCard } from "../../components/card/problem-card/ProblemCard";
 import { HomeHeader } from "../../components/home-header/HomeHeader";
 import { useAuthContext } from "../../contexts/AuthContext";
-import Search from "../../assets/search.svg";
-import "./style.css";
 import type { Problem } from "../../data/dto/problem.dto";
-import { problemService } from "../../api/services/problem.service";
-import { ProblemCard } from "../../components/card/problem-card/ProblemCard";
+import { useFetch } from "../../hooks/useFetch";
+import "./style.css";
 import type { Submission } from "../../data/dto/submission.dto";
-import { userService } from "../../api/services/user.service";
-import { useNavigate } from "react-router-dom";
 
 export const Home = () => {
   const { user, getUserData } = useAuthContext();
   const navigate = useNavigate();
   const [quickSearchText, setQuickSearchText] = React.useState<string>("");
   const [homeSearchText, setHomeSearchText] = React.useState<string>("");
-  const [problems, setProblems] = React.useState<Problem[] | null>(null);
-  const [userSubmissions, setUserSubmissions] = React.useState<
-    Submission[] | null
-  >(null);
 
   const handleSearch = () => {
     console.log("pesquisou");
@@ -33,38 +30,14 @@ export const Home = () => {
     getUserData();
   }, [getUserData]);
 
-  React.useEffect(() => {
-    if (!user) return;
-
-    const getProblems = async () => {
-      try {
-        const response = await problemService.findAll();
-        setProblems(response);
-      } catch (e) {
-        console.error(
-          "Error while getting problems:",
-          e instanceof Error ? e.message : "Unknown Error",
-        );
-        throw e;
-      }
-    };
-
-    const getUserSubmissions = async () => {
-      try {
-        const response = await userService.getSubmissionsById(user.id);
-        setUserSubmissions(response);
-      } catch (e) {
-        console.error(
-          "Error while getting user submissions:",
-          e instanceof Error ? e.message : "Unknown error",
-        );
-        throw e;
-      }
-    };
-
-    getProblems();
-    getUserSubmissions();
-  }, [user]);
+  const { data: problems } = useFetch<Problem[]>(
+    () => problemService.findAll(),
+    [],
+  );
+  const { data: userSubmissions } = useFetch<Submission[]>(
+    () => userService.getUserSubmissions(),
+    [],
+  );
 
   if (!user || !userSubmissions) {
     return null;
