@@ -1,22 +1,14 @@
 import { UpdateUserStreakUseCase } from 'src/modules/user/use-case/update-streak.use-case';
-import { SubmissionFactory } from 'test/factories/submission.factory';
 import { UserFactory } from 'test/factories/user.factory';
 
 describe('UpdateUserStreakUseCase', () => {
   let userRepositoryMock: ReturnType<typeof UserFactory.makeUserRepositoryMock>;
-  let submissionRepositoryMock: ReturnType<
-    typeof SubmissionFactory.makeSubmissionRepositoryMock
-  >;
   let useCase: UpdateUserStreakUseCase;
 
   beforeEach(() => {
     userRepositoryMock = UserFactory.makeUserRepositoryMock();
-    submissionRepositoryMock = SubmissionFactory.makeSubmissionRepositoryMock();
 
-    useCase = new UpdateUserStreakUseCase(
-      userRepositoryMock as any,
-      submissionRepositoryMock as any,
-    );
+    useCase = new UpdateUserStreakUseCase(userRepositoryMock as any);
   });
 
   afterEach(() => {
@@ -27,14 +19,10 @@ describe('UpdateUserStreakUseCase', () => {
   it('should reset streak and save when no last submission and streak was positive', async () => {
     const user = UserFactory.makeUserEntity();
     user.streak = 4;
-
-    submissionRepositoryMock.findLastUserSubmission.mockResolvedValue(null);
+    user.lastSubmissionDate = null as any;
 
     await useCase.execute(user);
 
-    expect(
-      submissionRepositoryMock.findLastUserSubmission,
-    ).toHaveBeenCalledWith(user.id);
     expect(user.streak).toBe(0);
     expect(userRepositoryMock.saveExistingEntity).toHaveBeenCalledWith(user);
   });
@@ -42,8 +30,7 @@ describe('UpdateUserStreakUseCase', () => {
   it('should not save when no last submission and streak already zero', async () => {
     const user = UserFactory.makeUserEntity();
     user.streak = 0;
-
-    submissionRepositoryMock.findLastUserSubmission.mockResolvedValue(null);
+    user.lastSubmissionDate = null as any;
 
     await useCase.execute(user);
 
@@ -57,10 +44,7 @@ describe('UpdateUserStreakUseCase', () => {
 
     const user = UserFactory.makeUserEntity();
     user.streak = 3;
-
-    submissionRepositoryMock.findLastUserSubmission.mockResolvedValue({
-      submissionDate: new Date('2026-01-09T08:00:00.000Z'),
-    } as any);
+    user.lastSubmissionDate = new Date('2026-01-09T08:00:00.000Z');
 
     await useCase.execute(user);
 
@@ -74,10 +58,7 @@ describe('UpdateUserStreakUseCase', () => {
 
     const user = UserFactory.makeUserEntity();
     user.streak = 2;
-
-    submissionRepositoryMock.findLastUserSubmission.mockResolvedValue({
-      submissionDate: new Date('2026-01-08T08:00:00.000Z'),
-    } as any);
+    user.lastSubmissionDate = new Date('2026-01-08T08:00:00.000Z');
 
     await useCase.execute(user);
 

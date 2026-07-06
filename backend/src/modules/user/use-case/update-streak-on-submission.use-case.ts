@@ -1,23 +1,13 @@
-import { Inject, Injectable } from '@nestjs/common';
-import { SubmissionRepositoryPort } from 'src/modules/submission/interface/submission.repository.port';
-import { EntityManager } from 'typeorm';
+import { Injectable } from '@nestjs/common';
 import { User } from '../entities/user.entity';
 
 @Injectable()
 export class UpdateUserStreakOnSubmissionUseCase {
-  constructor(
-    @Inject(SubmissionRepositoryPort)
-    private readonly submissionRepository: SubmissionRepositoryPort,
-  ) {}
-
-  async execute(user: User, manager?: EntityManager) {
-    const lastUserSubmission =
-      await this.submissionRepository.findLastUserSubmission(user.id, manager);
-
-    if (!lastUserSubmission) {
+  execute(user: User): void {
+    if (!user.lastSubmissionDate) {
       user.streak = 1;
     } else {
-      const lastDate = new Date(lastUserSubmission.submissionDate);
+      const lastDate = new Date(user.lastSubmissionDate);
       const today = new Date();
 
       lastDate.setUTCHours(0, 0, 0, 0);

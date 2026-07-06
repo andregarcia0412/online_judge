@@ -26,6 +26,9 @@ export class User {
   @Column({ type: 'integer', default: 0 })
   streak!: number;
 
+  @Column({ type: 'timestamp', name: 'last_submission_date', nullable: true })
+  lastSubmissionDate!: Date;
+
   @Column({
     name: 'created_at',
     type: 'timestamp',

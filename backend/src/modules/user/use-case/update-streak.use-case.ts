@@ -1,26 +1,21 @@
 import { Inject, Injectable } from '@nestjs/common';
 import { UserRepositoryPort } from '../interface/user.repository.port';
 import { User } from '../entities/user.entity';
-import { SubmissionRepositoryPort } from 'src/modules/submission/interface/submission.repository.port';
 
 @Injectable()
 export class UpdateUserStreakUseCase {
   constructor(
     @Inject(UserRepositoryPort)
     private readonly userRepository: UserRepositoryPort,
-    @Inject(SubmissionRepositoryPort)
-    private readonly submissionRepository: SubmissionRepositoryPort,
   ) {}
 
-  async execute(user: User) {
-    const lastUserSubmission =
-      await this.submissionRepository.findLastUserSubmission(user.id);
+  async execute(user: User): Promise<void> {
     const oldUserStreak = user.streak;
 
-    if (!lastUserSubmission) {
+    if (!user.lastSubmissionDate) {
       user.streak = 0;
     } else {
-      const lastDate = new Date(lastUserSubmission.submissionDate);
+      const lastDate = new Date(user.lastSubmissionDate);
       const today = new Date();
 
       lastDate.setUTCHours(0, 0, 0, 0);

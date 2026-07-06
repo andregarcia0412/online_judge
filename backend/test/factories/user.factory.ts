@@ -55,7 +55,6 @@ export class UserFactory {
     const findOneUserByIdUseCase = { execute: jest.fn() };
     const updateUserStreakUseCase = { execute: jest.fn() };
     const findOneByEmailUseCase = { execute: jest.fn() };
-    const findAllSubmissionsUseCase = { execute: jest.fn() };
     const updateUserUseCase = { execute: jest.fn() };
     const deleteUserUseCase = { execute: jest.fn() };
     const updateUserStreakOnSubmissionUseCase = { execute: jest.fn() };
@@ -66,7 +65,6 @@ export class UserFactory {
       findOneUserByIdUseCase,
       updateUserStreakUseCase,
       findOneByEmailUseCase,
-      findAllSubmissionsUseCase,
       updateUserUseCase,
       deleteUserUseCase,
       updateUserStreakOnSubmissionUseCase,

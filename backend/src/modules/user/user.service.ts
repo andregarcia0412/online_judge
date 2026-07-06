@@ -1,6 +1,4 @@
 import { Inject, Injectable } from '@nestjs/common';
-import { ReturnSubmissionDto } from 'src/modules/submission/dto/return-submission.dto';
-import { EntityManager } from 'typeorm';
 import { CreateUserDto } from './dto/create-user.dto';
 import { ReturnUserDto } from './dto/return-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
@@ -8,7 +6,6 @@ import { User } from './entities/user.entity';
 import { UserServicePort } from './interface/user.service.port';
 import { CreateUserUseCase } from './use-case/create.use-case';
 import { DeleteUserUseCase } from './use-case/delete.use-case';
-import { FindAllSubmissionsUseCase } from './use-case/find-all-submissions.use-case';
 import { FindAllUserUseCase } from './use-case/find-all.use-case';
 import { FindOneByEmailUseCase } from './use-case/find-one-by-email.use-case';
 import { FindOneUserByIdUseCase } from './use-case/find-one-by-id.use-case';
@@ -29,8 +26,6 @@ export class UserService implements UserServicePort {
     private readonly updateUserStreakUseCase: UpdateUserStreakUseCase,
     @Inject(FindOneByEmailUseCase)
     private readonly findOneByEmailUseCase: FindOneByEmailUseCase,
-    @Inject(FindAllSubmissionsUseCase)
-    private readonly findAllSubmissionsUseCase: FindAllSubmissionsUseCase,
     @Inject(UpdateUserUseCase)
     private readonly updateUserUseCase: UpdateUserUseCase,
     @Inject(DeleteUserUseCase)
@@ -60,12 +55,6 @@ export class UserService implements UserServicePort {
     return await this.findOneByEmailUseCase.execute(email);
   }
 
-  async findAllSubmissionsById(id: string): Promise<ReturnSubmissionDto[]> {
-    return (await this.findAllSubmissionsUseCase.execute(id)).map(
-      ReturnSubmissionDto.fromEntity,
-    );
-  }
-
   async update(
     id: string,
     updateUserDto: UpdateUserDto,
@@ -83,10 +72,7 @@ export class UserService implements UserServicePort {
     await this.updateUserStreakUseCase.execute(user);
   }
 
-  async updateUserStreakOnSubmission(
-    user: User,
-    manager?: EntityManager,
-  ): Promise<void> {
-    await this.updateUserStreakOnSubmissionUseCase.execute(user, manager);
+  updateUserStreakOnSubmission(user: User): void {
+    this.updateUserStreakOnSubmissionUseCase.execute(user);
   }
 }
