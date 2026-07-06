@@ -61,6 +61,16 @@ export class SubmissionController {
     return await this.submissionService.findAll();
   }
 
+  @Get('me')
+  @UseGuards(JwtAuthGuard)
+  @ApiBearerAuth()
+  @ApiOkResponse({ type: [ReturnSubmissionDto] })
+  async findUserSubmissions(
+    @GetUser('userId') userId: string,
+  ): Promise<ReturnSubmissionDto[]> {
+    return await this.submissionService.findAllByUserId(userId);
+  }
+
   @Get(':id')
   @UseGuards(JwtAuthGuard)
   @ApiBearerAuth()

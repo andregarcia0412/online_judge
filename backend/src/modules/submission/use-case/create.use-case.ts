@@ -73,7 +73,8 @@ export class CreateSubmissionUseCase {
       problem.totalSubmitted = Number(problem.totalSubmitted) + 1;
       user.totalSubmissions = Number(user.totalSubmissions) + 1;
 
-      await this.userService.updateUserStreakOnSubmission(user, manager);
+      this.userService.updateUserStreakOnSubmission(user);
+      user.lastSubmissionDate = new Date();
       await this.userRepository.save(user, manager);
       await this.problemRepository.saveExistingEntity(problem, manager);
 

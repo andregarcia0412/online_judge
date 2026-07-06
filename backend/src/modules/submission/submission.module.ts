@@ -1,8 +1,7 @@
-import { forwardRef, Module } from '@nestjs/common';
+import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { TestRunnerModule } from 'src/modules/test-runner/test-runner.module';
 import { ProblemModule } from '../problem/problem.module';
-import { UserModule } from '../user/user.module';
 import { Submission } from './entities/submission.entity';
 import { SubmissionRepositoryPort } from './interface/submission.repository.port';
 import { SubmissionServicePort } from './interface/submission.service.port';
@@ -16,13 +15,14 @@ import { FindAllSubmissionByUserIdUseCase } from './use-case/find-all-by-user-id
 import { FindAllSubmissionUseCase } from './use-case/find-all.use-case';
 import { FindOneSubmissionByIdUseCase } from './use-case/find-one-by-id.use-case';
 import { UpdateSubmissionUseCase } from './use-case/update.use-case';
+import { UserModule } from '../user/user.module';
 
 @Module({
   imports: [
     TypeOrmModule.forFeature([Submission]),
     TestRunnerModule,
-    forwardRef(() => UserModule),
     ProblemModule,
+    UserModule,
   ],
   controllers: [SubmissionController],
   providers: [

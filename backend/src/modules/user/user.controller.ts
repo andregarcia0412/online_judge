@@ -4,7 +4,6 @@ import {
   Delete,
   Get,
   Inject,
-  Param,
   Patch,
   Post,
   UseGuards,
@@ -15,13 +14,12 @@ import {
   ApiNoContentResponse,
   ApiOkResponse,
 } from '@nestjs/swagger';
-import { ReturnSubmissionDto } from 'src/modules/submission/dto/return-submission.dto';
+import { GetUser } from 'src/shared/decorator/get-user.decorator';
+import { JwtAuthGuard } from '../auth/common/jwt-auth.guard';
 import { CreateUserDto } from './dto/create-user.dto';
 import { ReturnUserDto } from './dto/return-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
 import { UserServicePort } from './interface/user.service.port';
-import { JwtAuthGuard } from '../auth/common/jwt-auth.guard';
-import { GetUser } from 'src/shared/decorator/get-user.decorator';
 
 @Controller('user')
 export class UserController {
@@ -36,16 +34,6 @@ export class UserController {
   @ApiCreatedResponse({ type: ReturnUserDto })
   async create(@Body() createUserDto: CreateUserDto): Promise<ReturnUserDto> {
     return await this.userService.create(createUserDto);
-  }
-
-  @Get('me/submission')
-  @UseGuards(JwtAuthGuard)
-  @ApiBearerAuth()
-  @ApiOkResponse({ type: [ReturnSubmissionDto] })
-  async findAllSubmissionsById(
-    @GetUser('userId') userId: string,
-  ): Promise<ReturnSubmissionDto[]> {
-    return await this.userService.findAllSubmissionsById(userId);
   }
 
   @Get('me')
