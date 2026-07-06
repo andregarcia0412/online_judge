@@ -15,7 +15,7 @@ export class Submission {
   @Column({ type: 'text' })
   text: string;
 
-  @Column({ type: 'text' })
+  @Column({ type: 'varchar', length: 64 })
   language: string;
 
   @Column({ type: 'enum', enum: StatusEnum, default: StatusEnum.PENDING })

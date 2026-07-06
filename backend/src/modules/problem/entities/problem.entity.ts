@@ -8,13 +8,13 @@ export class Problem {
   @PrimaryGeneratedColumn({ type: 'integer' })
   id!: number;
 
-  @Column({ type: 'text', unique: true })
+  @Column({ type: 'varchar', length: 128, unique: true })
   title!: string;
 
   @Column({ type: 'decimal', precision: 10, scale: 2, default: 0 })
   points!: number;
 
-  @Column({ type: 'text' })
+  @Column({ type: 'varchar', length: 32 })
   author!: string;
 
   @Column({ type: 'text' })
