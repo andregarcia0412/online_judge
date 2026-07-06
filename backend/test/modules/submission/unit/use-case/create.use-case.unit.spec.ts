@@ -107,7 +107,6 @@ describe('CreateSubmissionUseCase', () => {
     );
     expect(userServiceMock.updateUserStreakOnSubmission).toHaveBeenCalledWith(
       savedUser,
-      expect.any(Object),
     );
 
     expect(

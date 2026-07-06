@@ -3,8 +3,6 @@ import { UserService } from 'src/modules/user/user.service';
 import { UserFactory } from 'test/factories/user.factory';
 import { ReturnUserDto } from 'src/modules/user/dto/return-user.dto';
 import { User } from 'src/modules/user/entities/user.entity';
-import { SubmissionFactory } from 'test/factories/submission.factory';
-import { ReturnSubmissionDto } from 'src/modules/submission/dto/return-submission.dto';
 
 describe('UserService', () => {
   let useCaseMocks: ReturnType<typeof UserFactory.makeUserUseCaseMocks>;
@@ -19,7 +17,6 @@ describe('UserService', () => {
       useCaseMocks.findOneUserByIdUseCase as any,
       useCaseMocks.updateUserStreakUseCase as any,
       useCaseMocks.findOneByEmailUseCase as any,
-      useCaseMocks.findAllSubmissionsUseCase as any,
       useCaseMocks.updateUserUseCase as any,
       useCaseMocks.deleteUserUseCase as any,
       useCaseMocks.updateUserStreakOnSubmissionUseCase as any,
@@ -172,27 +169,6 @@ describe('UserService', () => {
     });
   });
 
-  describe('Find Submission By User Id', () => {
-    it('should return a list of ReturnSubmissionDto', async () => {
-      const savedEntity = SubmissionFactory.makeSubmissionEntity();
-      useCaseMocks.findAllSubmissionsUseCase.execute.mockResolvedValue([
-        savedEntity,
-      ]);
-
-      const id_user = '123';
-
-      const result = await service.findAllSubmissionsById(id_user);
-
-      expect(result.length).toBe(1);
-      expect(result[0]).toBeInstanceOf(ReturnSubmissionDto);
-      expect(
-        useCaseMocks.findAllSubmissionsUseCase.execute,
-      ).toHaveBeenCalledWith(id_user);
-
-      expect(result[0].id).toMatch(savedEntity.id);
-    });
-  });
-
   describe('Update User', () => {
     it('should update a user and return ReturnUserDto', async () => {
       const userId = '123';
@@ -249,33 +225,14 @@ describe('UserService', () => {
   });
 
   describe('Update User Streak On Submission', () => {
-    it('should delegate updateUserStreakOnSubmission without manager', async () => {
+    it('should delegate updateUserStreakOnSubmission to the use case', () => {
       const userEntity = UserFactory.makeUserEntity();
 
-      useCaseMocks.updateUserStreakOnSubmissionUseCase.execute.mockResolvedValue(
-        undefined,
-      );
-
-      await service.updateUserStreakOnSubmission(userEntity);
+      service.updateUserStreakOnSubmission(userEntity);
 
       expect(
         useCaseMocks.updateUserStreakOnSubmissionUseCase.execute,
-      ).toHaveBeenCalledWith(userEntity, undefined);
-    });
-
-    it('should delegate updateUserStreakOnSubmission with manager', async () => {
-      const userEntity = UserFactory.makeUserEntity();
-      const manager = {} as any;
-
-      useCaseMocks.updateUserStreakOnSubmissionUseCase.execute.mockResolvedValue(
-        undefined,
-      );
-
-      await service.updateUserStreakOnSubmission(userEntity, manager);
-
-      expect(
-        useCaseMocks.updateUserStreakOnSubmissionUseCase.execute,
-      ).toHaveBeenCalledWith(userEntity, manager);
+      ).toHaveBeenCalledWith(userEntity);
     });
   });
 });
