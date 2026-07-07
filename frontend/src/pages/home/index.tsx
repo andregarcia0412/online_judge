@@ -15,6 +15,7 @@ import type { Problem } from "../../data/dto/problem.dto";
 import { useFetch } from "../../hooks/useFetch";
 import "./style.css";
 import type { Submission } from "../../data/dto/submission.dto";
+import { submissionService } from "../../api/services/submission.service";
 
 export const Home = () => {
   const { user, getUserData } = useAuthContext();
@@ -35,7 +36,7 @@ export const Home = () => {
     [],
   );
   const { data: userSubmissions } = useFetch<Submission[]>(
-    () => userService.getUserSubmissions(),
+    () => submissionService.getUserSubmissions(),
     [],
   );
 

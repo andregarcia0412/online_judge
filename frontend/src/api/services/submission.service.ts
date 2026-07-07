@@ -40,4 +40,17 @@ export const submissionService = {
       throw e;
     }
   },
+
+  async getUserSubmissions() {
+    try {
+      const { data } = await api.get(`/submission/me`);
+      return data;
+    } catch (e) {
+      console.error(
+        "Error while getting user submissions:",
+        e instanceof Error ? e.message : "Unknown Error",
+      );
+      throw e;
+    }
+  },
 };

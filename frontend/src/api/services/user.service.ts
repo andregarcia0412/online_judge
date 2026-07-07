@@ -1,19 +1,6 @@
 import { api } from "../api.client";
 
 export const userService = {
-  async getUserSubmissions() {
-    try {
-      const { data } = await api.get(`/user/me/submission`);
-      return data;
-    } catch (e) {
-      console.error(
-        "Error while getting user submissions:",
-        e instanceof Error ? e.message : "Unknown Error",
-      );
-      throw e;
-    }
-  },
-
   async getCurrentUser() {
     try {
       const { data } = await api.get(`/user/me`);
