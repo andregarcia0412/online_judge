@@ -117,6 +117,30 @@ describe('ProblemService', () => {
     });
   });
 
+  describe('Find Problem Entity By Id', () => {
+    it('should delegate to FindProblemByIdUseCase and return the raw entity', async () => {
+      const problem = ProblemFactory.makeProblemEntity();
+
+      useCaseMocks.findProblemByIdUseCase.execute.mockResolvedValue(problem);
+
+      const result = await service.findProblemEntityById(problem.id);
+
+      expect(useCaseMocks.findProblemByIdUseCase.execute).toHaveBeenCalledWith(
+        problem.id,
+      );
+      expect(result).not.toBeInstanceOf(ReturnProblemDto);
+      expect(result).toBe(problem);
+    });
+
+    it('should propagate errors from FindProblemByIdUseCase', async () => {
+      const error = new NotFoundException('Problem not found');
+
+      useCaseMocks.findProblemByIdUseCase.execute.mockRejectedValue(error);
+
+      await expect(service.findProblemEntityById(123)).rejects.toThrow(error);
+    });
+  });
+
   describe('Find Problem By Title', () => {
     it('should delegate to FindProblemByTitleUseCase and map to ReturnProblemDto', async () => {
       const problem = ProblemFactory.makeProblemEntity();

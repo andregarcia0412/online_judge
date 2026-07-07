@@ -12,48 +12,54 @@ describe('CreateSubmissionUseCase', () => {
   let submissionRepositoryMock: ReturnType<
     typeof SubmissionFactory.makeSubmissionRepositoryMock
   >;
-  let userRepositoryMock: ReturnType<typeof UserFactory.makeUserRepositoryMock>;
-  let problemRepositoryMock: ReturnType<
-    typeof ProblemFactory.makeProblemRepositoryMock
-  >;
-  let testCaseRepositoryMock: ReturnType<
-    typeof TestCaseFactory.makeTestCaseRepositoryMock
-  >;
+  let problemServiceMock: {
+    findProblemEntityById: jest.Mock;
+    update: jest.Mock;
+  };
+  let testCaseServiceMock: {
+    findAllEntitiesByProblemId: jest.Mock;
+  };
   let testRunnerServiceMock: ReturnType<
     typeof TestRunnerFactory.makeTestResultServiceMock
   >;
   let userServiceMock: {
+    findUserEntityById: jest.Mock;
+    update: jest.Mock;
     updateUserStreakOnSubmission: jest.Mock;
   };
-  let dataSourceMock: {
-    transaction: jest.Mock;
+  let txHostMock: {
+    withTransaction: jest.Mock;
   };
   let useCase: CreateSubmissionUseCase;
 
   beforeEach(() => {
     submissionRepositoryMock = SubmissionFactory.makeSubmissionRepositoryMock();
-    userRepositoryMock = UserFactory.makeUserRepositoryMock();
-    problemRepositoryMock = ProblemFactory.makeProblemRepositoryMock();
-    testCaseRepositoryMock = TestCaseFactory.makeTestCaseRepositoryMock();
+    problemServiceMock = {
+      findProblemEntityById: jest.fn(),
+      update: jest.fn(),
+    };
+    testCaseServiceMock = {
+      findAllEntitiesByProblemId: jest.fn(),
+    };
     testRunnerServiceMock = TestRunnerFactory.makeTestResultServiceMock();
     userServiceMock = {
+      findUserEntityById: jest.fn(),
+      update: jest.fn(),
       updateUserStreakOnSubmission: jest.fn(),
     };
-    dataSourceMock = {
-      transaction: jest.fn(),
+    txHostMock = {
+      withTransaction: jest.fn().mockImplementation(async (callback) =>
+        callback(),
+      ),
     };
-    dataSourceMock.transaction.mockImplementation(async (callback) =>
-      callback({}),
-    );
 
     useCase = new CreateSubmissionUseCase(
       submissionRepositoryMock as any,
-      userRepositoryMock as any,
-      problemRepositoryMock as any,
-      testCaseRepositoryMock as any,
+      problemServiceMock as any,
+      testCaseServiceMock as any,
       testRunnerServiceMock as any,
       userServiceMock as any,
-      dataSourceMock as any,
+      txHostMock as any,
     );
   });
 
@@ -74,31 +80,30 @@ describe('CreateSubmissionUseCase', () => {
     const savedSubmission = SubmissionFactory.makeSubmissionEntity();
     const testResult = TestRunnerFactory.makeTestResult();
 
-    userRepositoryMock.findOneById.mockResolvedValue(savedUser);
-    problemRepositoryMock.findById.mockResolvedValue(savedProblem);
-    testCaseRepositoryMock.findByProblemId.mockResolvedValue([savedTestCase]);
+    userServiceMock.findUserEntityById.mockResolvedValue(savedUser);
+    problemServiceMock.findProblemEntityById.mockResolvedValue(savedProblem);
+    testCaseServiceMock.findAllEntitiesByProblemId.mockResolvedValue([
+      savedTestCase,
+    ]);
     testRunnerServiceMock.runTests.mockResolvedValue(testResult);
     submissionRepositoryMock.findOneUserAcceptedSubmission.mockResolvedValue(
       null,
     );
     submissionRepositoryMock.save.mockResolvedValue(savedSubmission);
-    userRepositoryMock.save.mockResolvedValue(savedUser);
-    problemRepositoryMock.saveExistingEntity.mockResolvedValue(savedProblem);
+    userServiceMock.update.mockResolvedValue(savedUser);
+    problemServiceMock.update.mockResolvedValue(savedProblem);
 
     const result = await useCase.execute(savedUser.id, createSubmissionDto);
 
-    expect(dataSourceMock.transaction).toHaveBeenCalledTimes(1);
-    expect(userRepositoryMock.findOneById).toHaveBeenCalledWith(
+    expect(txHostMock.withTransaction).toHaveBeenCalledTimes(1);
+    expect(userServiceMock.findUserEntityById).toHaveBeenCalledWith(
       savedUser.id,
-      expect.any(Object),
     );
-    expect(problemRepositoryMock.findById).toHaveBeenCalledWith(
+    expect(problemServiceMock.findProblemEntityById).toHaveBeenCalledWith(
       createSubmissionDto.idProblem,
-      expect.any(Object),
     );
-    expect(testCaseRepositoryMock.findByProblemId).toHaveBeenCalledWith(
+    expect(testCaseServiceMock.findAllEntitiesByProblemId).toHaveBeenCalledWith(
       createSubmissionDto.idProblem,
-      expect.any(Object),
     );
     expect(testRunnerServiceMock.runTests).toHaveBeenCalledWith(
       [savedTestCase],
@@ -115,27 +120,25 @@ describe('CreateSubmissionUseCase', () => {
       savedUser.id,
       createSubmissionDto.language,
       createSubmissionDto.idProblem,
-      expect.any(Object),
     );
     expect(submissionRepositoryMock.save).toHaveBeenCalledWith(
       { ...createSubmissionDto, idUser: savedUser.id },
       testResult,
-      expect.any(Object),
     );
-    expect(userRepositoryMock.save).toHaveBeenCalledWith(
+    expect(userServiceMock.update).toHaveBeenCalledWith(
+      savedUser.id,
       expect.objectContaining({
         points: Number(savedProblem.points),
         totalSubmissions: 4,
         totalResolved: 1,
       }),
-      expect.any(Object),
     );
-    expect(problemRepositoryMock.saveExistingEntity).toHaveBeenCalledWith(
+    expect(problemServiceMock.update).toHaveBeenCalledWith(
+      savedProblem.id,
       expect.objectContaining({
         totalSubmitted: 4,
         totalAccepted: 2,
       }),
-      expect.any(Object),
     );
 
     expect(result).toMatchObject({
@@ -154,7 +157,9 @@ describe('CreateSubmissionUseCase', () => {
   });
 
   it('should throw NotFoundException when user id does not match', async () => {
-    userRepositoryMock.findOneById.mockResolvedValue(null);
+    userServiceMock.findUserEntityById.mockRejectedValue(
+      new NotFoundException('User not found'),
+    );
 
     const createPromise = useCase.execute(
       '123',
@@ -165,13 +170,16 @@ describe('CreateSubmissionUseCase', () => {
     await expect(createPromise).rejects.toThrow('User not found');
 
     expect(userServiceMock.updateUserStreakOnSubmission).not.toHaveBeenCalled();
+    expect(txHostMock.withTransaction).not.toHaveBeenCalled();
   });
 
   it('should throw NotFoundException when problem id does not match', async () => {
-    userRepositoryMock.findOneById.mockResolvedValue(
+    userServiceMock.findUserEntityById.mockResolvedValue(
       UserFactory.makeUserEntity(),
     );
-    problemRepositoryMock.findById.mockResolvedValue(null);
+    problemServiceMock.findProblemEntityById.mockRejectedValue(
+      new NotFoundException('Problem not found'),
+    );
 
     const createPromise = useCase.execute(
       '123',
@@ -183,13 +191,13 @@ describe('CreateSubmissionUseCase', () => {
   });
 
   it('should throw NotFoundException when there are no test cases', async () => {
-    userRepositoryMock.findOneById.mockResolvedValue(
+    userServiceMock.findUserEntityById.mockResolvedValue(
       UserFactory.makeUserEntity(),
     );
-    problemRepositoryMock.findById.mockResolvedValue(
+    problemServiceMock.findProblemEntityById.mockResolvedValue(
       ProblemFactory.makeProblemEntity(),
     );
-    testCaseRepositoryMock.findByProblemId.mockResolvedValue([]);
+    testCaseServiceMock.findAllEntitiesByProblemId.mockResolvedValue([]);
 
     const createPromise = useCase.execute(
       '123',
@@ -216,33 +224,35 @@ describe('CreateSubmissionUseCase', () => {
     const testResult = TestRunnerFactory.makeTestResult();
     const initialPoints = Number(savedUser.points);
 
-    userRepositoryMock.findOneById.mockResolvedValue(savedUser);
-    problemRepositoryMock.findById.mockResolvedValue(savedProblem);
-    testCaseRepositoryMock.findByProblemId.mockResolvedValue([savedTestCase]);
+    userServiceMock.findUserEntityById.mockResolvedValue(savedUser);
+    problemServiceMock.findProblemEntityById.mockResolvedValue(savedProblem);
+    testCaseServiceMock.findAllEntitiesByProblemId.mockResolvedValue([
+      savedTestCase,
+    ]);
     testRunnerServiceMock.runTests.mockResolvedValue(testResult);
     submissionRepositoryMock.findOneUserAcceptedSubmission.mockResolvedValue(
       existingAcceptedSubmission,
     );
     submissionRepositoryMock.save.mockResolvedValue(savedSubmission);
-    userRepositoryMock.save.mockResolvedValue(savedUser);
-    problemRepositoryMock.saveExistingEntity.mockResolvedValue(savedProblem);
+    userServiceMock.update.mockResolvedValue(savedUser);
+    problemServiceMock.update.mockResolvedValue(savedProblem);
 
     await useCase.execute(savedUser.id, createSubmissionDto);
 
-    expect(userRepositoryMock.save).toHaveBeenCalledWith(
+    expect(userServiceMock.update).toHaveBeenCalledWith(
+      savedUser.id,
       expect.objectContaining({
         points: initialPoints,
         totalSubmissions: 6,
         totalResolved: 3,
       }),
-      expect.any(Object),
     );
-    expect(problemRepositoryMock.saveExistingEntity).toHaveBeenCalledWith(
+    expect(problemServiceMock.update).toHaveBeenCalledWith(
+      savedProblem.id,
       expect.objectContaining({
         totalSubmitted: 9,
         totalAccepted: 6,
       }),
-      expect.any(Object),
     );
   });
 
@@ -266,33 +276,35 @@ describe('CreateSubmissionUseCase', () => {
     );
     const initialPoints = Number(savedUser.points);
 
-    userRepositoryMock.findOneById.mockResolvedValue(savedUser);
-    problemRepositoryMock.findById.mockResolvedValue(savedProblem);
-    testCaseRepositoryMock.findByProblemId.mockResolvedValue([savedTestCase]);
+    userServiceMock.findUserEntityById.mockResolvedValue(savedUser);
+    problemServiceMock.findProblemEntityById.mockResolvedValue(savedProblem);
+    testCaseServiceMock.findAllEntitiesByProblemId.mockResolvedValue([
+      savedTestCase,
+    ]);
     testRunnerServiceMock.runTests.mockResolvedValue(rejectedResult);
     submissionRepositoryMock.findOneUserAcceptedSubmission.mockResolvedValue(
       null,
     );
     submissionRepositoryMock.save.mockResolvedValue(savedSubmission);
-    userRepositoryMock.save.mockResolvedValue(savedUser);
-    problemRepositoryMock.saveExistingEntity.mockResolvedValue(savedProblem);
+    userServiceMock.update.mockResolvedValue(savedUser);
+    problemServiceMock.update.mockResolvedValue(savedProblem);
 
     await useCase.execute(savedUser.id, createSubmissionDto);
 
-    expect(userRepositoryMock.save).toHaveBeenCalledWith(
+    expect(userServiceMock.update).toHaveBeenCalledWith(
+      savedUser.id,
       expect.objectContaining({
         points: initialPoints,
         totalSubmissions: 4,
         totalResolved: 1,
       }),
-      expect.any(Object),
     );
-    expect(problemRepositoryMock.saveExistingEntity).toHaveBeenCalledWith(
+    expect(problemServiceMock.update).toHaveBeenCalledWith(
+      savedProblem.id,
       expect.objectContaining({
         totalSubmitted: 3,
         totalAccepted: 1,
       }),
-      expect.any(Object),
     );
   });
 });

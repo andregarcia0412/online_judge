@@ -142,6 +142,35 @@ describe('UserService', () => {
     });
   });
 
+  describe('Get User Entity By Id', () => {
+    it('should delegate to FindOneUserByIdUseCase and return the raw entity without touching the streak', async () => {
+      const userEntity = UserFactory.makeUserEntity();
+      useCaseMocks.findOneUserByIdUseCase.execute.mockResolvedValue(userEntity);
+
+      const result = await service.findUserEntityById(userEntity.id);
+
+      expect(result).toBeInstanceOf(User);
+      expect(result).toBe(userEntity);
+      expect(useCaseMocks.findOneUserByIdUseCase.execute).toHaveBeenCalledWith(
+        userEntity.id,
+      );
+      expect(
+        useCaseMocks.updateUserStreakUseCase.execute,
+      ).not.toHaveBeenCalled();
+    });
+
+    it('should propagate not found exception when id does not match', async () => {
+      useCaseMocks.findOneUserByIdUseCase.execute.mockRejectedValue(
+        new NotFoundException('User not found'),
+      );
+
+      const getPromise = service.findUserEntityById('123');
+
+      await expect(getPromise).rejects.toThrow(NotFoundException);
+      await expect(getPromise).rejects.toThrow('User not found');
+    });
+  });
+
   describe('Get User By Email', () => {
     it('should return user entity when email matches', async () => {
       const userEntity = UserFactory.makeUserEntity();
@@ -151,7 +180,7 @@ describe('UserService', () => {
 
       expect(result).toBeInstanceOf(User);
       expect(result).toBe(userEntity);
-      expect(result.id).toMatch(userEntity.id);
+      expect(result!.id).toMatch(userEntity.id);
       expect(useCaseMocks.findOneByEmailUseCase.execute).toHaveBeenCalledWith(
         userEntity.email,
       );
