@@ -1,5 +1,6 @@
+import { TransactionHost } from '@nestjs-cls/transactional';
+import { TransactionalAdapterTypeOrm } from '@nestjs-cls/transactional-adapter-typeorm';
 import { Injectable } from '@nestjs/common';
-import { InjectRepository } from '@nestjs/typeorm';
 import { TestResult } from 'src/modules/test-runner/dto/test-result.dto';
 import { EntityManager, Repository } from 'typeorm';
 import { Submission } from '../entities/submission.entity';
@@ -9,8 +10,7 @@ import { SubmissionRepositoryPort } from '../interface/submission.repository.por
 @Injectable()
 export class SubmissionRepository implements SubmissionRepositoryPort {
   constructor(
-    @InjectRepository(Submission)
-    private readonly submissionRepository: Repository<Submission>,
+    private readonly txHost: TransactionHost<TransactionalAdapterTypeOrm>,
   ) {}
   async findOneUserAcceptedSubmission(
     idUser: string,
@@ -97,8 +97,6 @@ export class SubmissionRepository implements SubmissionRepositoryPort {
   }
 
   private getRepository(manager?: EntityManager): Repository<Submission> {
-    return manager
-      ? manager.getRepository(Submission)
-      : this.submissionRepository;
+    return (manager ?? this.txHost.tx).getRepository(Submission);
   }
 }

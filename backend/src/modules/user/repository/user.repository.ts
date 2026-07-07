@@ -1,5 +1,6 @@
+import { TransactionHost } from '@nestjs-cls/transactional';
+import { TransactionalAdapterTypeOrm } from '@nestjs-cls/transactional-adapter-typeorm';
 import { Injectable } from '@nestjs/common';
-import { InjectRepository } from '@nestjs/typeorm';
 import { EntityManager, Repository } from 'typeorm';
 import { User } from '../entities/user.entity';
 import { UserRepositoryPort } from '../interface/user.repository.port';
@@ -7,8 +8,7 @@ import { UserRepositoryPort } from '../interface/user.repository.port';
 @Injectable()
 export class UserRepository implements UserRepositoryPort {
   constructor(
-    @InjectRepository(User)
-    private readonly userRepository: Repository<User>,
+    private readonly txHost: TransactionHost<TransactionalAdapterTypeOrm>,
   ) {}
 
   async findOneByEmail(
@@ -63,6 +63,6 @@ export class UserRepository implements UserRepositoryPort {
   }
 
   private getRepository(manager?: EntityManager): Repository<User> {
-    return manager ? manager.getRepository(User) : this.userRepository;
+    return (manager ?? this.txHost.tx).getRepository(User);
   }
 }

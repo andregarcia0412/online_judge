@@ -1,5 +1,6 @@
+import { TransactionHost } from '@nestjs-cls/transactional';
+import { TransactionalAdapterTypeOrm } from '@nestjs-cls/transactional-adapter-typeorm';
 import { Injectable } from '@nestjs/common';
-import { InjectRepository } from '@nestjs/typeorm';
 import { DeepPartial, EntityManager, Repository } from 'typeorm';
 import { Problem } from '../entities/problem.entity';
 import { ProblemRepositoryPort } from '../interface/repository/problem.repository.port';
@@ -7,8 +8,7 @@ import { ProblemRepositoryPort } from '../interface/repository/problem.repositor
 @Injectable()
 export class ProblemRepository implements ProblemRepositoryPort {
   constructor(
-    @InjectRepository(Problem)
-    private readonly problemRepository: Repository<Problem>,
+    private readonly txHost: TransactionHost<TransactionalAdapterTypeOrm>,
   ) {}
   async findByTitle(
     title: string,
@@ -65,6 +65,6 @@ export class ProblemRepository implements ProblemRepositoryPort {
   }
 
   private getRepository(manager?: EntityManager): Repository<Problem> {
-    return manager ? manager.getRepository(Problem) : this.problemRepository;
+    return (manager ?? this.txHost.tx).getRepository(Problem);
   }
 }
