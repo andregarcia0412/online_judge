@@ -9,6 +9,7 @@ import { FindAllTestCasesUseCase } from '../use-case/test-case/find-all.use-case
 import { FindTestCaseByIdUseCase } from '../use-case/test-case/find-one.use-case';
 import { RemoveTestCaseUseCase } from '../use-case/test-case/remove.use-case';
 import { UpdateTestCaseUseCase } from '../use-case/test-case/update.use-case';
+import { TestCase } from '../entities/test-case.entity';
 
 @Injectable()
 export class TestCaseService implements TestCaseServicePort {
@@ -47,10 +48,18 @@ export class TestCaseService implements TestCaseServicePort {
     );
   }
 
+  async findTestCaseEntityById(id: string): Promise<TestCase> {
+    return await this.findTestCaseByIdUseCase.execute(id);
+  }
+
   async findAllByProblemId(idProblem: number): Promise<ReturnTestCaseDto[]> {
     return ReturnTestCaseDto.fromEntityList(
       await this.findAllTestCasesByProblemIdUseCase.execute(idProblem),
     );
+  }
+
+  async findAllEntitiesByProblemId(idProblem: number): Promise<TestCase[]> {
+    return await this.findAllTestCasesByProblemIdUseCase.execute(idProblem);
   }
 
   async update(
