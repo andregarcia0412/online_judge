@@ -12,6 +12,7 @@ import { ProblemModule } from './modules/problem/problem.module';
 import { SubmissionModule } from './modules/submission/submission.module';
 import { SystemModule } from './modules/system/system.module';
 import { UserModule } from './modules/user/user.module';
+import { SeedsModule } from './modules/seeds/seeds.module';
 
 @Module({
   imports: [
@@ -79,6 +80,7 @@ import { UserModule } from './modules/user/user.module';
     AuthModule,
     LlmModule,
     SystemModule,
+    SeedsModule,
   ],
 })
 export class AppModule {}

@@ -9,4 +9,12 @@ export enum CategoryEnum {
   GREEDY = 'greedy',
   BACKTRACKING = 'backtracking',
   MATH = 'math',
+  STRINGS = 'strings',
+  BIT_MANIPULATION = 'bit_manipulation',
+  STACK = 'stack',
+  HASHING = 'hashing',
+  NUMBER_THEORY = 'number_theory',
+  SLIDING_WINDOW = 'sliding_window',
+  RECURSION = 'recursion',
+  SIMULATION = 'simulation',
 }
