@@ -11,4 +11,12 @@ export const CategoryLabels: Record<CategoryEnum, string> = {
   [CategoryEnum.GREEDY]: 'Greedy',
   [CategoryEnum.BACKTRACKING]: 'Backtracking',
   [CategoryEnum.MATH]: 'Math',
+  [CategoryEnum.STRINGS]: 'Strings',
+  [CategoryEnum.BIT_MANIPULATION]: 'Bit Manipulation',
+  [CategoryEnum.STACK]: 'Stack',
+  [CategoryEnum.HASHING]: 'Hashing',
+  [CategoryEnum.NUMBER_THEORY]: 'Number Theory',
+  [CategoryEnum.SLIDING_WINDOW]: 'Sliding Window',
+  [CategoryEnum.RECURSION]: 'Recursion',
+  [CategoryEnum.SIMULATION]: 'Simulation',
 };
