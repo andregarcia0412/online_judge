@@ -9,6 +9,7 @@ import { FindProblemByIdUseCase } from '../use-case/problem/find-by-id.use-case'
 import { FindProblemByTitleUseCase } from '../use-case/problem/find-by-title.use-case';
 import { RemoveProblemUseCase } from '../use-case/problem/remove.use-case';
 import { UpdateProblemUseCase } from '../use-case/problem/update.use-case';
+import { Problem } from '../entities/problem.entity';
 
 @Injectable()
 export class ProblemService implements ProblemServicePort {
@@ -43,6 +44,10 @@ export class ProblemService implements ProblemServicePort {
     const problem = await this.findProblemByIdUseCase.execute(id);
 
     return ReturnProblemDto.fromEntity(problem);
+  }
+
+  async findProblemEntityById(id: number): Promise<Problem> {
+    return await this.findProblemByIdUseCase.execute(id);
   }
 
   async findOneByTitle(title: string): Promise<ReturnProblemDto> {

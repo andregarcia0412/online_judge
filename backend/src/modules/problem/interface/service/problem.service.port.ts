@@ -1,11 +1,13 @@
 import { CreateProblemDto } from '../../dto/problem/create-problem.dto';
 import { ReturnProblemDto } from '../../dto/problem/return-problem.dto';
 import { UpdateProblemDto } from '../../dto/problem/update-problem.dto';
+import { Problem } from '../../entities/problem.entity';
 
 export interface ProblemServicePort {
   create(createProblemDto: CreateProblemDto): Promise<ReturnProblemDto>;
   findAll(): Promise<ReturnProblemDto[]>;
   findOneById(id: number): Promise<ReturnProblemDto>;
+  findProblemEntityById(id: number): Promise<Problem>;
   findOneByTitle(title: string): Promise<ReturnProblemDto>;
   update(
     id: number,
