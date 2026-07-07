@@ -64,11 +64,6 @@ import { UpdateTestCaseUseCase } from './use-case/test-case/update.use-case';
     RemoveTestCaseUseCase,
     UpdateTestCaseUseCase,
   ],
-  exports: [
-    ProblemServicePort,
-    ProblemRepositoryPort,
-    CategoryRepositoryPort,
-    TestCaseRepositoryPort,
-  ],
+  exports: [ProblemServicePort, CategoryServicePort, TestCaseServicePort],
 })
 export class ProblemModule {}

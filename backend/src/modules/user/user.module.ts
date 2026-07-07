@@ -33,6 +33,6 @@ import { UserService } from './user.service';
     DeleteUserUseCase,
     UpdateUserStreakOnSubmissionUseCase,
   ],
-  exports: [UserServicePort, UserRepositoryPort],
+  exports: [UserServicePort],
 })
 export class UserModule {}

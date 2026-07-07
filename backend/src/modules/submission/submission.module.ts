@@ -36,6 +36,6 @@ import { UserModule } from '../user/user.module';
     UpdateSubmissionUseCase,
     DeleteSubmissionUseCase,
   ],
-  exports: [SubmissionServicePort, SubmissionRepositoryPort],
+  exports: [SubmissionServicePort],
 })
 export class SubmissionModule {}

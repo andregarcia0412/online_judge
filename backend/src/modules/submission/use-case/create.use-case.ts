@@ -1,88 +1,80 @@
 import { Inject, Injectable, NotFoundException } from '@nestjs/common';
 import { Problem } from 'src/modules/problem/entities/problem.entity';
 import { TestCase } from 'src/modules/problem/entities/test-case.entity';
-import { ProblemRepositoryPort } from 'src/modules/problem/interface/repository/problem.repository.port';
-import { TestCaseRepositoryPort } from 'src/modules/problem/interface/repository/test-case.repository.port';
+import { ProblemServicePort } from 'src/modules/problem/interface/service/problem.service.port';
+import { TestCaseServicePort } from 'src/modules/problem/interface/service/test-case.service.port';
 import { TestRunnerServicePort } from 'src/modules/test-runner/interface/test-runner.service.port';
 import { User } from 'src/modules/user/entities/user.entity';
-import { UserRepositoryPort } from 'src/modules/user/interface/user.repository.port';
 import { UserServicePort } from 'src/modules/user/interface/user.service.port';
-import { DataSource, EntityManager } from 'typeorm';
 import { CreateSubmissionDto } from '../dto/create-submission.dto';
 import { ReturnSubmissionDto } from '../dto/return-submission.dto';
 import { StatusEnum } from '../enum/submission-status';
 import { SubmissionRepositoryPort } from '../interface/submission.repository.port';
+import { TransactionHost } from '@nestjs-cls/transactional';
+import { TransactionalAdapterTypeOrm } from '@nestjs-cls/transactional-adapter-typeorm';
 
 @Injectable()
 export class CreateSubmissionUseCase {
   constructor(
     @Inject(SubmissionRepositoryPort)
     private readonly submissionRepository: SubmissionRepositoryPort,
-    @Inject(UserRepositoryPort)
-    private readonly userRepository: UserRepositoryPort,
-    @Inject(ProblemRepositoryPort)
-    private readonly problemRepository: ProblemRepositoryPort,
-    @Inject(TestCaseRepositoryPort)
-    private readonly testCaseRepository: TestCaseRepositoryPort,
+    @Inject(ProblemServicePort)
+    private readonly problemService: ProblemServicePort,
+    @Inject(TestCaseServicePort)
+    private readonly testCaseService: TestCaseServicePort,
     @Inject(TestRunnerServicePort)
     private readonly testRunnerService: TestRunnerServicePort,
     @Inject(UserServicePort)
     private readonly userService: UserServicePort,
-    private readonly datasource: DataSource,
+    private readonly txHost: TransactionHost<TransactionalAdapterTypeOrm>,
   ) {}
 
   async execute(
     idUser: string,
     createSubmissionDto: CreateSubmissionDto,
   ): Promise<ReturnSubmissionDto> {
-    return await this.datasource.transaction(async (manager) => {
-      const user = await this.getUserOrThrow(idUser, manager);
+    const user = await this.getUserOrThrow(idUser);
 
-      const problem = await this.getProblemOrThrow(
-        createSubmissionDto.idProblem,
-        manager,
-      );
+    const problem = await this.getProblemOrThrow(createSubmissionDto.idProblem);
 
-      const testCases = await this.getTestCasesOrThrow(
-        createSubmissionDto.idProblem,
-        manager,
-      );
+    const testCases = await this.getTestCasesOrThrow(
+      createSubmissionDto.idProblem,
+    );
 
-      const testResult = await this.testRunnerService.runTests(
-        testCases,
-        createSubmissionDto.text,
+    const testResult = await this.testRunnerService.runTests(
+      testCases,
+      createSubmissionDto.text,
+      createSubmissionDto.language,
+    );
+
+    const submission =
+      await this.submissionRepository.findOneUserAcceptedSubmission(
+        user.id,
         createSubmissionDto.language,
+        createSubmissionDto.idProblem,
       );
 
-      const submission =
-        await this.submissionRepository.findOneUserAcceptedSubmission(
-          user.id,
-          createSubmissionDto.language,
-          createSubmissionDto.idProblem,
-          manager,
-        );
-
-      if (testResult.status === StatusEnum.ACCEPTED) {
-        problem.totalAccepted = Number(problem.totalAccepted) + 1;
-        if (!submission) {
-          user.points = Number(user.points) + Number(problem.points);
-          user.totalResolved = Number(user.totalResolved) + 1;
-        }
+    if (testResult.status === StatusEnum.ACCEPTED) {
+      problem.totalAccepted = Number(problem.totalAccepted) + 1;
+      if (!submission) {
+        user.points = Number(user.points) + Number(problem.points);
+        user.totalResolved = Number(user.totalResolved) + 1;
       }
+    }
 
-      problem.totalSubmitted = Number(problem.totalSubmitted) + 1;
-      user.totalSubmissions = Number(user.totalSubmissions) + 1;
+    problem.totalSubmitted = Number(problem.totalSubmitted) + 1;
+    user.totalSubmissions = Number(user.totalSubmissions) + 1;
 
+    return await this.txHost.withTransaction(async () => {
       this.userService.updateUserStreakOnSubmission(user);
       user.lastSubmissionDate = new Date();
-      await this.userRepository.save(user, manager);
-      await this.problemRepository.saveExistingEntity(problem, manager);
+      await this.userService.update(user.id, user);
+      await this.problemService.update(problem.id, problem);
 
       const returnSubmissionDto = ReturnSubmissionDto.fromEntity(
         await this.submissionRepository.save(
           { ...createSubmissionDto, idUser: user.id },
           testResult,
-          manager,
         ),
       );
       returnSubmissionDto.lastStdout = testResult.stdout;
@@ -91,38 +83,17 @@ export class CreateSubmissionUseCase {
     });
   }
 
-  private async getUserOrThrow(
-    id: string,
-    manager?: EntityManager,
-  ): Promise<User> {
-    const user = await this.userRepository.findOneById(id, manager);
-    if (!user) {
-      throw new NotFoundException('User not found');
-    }
-
-    return user;
+  private async getUserOrThrow(id: string): Promise<User> {
+    return await this.userService.findUserEntityById(id);
   }
 
-  private async getProblemOrThrow(
-    id: number,
-    manager?: EntityManager,
-  ): Promise<Problem> {
-    const problem = await this.problemRepository.findById(id, manager);
-    if (!problem) {
-      throw new NotFoundException('Problem not found');
-    }
-
-    return problem;
+  private async getProblemOrThrow(id: number): Promise<Problem> {
+    return await this.problemService.findProblemEntityById(id);
   }
 
-  private async getTestCasesOrThrow(
-    idProblem: number,
-    manager?: EntityManager,
-  ): Promise<TestCase[]> {
-    const testCases = await this.testCaseRepository.findByProblemId(
-      idProblem,
-      manager,
-    );
+  private async getTestCasesOrThrow(idProblem: number): Promise<TestCase[]> {
+    const testCases =
+      await this.testCaseService.findAllEntitiesByProblemId(idProblem);
 
     if (!testCases || testCases.length === 0) {
       throw new NotFoundException('There are no test cases for this problem');
