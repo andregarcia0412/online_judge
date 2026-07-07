@@ -36,7 +36,7 @@ export const PROBLEM_SEED: ProblemSeed[] = [
     points: 5,
     author: 'Online Judge',
     description:
-      'Read two integer values, A and B, calculate their sum and print the result. This is a classic introductory problem (beecrowd 1003).',
+      'Read two integer values, A and B, calculate their sum and print the result.',
     inputDescription:
       'The input contains two integer values, A and B, one per line.',
     outputDescription:
@@ -96,7 +96,7 @@ export const PROBLEM_SEED: ProblemSeed[] = [
     points: 15,
     author: 'Online Judge',
     description:
-      'Given an array of integers and a target value, return the 0-based indices of the two numbers that add up to the target. Exactly one solution exists and the same element may not be used twice (LeetCode #1).',
+      'Given an array of integers and a target value, return the 0-based indices of the two numbers that add up to the target. Exactly one solution exists and the same element may not be used twice.',
     inputDescription:
       'First line: N, the array size. Second line: N integers. Third line: the target value.',
     outputDescription:
@@ -191,7 +191,7 @@ export const PROBLEM_SEED: ProblemSeed[] = [
     points: 30,
     author: 'Online Judge',
     description:
-      "Given an integer array, find the contiguous subarray with the largest sum and print that sum (Kadane's algorithm, LeetCode #53).",
+      'Given an integer array, find the contiguous subarray with the largest sum and print that sum.',
     inputDescription:
       'First line: N, the array size. Second line: N integers separated by spaces.',
     outputDescription: 'Print the maximum contiguous subarray sum.',
@@ -286,7 +286,7 @@ export const PROBLEM_SEED: ProblemSeed[] = [
     points: 30,
     author: 'Online Judge',
     description:
-      'Given a set of coin denominations and a target amount, print the minimum number of coins needed to make the amount, or -1 if it is impossible (LeetCode #322).',
+      'Given a set of coin denominations and a target amount, print the minimum number of coins needed to make the amount, or -1 if it is impossible.',
     inputDescription:
       'First line: N, the number of coins. Second line: N denominations. Third line: the target amount.',
     outputDescription:
@@ -306,7 +306,7 @@ export const PROBLEM_SEED: ProblemSeed[] = [
     points: 35,
     author: 'Online Judge',
     description:
-      'Given a grid of 0s (water) and 1s (land), count the number of islands. An island is a group of adjacent land cells connected horizontally or vertically (LeetCode #200).',
+      'Given a grid of 0s (water) and 1s (land), count the number of islands. An island is a group of adjacent land cells connected horizontally or vertically.',
     inputDescription:
       'First line: R and C, the grid dimensions. Next R lines: C characters (0 or 1) each.',
     outputDescription: 'Print the number of islands in the grid.',
@@ -346,8 +346,7 @@ export const PROBLEM_SEED: ProblemSeed[] = [
     title: 'Product of Two Numbers',
     points: 5,
     author: 'Online Judge',
-    description:
-      'Read two integer values A and B and print their product (beecrowd 1004).',
+    description: 'Read two integer values A and B and print their product.',
     inputDescription:
       'The input contains two integers A and B, separated by a space.',
     outputDescription: 'Print the product of A and B.',
@@ -510,7 +509,7 @@ export const PROBLEM_SEED: ProblemSeed[] = [
     points: 10,
     author: 'Online Judge',
     description:
-      'Read a non-negative integer N and print the number formed by reversing its digits, dropping any leading zeros (LeetCode #7, simplified).',
+      'Read a non-negative integer N and print the number formed by reversing its digits, dropping any leading zeros.',
     inputDescription: 'The input contains a single integer N (0 <= N <= 10^9).',
     outputDescription: 'Print the reversed integer.',
     inputExample: '1200',
@@ -546,7 +545,7 @@ export const PROBLEM_SEED: ProblemSeed[] = [
     points: 5,
     author: 'Online Judge',
     description:
-      'Read an integer N and print its multiplication table from 1 to 10, one line per term, in the format "N x i = result" (beecrowd 1005).',
+      'Read an integer N and print its multiplication table from 1 to 10, one line per term, in the format "N x i = result".',
     inputDescription: 'The input contains a single integer N (1 <= N <= 1000).',
     outputDescription:
       'Print 10 lines, each in the format "N x i = result" for i from 1 to 10.',
@@ -664,7 +663,7 @@ export const PROBLEM_SEED: ProblemSeed[] = [
     points: 10,
     author: 'Online Judge',
     description:
-      'Read a positive integer N and determine whether it is a power of two (LeetCode #231).',
+      'Read a positive integer N and determine whether it is a power of two.',
     inputDescription: 'The input contains a single integer N (1 <= N <= 10^9).',
     outputDescription: 'Print "YES" if N is a power of two, otherwise "NO".',
     inputExample: '16',
@@ -778,7 +777,7 @@ export const PROBLEM_SEED: ProblemSeed[] = [
     points: 20,
     author: 'Online Judge',
     description:
-      'Read an array of N integers and rotate it to the right by K positions (LeetCode #189). K may be larger than N.',
+      'Read an array of N integers and rotate it to the right by K positions. K may be larger than N.',
     inputDescription:
       'First line: N. Second line: N integers. Third line: K, the rotation amount.',
     outputDescription: 'Print the rotated array, space separated.',
@@ -797,7 +796,7 @@ export const PROBLEM_SEED: ProblemSeed[] = [
     points: 20,
     author: 'Online Judge',
     description:
-      'Read an array of N integers and move all zeroes to the end while keeping the relative order of the non-zero elements (LeetCode #283).',
+      'Read an array of N integers and move all zeroes to the end while keeping the relative order of the non-zero elements.',
     inputDescription:
       'First line: N, the array size. Second line: N integers separated by spaces.',
     outputDescription: 'Print the resulting array, space separated.',
@@ -816,7 +815,7 @@ export const PROBLEM_SEED: ProblemSeed[] = [
     points: 20,
     author: 'Online Judge',
     description:
-      'Read a sorted array of N integers and print the distinct values in ascending order (LeetCode #26).',
+      'Read a sorted array of N integers and print the distinct values in ascending order.',
     inputDescription:
       'First line: N. Second line: N integers in non-decreasing order.',
     outputDescription: 'Print the distinct values, space separated.',
@@ -835,7 +834,7 @@ export const PROBLEM_SEED: ProblemSeed[] = [
     points: 20,
     author: 'Online Judge',
     description:
-      'Read a string containing only the characters ()[]{} and determine whether the brackets are balanced and correctly nested (LeetCode #20).',
+      'Read a string containing only the characters ()[]{} and determine whether the brackets are balanced and correctly nested.',
     inputDescription:
       'The input contains a single line with a bracket string S.',
     outputDescription: 'Print "YES" if the string is valid, otherwise "NO".',
@@ -854,7 +853,7 @@ export const PROBLEM_SEED: ProblemSeed[] = [
     points: 15,
     author: 'Online Judge',
     description:
-      'Read an array of N integers and determine whether any value appears more than once (LeetCode #217).',
+      'Read an array of N integers and determine whether any value appears more than once.',
     inputDescription:
       'First line: N, the array size. Second line: N integers separated by spaces.',
     outputDescription: 'Print "YES" if there is a duplicate, otherwise "NO".',
@@ -873,7 +872,7 @@ export const PROBLEM_SEED: ProblemSeed[] = [
     points: 20,
     author: 'Online Judge',
     description:
-      'Every element in the array appears exactly twice except for one, which appears once. Find and print that single element (LeetCode #136). Hint: use XOR.',
+      'Every element in the array appears exactly twice except for one, which appears once. Find and print that single element. Hint: use XOR.',
     inputDescription:
       'First line: N (odd). Second line: N integers separated by spaces.',
     outputDescription: 'Print the element that appears only once.',
@@ -892,7 +891,7 @@ export const PROBLEM_SEED: ProblemSeed[] = [
     points: 20,
     author: 'Online Judge',
     description:
-      'Read an array of N integers where one element appears more than N/2 times. Print that majority element (LeetCode #169).',
+      'Read an array of N integers where one element appears more than N/2 times. Print that majority element.',
     inputDescription:
       'First line: N, the array size. Second line: N integers separated by spaces.',
     outputDescription: 'Print the majority element.',
@@ -911,7 +910,7 @@ export const PROBLEM_SEED: ProblemSeed[] = [
     points: 15,
     author: 'Online Judge',
     description:
-      'Read a non-negative integer N and print how many bits are set to 1 in its binary representation (LeetCode #191, Hamming weight).',
+      'Read a non-negative integer N and print how many bits are set to 1 in its binary representation (Hamming weight).',
     inputDescription: 'The input contains a single integer N (0 <= N <= 10^9).',
     outputDescription: 'Print the number of set bits in N.',
     inputExample: '11',
@@ -965,7 +964,7 @@ export const PROBLEM_SEED: ProblemSeed[] = [
     points: 25,
     author: 'Online Judge',
     description:
-      'Given daily prices of a stock, find the maximum profit from a single buy followed by a later sell. If no profit is possible, the answer is 0 (LeetCode #121).',
+      'Given daily prices of a stock, find the maximum profit from a single buy followed by a later sell. If no profit is possible, the answer is 0.',
     inputDescription:
       'First line: N, the number of days. Second line: N prices separated by spaces.',
     outputDescription: 'Print the maximum achievable profit.',
@@ -984,7 +983,7 @@ export const PROBLEM_SEED: ProblemSeed[] = [
     points: 20,
     author: 'Online Judge',
     description:
-      'You climb a staircase of N steps, taking 1 or 2 steps at a time. Print the number of distinct ways to reach the top (LeetCode #70).',
+      'You climb a staircase of N steps, taking 1 or 2 steps at a time. Print the number of distinct ways to reach the top.',
     inputDescription: 'The input contains a single integer N (1 <= N <= 45).',
     outputDescription: 'Print the number of distinct ways to climb the stairs.',
     inputExample: '3',
@@ -1002,7 +1001,7 @@ export const PROBLEM_SEED: ProblemSeed[] = [
     points: 20,
     author: 'Online Judge',
     description:
-      'Read N strings and print the longest common prefix shared by all of them. If there is none, print an empty line (LeetCode #14).',
+      'Read N strings and print the longest common prefix shared by all of them. If there is none, print an empty line.',
     inputDescription: 'First line: N. Next N lines: one string each.',
     outputDescription:
       'Print the longest common prefix, or an empty line if none.',
@@ -1021,7 +1020,7 @@ export const PROBLEM_SEED: ProblemSeed[] = [
     points: 15,
     author: 'Online Judge',
     description:
-      'Read two strings and determine whether the second is an anagram of the first, i.e. it uses exactly the same characters with the same frequencies (LeetCode #242).',
+      'Read two strings and determine whether the second is an anagram of the first, i.e. it uses exactly the same characters with the same frequencies.',
     inputDescription: 'Two lines, each containing one string.',
     outputDescription: 'Print "YES" if they are anagrams, otherwise "NO".',
     inputExample: 'anagram\nnagaram',
@@ -1039,7 +1038,7 @@ export const PROBLEM_SEED: ProblemSeed[] = [
     points: 20,
     author: 'Online Judge',
     description:
-      'Given a sorted array and a target, find the two elements that sum to the target and print their 1-based indices. Exactly one solution exists (LeetCode #167).',
+      'Given a sorted array and a target, find the two elements that sum to the target and print their 1-based indices. Exactly one solution exists.',
     inputDescription:
       'First line: N. Second line: N sorted integers. Third line: the target.',
     outputDescription: 'Print the two 1-based indices in ascending order.',
@@ -1058,7 +1057,7 @@ export const PROBLEM_SEED: ProblemSeed[] = [
     points: 25,
     author: 'Online Judge',
     description:
-      'Read an integer N and print how many prime numbers are strictly less than N. Use the Sieve of Eratosthenes (LeetCode #204).',
+      'Read an integer N and print how many prime numbers are strictly less than N. Use the Sieve of Eratosthenes.',
     inputDescription:
       'The input contains a single integer N (0 <= N <= 5000000).',
     outputDescription: 'Print the count of primes strictly less than N.',
@@ -1115,7 +1114,7 @@ export const PROBLEM_SEED: ProblemSeed[] = [
     points: 25,
     author: 'Online Judge',
     description:
-      'A robot starts at the top-left of an M x N grid and can only move right or down. Print the number of distinct paths to reach the bottom-right corner (LeetCode #62).',
+      'A robot starts at the top-left of an M x N grid and can only move right or down. Print the number of distinct paths to reach the bottom-right corner.',
     inputDescription:
       'The input contains two integers M and N, separated by a space (1 <= M, N <= 20).',
     outputDescription: 'Print the number of unique paths.',
@@ -1134,7 +1133,7 @@ export const PROBLEM_SEED: ProblemSeed[] = [
     points: 30,
     author: 'Online Judge',
     description:
-      'Read a string and print the length of the longest substring without repeating characters (LeetCode #3).',
+      'Read a string and print the length of the longest substring without repeating characters.',
     inputDescription: 'The input contains a single line with a string S.',
     outputDescription:
       'Print the length of the longest substring without repeats.',
@@ -1153,7 +1152,7 @@ export const PROBLEM_SEED: ProblemSeed[] = [
     points: 35,
     author: 'Online Judge',
     description:
-      'Read an array of N integers and print the length of its longest strictly increasing subsequence (LeetCode #300).',
+      'Read an array of N integers and print the length of its longest strictly increasing subsequence.',
     inputDescription:
       'First line: N, the array size. Second line: N integers separated by spaces.',
     outputDescription:
@@ -1173,7 +1172,7 @@ export const PROBLEM_SEED: ProblemSeed[] = [
     points: 40,
     author: 'Online Judge',
     description:
-      'Read two strings and print the minimum number of single-character insertions, deletions, or replacements needed to transform the first into the second (LeetCode #72).',
+      'Read two strings and print the minimum number of single-character insertions, deletions, or replacements needed to transform the first into the second.',
     inputDescription: 'Two lines, each containing one string.',
     outputDescription: 'Print the edit distance between the two strings.',
     inputExample: 'horse\nros',
@@ -1191,7 +1190,7 @@ export const PROBLEM_SEED: ProblemSeed[] = [
     points: 35,
     author: 'Online Judge',
     description:
-      'Read two strings and print the length of their longest common subsequence, i.e. the longest sequence of characters appearing in both in the same relative order (LeetCode #1143).',
+      'Read two strings and print the length of their longest common subsequence, i.e. the longest sequence of characters appearing in both in the same relative order.',
     inputDescription: 'Two lines, each containing one string.',
     outputDescription: 'Print the length of the longest common subsequence.',
     inputExample: 'abcde\nace',
@@ -1228,7 +1227,7 @@ export const PROBLEM_SEED: ProblemSeed[] = [
     points: 40,
     author: 'Online Judge',
     description:
-      'Given N non-negative heights representing an elevation map where each bar is 1 unit wide, print how many units of water can be trapped after raining (LeetCode #42).',
+      'Given N non-negative heights representing an elevation map where each bar is 1 unit wide, print how many units of water can be trapped after raining.',
     inputDescription:
       'First line: N, the number of bars. Second line: N heights separated by spaces.',
     outputDescription: 'Print the total amount of trapped water.',
@@ -1247,7 +1246,7 @@ export const PROBLEM_SEED: ProblemSeed[] = [
     points: 35,
     author: 'Online Judge',
     description:
-      'Read a string and print the length of its longest substring that is a palindrome (LeetCode #5).',
+      'Read a string and print the length of its longest substring that is a palindrome.',
     inputDescription: 'The input contains a single line with a string S.',
     outputDescription: 'Print the length of the longest palindromic substring.',
     inputExample: 'babad',
@@ -1265,7 +1264,7 @@ export const PROBLEM_SEED: ProblemSeed[] = [
     points: 40,
     author: 'Online Judge',
     description:
-      'Read an integer N and print the number of distinct ways to place N non-attacking queens on an N x N chessboard (LeetCode #52).',
+      'Read an integer N and print the number of distinct ways to place N non-attacking queens on an N x N chessboard.',
     inputDescription: 'The input contains a single integer N (1 <= N <= 12).',
     outputDescription: 'Print the number of valid queen placements.',
     inputExample: '4',
