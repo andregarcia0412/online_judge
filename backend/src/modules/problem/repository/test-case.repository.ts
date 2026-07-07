@@ -1,5 +1,6 @@
+import { TransactionHost } from '@nestjs-cls/transactional';
+import { TransactionalAdapterTypeOrm } from '@nestjs-cls/transactional-adapter-typeorm';
 import { Injectable } from '@nestjs/common';
-import { InjectRepository } from '@nestjs/typeorm';
 import { EntityManager, Repository } from 'typeorm';
 import { TestCase } from '../entities/test-case.entity';
 import { TestCaseRepositoryPort } from '../interface/repository/test-case.repository.port';
@@ -7,8 +8,7 @@ import { TestCaseRepositoryPort } from '../interface/repository/test-case.reposi
 @Injectable()
 export class TestCaseRepository implements TestCaseRepositoryPort {
   constructor(
-    @InjectRepository(TestCase)
-    private readonly testCaseRepository: Repository<TestCase>,
+    private readonly txHost: TransactionHost<TransactionalAdapterTypeOrm>,
   ) {}
   async findByProblemId(
     idProblem: number,
@@ -71,6 +71,6 @@ export class TestCaseRepository implements TestCaseRepositoryPort {
     await repository.delete({ idProblem });
   }
   private getRepository(manager?: EntityManager): Repository<TestCase> {
-    return manager ? manager.getRepository(TestCase) : this.testCaseRepository;
+    return (manager ?? this.txHost.tx).getRepository(TestCase);
   }
 }

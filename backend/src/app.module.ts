@@ -1,13 +1,17 @@
+import { ClsPluginTransactional } from '@nestjs-cls/transactional';
+import { TransactionalAdapterTypeOrm } from '@nestjs-cls/transactional-adapter-typeorm';
 import { Module } from '@nestjs/common';
-import { SubmissionModule } from './modules/submission/submission.module';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { TypeOrmModule } from '@nestjs/typeorm';
-import { UserModule } from './modules/user/user.module';
-import { ProblemModule } from './modules/problem/problem.module';
+import * as Joi from 'joi';
+import { ClsModule } from 'nestjs-cls';
+import { DataSource } from 'typeorm';
 import { AuthModule } from './modules/auth/auth.module';
 import { LlmModule } from './modules/llm/llm.module';
+import { ProblemModule } from './modules/problem/problem.module';
+import { SubmissionModule } from './modules/submission/submission.module';
 import { SystemModule } from './modules/system/system.module';
-import * as Joi from 'joi';
+import { UserModule } from './modules/user/user.module';
 
 @Module({
   imports: [
@@ -58,6 +62,16 @@ import * as Joi from 'joi';
         synchronize: true,
       }),
       inject: [ConfigService],
+    }),
+    ClsModule.forRoot({
+      plugins: [
+        new ClsPluginTransactional({
+          imports: [TypeOrmModule],
+          adapter: new TransactionalAdapterTypeOrm({
+            dataSourceToken: DataSource,
+          }),
+        }),
+      ],
     }),
     SubmissionModule,
     UserModule,

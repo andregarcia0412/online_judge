@@ -51,6 +51,10 @@ export class UserService implements UserServicePort {
     return ReturnUserDto.fromEntity(user);
   }
 
+  async findUserEntityById(id: string): Promise<User> {
+    return await this.findOneUserByIdUseCase.execute(id);
+  }
+
   async findOneByEmail(email: string): Promise<User | null> {
     return await this.findOneByEmailUseCase.execute(email);
   }

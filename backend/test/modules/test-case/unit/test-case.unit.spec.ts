@@ -133,6 +133,57 @@ describe('TestCaseService', () => {
     });
   });
 
+  describe('Find Test Case Entity By Id', () => {
+    it('should delegate to FindTestCaseByIdUseCase and return the raw entity', async () => {
+      const testCaseEntity = TestCaseFactory.makeTestCaseEntity();
+      useCaseMocks.findTestCaseByIdUseCase.execute.mockResolvedValue(
+        testCaseEntity,
+      );
+
+      const result = await service.findTestCaseEntityById(testCaseEntity.id);
+
+      expect(result).not.toBeInstanceOf(ReturnTestCaseDto);
+      expect(result).toBe(testCaseEntity);
+      expect(useCaseMocks.findTestCaseByIdUseCase.execute).toHaveBeenCalledWith(
+        testCaseEntity.id,
+      );
+    });
+
+    it('should propagate not found exception thrown by the use case', async () => {
+      const error = new NotFoundException('Test case not found');
+      useCaseMocks.findTestCaseByIdUseCase.execute.mockRejectedValue(error);
+
+      await expect(service.findTestCaseEntityById('123')).rejects.toThrow(error);
+    });
+  });
+
+  describe('Find All Test Case Entities By Problem Id', () => {
+    it('should delegate to FindAllTestCasesByProblemIdUseCase and return the raw entities', async () => {
+      const testCaseEntity = TestCaseFactory.makeTestCaseEntity();
+      useCaseMocks.findAllTestCasesByProblemIdUseCase.execute.mockResolvedValue([
+        testCaseEntity,
+      ]);
+
+      const result = await service.findAllEntitiesByProblemId(1);
+
+      expect(result).toHaveLength(1);
+      expect(result[0]).not.toBeInstanceOf(ReturnTestCaseDto);
+      expect(result[0]).toBe(testCaseEntity);
+      expect(
+        useCaseMocks.findAllTestCasesByProblemIdUseCase.execute,
+      ).toHaveBeenCalledWith(1);
+    });
+
+    it('should propagate errors thrown by the use case', async () => {
+      const error = new NotFoundException('Problem not found');
+      useCaseMocks.findAllTestCasesByProblemIdUseCase.execute.mockRejectedValue(
+        error,
+      );
+
+      await expect(service.findAllEntitiesByProblemId(1)).rejects.toThrow(error);
+    });
+  });
+
   describe('Update Test Case', () => {
     it('should delegate to UpdateTestCaseUseCase and map to ReturnTestCaseDto', async () => {
       const testCaseId = '123';

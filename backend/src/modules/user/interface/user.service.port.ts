@@ -7,6 +7,7 @@ export interface UserServicePort {
   create(createUserDto: CreateUserDto): Promise<ReturnUserDto>;
   findAll(): Promise<ReturnUserDto[]>;
   findOneById(id: string): Promise<ReturnUserDto>;
+  findUserEntityById(id: string): Promise<User>;
   findOneByEmail(email: string): Promise<User | null>;
   update(id: string, updateUserDto: UpdateUserDto): Promise<ReturnUserDto>;
   remove(id: string): Promise<void>;

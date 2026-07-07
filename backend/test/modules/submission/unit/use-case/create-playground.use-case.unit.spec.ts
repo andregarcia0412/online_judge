@@ -6,25 +6,29 @@ import { TestCaseFactory } from 'test/factories/test-case.factory';
 import { TestRunnerFactory } from 'test/factories/test-runner.factory';
 
 describe('CreatePlaygroundSubmissionUseCase', () => {
-  let problemRepositoryMock: ReturnType<
-    typeof ProblemFactory.makeProblemRepositoryMock
-  >;
-  let testCaseRepositoryMock: ReturnType<
-    typeof TestCaseFactory.makeTestCaseRepositoryMock
-  >;
+  let problemServiceMock: {
+    findProblemEntityById: jest.Mock;
+  };
+  let testCaseServiceMock: {
+    findAllEntitiesByProblemId: jest.Mock;
+  };
   let testRunnerServiceMock: ReturnType<
     typeof TestRunnerFactory.makeTestResultServiceMock
   >;
   let useCase: CreatePlaygroundSubmissionUseCase;
 
   beforeEach(() => {
-    problemRepositoryMock = ProblemFactory.makeProblemRepositoryMock();
-    testCaseRepositoryMock = TestCaseFactory.makeTestCaseRepositoryMock();
+    problemServiceMock = {
+      findProblemEntityById: jest.fn(),
+    };
+    testCaseServiceMock = {
+      findAllEntitiesByProblemId: jest.fn(),
+    };
     testRunnerServiceMock = TestRunnerFactory.makeTestResultServiceMock();
 
     useCase = new CreatePlaygroundSubmissionUseCase(
-      problemRepositoryMock as any,
-      testCaseRepositoryMock as any,
+      problemServiceMock as any,
+      testCaseServiceMock as any,
       testRunnerServiceMock as any,
     );
   });
@@ -38,21 +42,19 @@ describe('CreatePlaygroundSubmissionUseCase', () => {
     const testCases = [TestCaseFactory.makeTestCaseEntity()];
     const testResult = TestRunnerFactory.makeTestResult();
 
-    problemRepositoryMock.findById.mockResolvedValue(
+    problemServiceMock.findProblemEntityById.mockResolvedValue(
       ProblemFactory.makeProblemEntity(),
     );
-    testCaseRepositoryMock.findByProblemId.mockResolvedValue(testCases);
+    testCaseServiceMock.findAllEntitiesByProblemId.mockResolvedValue(testCases);
     testRunnerServiceMock.runTests.mockResolvedValue(testResult);
 
     const result = await useCase.execute(createSubmissionDto);
 
-    expect(problemRepositoryMock.findById).toHaveBeenCalledWith(
+    expect(problemServiceMock.findProblemEntityById).toHaveBeenCalledWith(
       createSubmissionDto.idProblem,
-      undefined,
     );
-    expect(testCaseRepositoryMock.findByProblemId).toHaveBeenCalledWith(
+    expect(testCaseServiceMock.findAllEntitiesByProblemId).toHaveBeenCalledWith(
       createSubmissionDto.idProblem,
-      undefined,
     );
     expect(testRunnerServiceMock.runTests).toHaveBeenCalledWith(
       testCases,
@@ -63,7 +65,9 @@ describe('CreatePlaygroundSubmissionUseCase', () => {
   });
 
   it('should throw NotFoundException when problem is not found', async () => {
-    problemRepositoryMock.findById.mockResolvedValue(null);
+    problemServiceMock.findProblemEntityById.mockRejectedValue(
+      new NotFoundException('Problem not found'),
+    );
 
     const createPromise = useCase.execute(
       SubmissionFactory.makeCreateSubmissionDto(),
@@ -74,10 +78,10 @@ describe('CreatePlaygroundSubmissionUseCase', () => {
   });
 
   it('should throw NotFoundException when there are no test cases', async () => {
-    problemRepositoryMock.findById.mockResolvedValue(
+    problemServiceMock.findProblemEntityById.mockResolvedValue(
       ProblemFactory.makeProblemEntity(),
     );
-    testCaseRepositoryMock.findByProblemId.mockResolvedValue([]);
+    testCaseServiceMock.findAllEntitiesByProblemId.mockResolvedValue([]);
 
     const createPromise = useCase.execute(
       SubmissionFactory.makeCreateSubmissionDto(),
