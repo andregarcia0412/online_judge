@@ -7,6 +7,7 @@ import xcircle from "../../../assets/xcircle.svg";
 import { useLockBodyScroll } from "../../../hooks/useLockBodyScroll";
 import Button from "../../input/button/Button";
 import "./style.result-card.css";
+import { capitalizeWords } from "../../../utils/capitalizeWords";
 
 type ResultCardProps = {
   accepted?: boolean;
@@ -107,7 +108,7 @@ export const ResultCard = ({
           <div className="result-card-footer">
             <div className="result-card-footer-inner">
               <p style={{ color: "rgba(255,255,255,0.8)" }}>Status</p>
-              <p>{status}</p>
+              <p>{capitalizeWords(status)}</p>
             </div>
 
             <div className="result-card-footer-inner">
