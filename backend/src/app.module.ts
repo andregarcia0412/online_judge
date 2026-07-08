@@ -44,6 +44,8 @@ import { SeedsModule } from './modules/seeds/seeds.module';
 
         LLM_API_URL: Joi.string().required(),
         INTERNAL_API_KEY: Joi.string().required(),
+
+        RUN_SEEDS: Joi.boolean().default(true),
       }),
       validationOptions: {
         abortEarly: false,
