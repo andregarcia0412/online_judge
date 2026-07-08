@@ -2,7 +2,7 @@ import { BadRequestException, Inject, Injectable } from '@nestjs/common';
 import { TestCase } from 'src/modules/problem/entities/test-case.entity';
 import { CodeRunnerProviderPort } from 'src/shared/provider/code-runner/code-runner.provider.port';
 import { ExecuteCodeDto } from '../../shared/provider/code-runner/dto/execute-code.dto';
-import { StatusEnum } from '../submission/enum/submission-status';
+import { SubmissionStatusEnum } from '../submission/enum/submission-status';
 import { TestResult } from './dto/test-result.dto';
 import { TestRunnerServicePort } from './interface/test-runner.service.port';
 
@@ -50,7 +50,7 @@ export class TestRunnerService implements TestRunnerServicePort {
         result.memoryUsage === undefined
       ) {
         return new TestResult(
-          StatusEnum.SUBMISSION_ERROR,
+          SubmissionStatusEnum.SUBMISSION_ERROR,
           biggestRuntime,
           null,
           'Execution failed',
@@ -60,12 +60,12 @@ export class TestRunnerService implements TestRunnerServicePort {
       }
 
       if (
-        result.status === StatusEnum.COMPILATION_ERROR ||
-        result.status === StatusEnum.TIME_LIMIT_EXCEEDED ||
+        result.status === SubmissionStatusEnum.COMPILATION_ERROR ||
+        result.status === SubmissionStatusEnum.TIME_LIMIT_EXCEEDED ||
         result.errorOcurred
       ) {
         return new TestResult(
-          result.status ?? StatusEnum.RUNTIME_ERROR,
+          result.status ?? SubmissionStatusEnum.RUNTIME_ERROR,
           biggestRuntime,
           null,
           result.errOutput,
@@ -85,7 +85,7 @@ export class TestRunnerService implements TestRunnerServicePort {
       if (testCase.output != result.output) {
         if (this.normalize(result.output) === this.normalize(testCase.output)) {
           return new TestResult(
-            StatusEnum.PRESENTATION_ERROR,
+            SubmissionStatusEnum.PRESENTATION_ERROR,
             Math.trunc(biggestRuntime),
             result.output,
             null,
@@ -95,7 +95,7 @@ export class TestRunnerService implements TestRunnerServicePort {
         }
 
         return new TestResult(
-          StatusEnum.WRONG_ANSWER,
+          SubmissionStatusEnum.WRONG_ANSWER,
           Math.trunc(biggestRuntime),
           result.output,
           result.errorOcurred ? result.errOutput : null,
@@ -112,7 +112,7 @@ export class TestRunnerService implements TestRunnerServicePort {
     }
 
     return new TestResult(
-      StatusEnum.ACCEPTED,
+      SubmissionStatusEnum.ACCEPTED,
       Math.trunc(biggestRuntime),
       result.output,
       null,

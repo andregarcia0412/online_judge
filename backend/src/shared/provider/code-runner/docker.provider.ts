@@ -9,7 +9,7 @@ import { ExecuteCodeDto } from 'src/shared/provider/code-runner/dto/execute-code
 import { TarPackProviderPort } from '../tar-pack/tar-pack.provider.port';
 import { CodeRunnerProviderPort } from './code-runner.provider.port';
 import { LANGUAGES } from './infra/languages/languages';
-import { StatusEnum } from 'src/modules/submission/enum/submission-status';
+import { SubmissionStatusEnum } from 'src/modules/submission/enum/submission-status';
 
 @Injectable()
 export class DockerProvider implements CodeRunnerProviderPort {
@@ -126,7 +126,7 @@ export class DockerProvider implements CodeRunnerProviderPort {
             0,
             true,
             0,
-            StatusEnum.COMPILATION_ERROR,
+            SubmissionStatusEnum.COMPILATION_ERROR,
           );
         }
       }
@@ -177,7 +177,7 @@ export class DockerProvider implements CodeRunnerProviderPort {
           executionTime,
           true,
           memoryUsageMB,
-          StatusEnum.TIME_LIMIT_EXCEEDED,
+          SubmissionStatusEnum.TIME_LIMIT_EXCEEDED,
         );
       }
 

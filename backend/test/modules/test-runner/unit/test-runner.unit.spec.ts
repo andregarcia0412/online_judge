@@ -1,6 +1,6 @@
 import { BadRequestException } from '@nestjs/common';
 import { ExecuteCodeDto } from 'src/shared/provider/code-runner/dto/execute-code.dto';
-import { StatusEnum } from 'src/modules/submission/enum/submission-status';
+import { SubmissionStatusEnum } from 'src/modules/submission/enum/submission-status';
 import { TestCase } from 'src/modules/problem/entities/test-case.entity';
 import { TestRunnerService } from 'src/modules/test-runner/test-runner.service';
 
@@ -64,7 +64,7 @@ describe('TestRunnerService', () => {
 
     const result = await service.runTests(testCases, 'print(1)', 'python');
 
-    expect(result.status).toBe(StatusEnum.REJECTED);
+    expect(result.status).toBe(SubmissionStatusEnum.REJECTED);
     expect(result.executionTime).toBe(0);
     expect(result.stdout).toBeNull();
     expect(result.error).toBe('Execution failed');
@@ -81,7 +81,7 @@ describe('TestRunnerService', () => {
 
     const result = await service.runTests(testCases, 'print(3)', 'python');
 
-    expect(result.status).toBe(StatusEnum.REJECTED);
+    expect(result.status).toBe(SubmissionStatusEnum.REJECTED);
     expect(result.executionTime).toBe(14);
     expect(result.stdout).toBe('3\n');
     expect(result.error).toBe('runtime error');
@@ -90,10 +90,7 @@ describe('TestRunnerService', () => {
   });
 
   it('should return ACCEPTED with biggest runtime and memory usage', async () => {
-    const testCases = [
-      makeTestCase('1\n', '1\n'),
-      makeTestCase('2\n', '2\n'),
-    ];
+    const testCases = [makeTestCase('1\n', '1\n'), makeTestCase('2\n', '2\n')];
 
     codeRunnerServiceMock.executeCode
       .mockResolvedValueOnce(new ExecuteCodeDto('1\n', '', 8.2, false, 6.4))
@@ -107,7 +104,7 @@ describe('TestRunnerService', () => {
 
     expect(codeRunnerServiceMock.getAllowedLanguages).toHaveBeenCalledTimes(1);
     expect(codeRunnerServiceMock.executeCode).toHaveBeenCalledTimes(2);
-    expect(result.status).toBe(StatusEnum.ACCEPTED);
+    expect(result.status).toBe(SubmissionStatusEnum.ACCEPTED);
     expect(result.executionTime).toBe(10);
     expect(result.stdout).toBe('2\n');
     expect(result.error).toBeNull();

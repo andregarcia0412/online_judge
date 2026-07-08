@@ -1,6 +1,6 @@
 import { NotFoundException } from '@nestjs/common';
 import { CreateSubmissionUseCase } from 'src/modules/submission/use-case/create.use-case';
-import { StatusEnum } from 'src/modules/submission/enum/submission-status';
+import { SubmissionStatusEnum } from 'src/modules/submission/enum/submission-status';
 import { TestResult } from 'src/modules/test-runner/dto/test-result.dto';
 import { ProblemFactory } from 'test/factories/problem.factory';
 import { SubmissionFactory } from 'test/factories/submission.factory';
@@ -48,9 +48,9 @@ describe('CreateSubmissionUseCase', () => {
       updateUserStreakOnSubmission: jest.fn(),
     };
     txHostMock = {
-      withTransaction: jest.fn().mockImplementation(async (callback) =>
-        callback(),
-      ),
+      withTransaction: jest
+        .fn()
+        .mockImplementation(async (callback) => callback()),
     };
 
     useCase = new CreateSubmissionUseCase(
@@ -267,7 +267,7 @@ describe('CreateSubmissionUseCase', () => {
     const savedTestCase = TestCaseFactory.makeTestCaseEntity();
     const savedSubmission = SubmissionFactory.makeSubmissionEntity();
     const rejectedResult = new TestResult(
-      StatusEnum.REJECTED,
+      SubmissionStatusEnum.REJECTED,
       10,
       '0\n',
       'Wrong Answer',

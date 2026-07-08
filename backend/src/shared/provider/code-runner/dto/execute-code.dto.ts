@@ -1,5 +1,5 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { StatusEnum } from 'src/modules/submission/enum/submission-status';
+import { SubmissionStatusEnum } from 'src/modules/submission/enum/submission-status';
 
 export class ExecuteCodeDto {
   @ApiProperty()
@@ -12,8 +12,8 @@ export class ExecuteCodeDto {
   errorOcurred: boolean;
   @ApiProperty()
   memoryUsage: number = 0;
-  @ApiProperty({ enum: StatusEnum })
-  status?: StatusEnum;
+  @ApiProperty({ enum: SubmissionStatusEnum })
+  status?: SubmissionStatusEnum;
 
   constructor(
     output: string,
@@ -21,7 +21,7 @@ export class ExecuteCodeDto {
     timeMs: number,
     errorOcurred: boolean,
     memoryUsage: number,
-    status?: StatusEnum,
+    status?: SubmissionStatusEnum,
   ) {
     this.output = output;
     this.errOutput = errOutput;
