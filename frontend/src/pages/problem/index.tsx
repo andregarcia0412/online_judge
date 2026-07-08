@@ -152,12 +152,14 @@ export const ProblemScreen = () => {
             <div className="problem-card-row">
               <h3>Examples</h3>
               <div className="problem-examples">
-                <div className="problem-example">
-                  <p>Input Example</p>
-                  <div className="problem-example-box">
-                    <p>{problem.input_example}</p>
+                {problem.input_example && (
+                  <div className="problem-example">
+                    <p>Input Example</p>
+                    <div className="problem-example-box">
+                      <p>{problem.input_example}</p>
+                    </div>
                   </div>
-                </div>
+                )}
                 <div className="problem-example">
                   <p>Output Example</p>
                   <div className="problem-example-box">
@@ -246,6 +248,7 @@ export const ProblemScreen = () => {
           totalTestCases={problem.test_cases.length}
           accepted={submissionInfo.status === "accepted"}
           submissionDate={submissionInfo.submission_date}
+          status={submissionInfo.status}
           onClose={() => setShowPopup(false)}
           onClickRight={() => console.log("A")}
         />

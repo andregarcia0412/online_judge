@@ -1,5 +1,5 @@
 import { Entity, PrimaryGeneratedColumn, Column } from 'typeorm';
-import { StatusEnum } from '../enum/submission-status';
+import { SubmissionStatusEnum } from '../../../shared/enum/submission-status';
 
 @Entity('Submission')
 export class Submission {
@@ -18,8 +18,12 @@ export class Submission {
   @Column({ type: 'varchar', length: 64 })
   language: string;
 
-  @Column({ type: 'enum', enum: StatusEnum, default: StatusEnum.PENDING })
-  status: StatusEnum;
+  @Column({
+    type: 'enum',
+    enum: SubmissionStatusEnum,
+    default: SubmissionStatusEnum.PENDING,
+  })
+  status: SubmissionStatusEnum;
 
   @Column({ name: 'execution_time', type: 'integer' })
   executionTime: number;
@@ -46,7 +50,7 @@ export class Submission {
     idProblem: number,
     text: string,
     language: string,
-    status: StatusEnum,
+    status: SubmissionStatusEnum,
     executionTime: number,
     submissionDate: Date,
     error: string | null,

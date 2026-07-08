@@ -4,7 +4,7 @@ import { Injectable } from '@nestjs/common';
 import { TestResult } from 'src/modules/test-runner/dto/test-result.dto';
 import { EntityManager, Repository } from 'typeorm';
 import { Submission } from '../entities/submission.entity';
-import { StatusEnum } from '../enum/submission-status';
+import { SubmissionStatusEnum } from '../../../shared/enum/submission-status';
 import { SubmissionRepositoryPort } from '../interface/submission.repository.port';
 
 @Injectable()
@@ -22,7 +22,7 @@ export class SubmissionRepository implements SubmissionRepositoryPort {
     return await repository.findOne({
       where: {
         idUser,
-        status: StatusEnum.ACCEPTED,
+        status: SubmissionStatusEnum.ACCEPTED,
         language,
         idProblem,
       },

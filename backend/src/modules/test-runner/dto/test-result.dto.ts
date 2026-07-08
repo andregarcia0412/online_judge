@@ -1,10 +1,10 @@
 import { ApiProperty } from '@nestjs/swagger';
 import { Expose } from 'class-transformer';
-import { StatusEnum } from 'src/modules/submission/enum/submission-status';
+import { SubmissionStatusEnum } from 'src/shared/enum/submission-status';
 
 export class TestResult {
   constructor(
-    status: StatusEnum,
+    status: SubmissionStatusEnum,
     executionTime: number,
     stdout: string | null,
     error: string | null,
@@ -20,7 +20,7 @@ export class TestResult {
   }
 
   @ApiProperty()
-  status: StatusEnum;
+  status: SubmissionStatusEnum;
 
   @Expose({ name: 'execution_time' })
   @ApiProperty({ name: 'execution_time' })

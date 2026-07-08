@@ -1,7 +1,7 @@
 import { CreateSubmissionDto } from 'src/modules/submission/dto/create-submission.dto';
 import { ReturnSubmissionDto } from 'src/modules/submission/dto/return-submission.dto';
 import { Submission } from 'src/modules/submission/entities/submission.entity';
-import { StatusEnum } from 'src/modules/submission/enum/submission-status';
+import { SubmissionStatusEnum } from 'src/shared/enum/submission-status';
 
 export class SubmissionFactory {
   private static readonly fixedDate = new Date('2026-01-01T00:00:00.000Z');
@@ -59,7 +59,7 @@ export class SubmissionFactory {
       1,
       'print("Hello World!")',
       'python',
-      StatusEnum.ACCEPTED,
+      SubmissionStatusEnum.ACCEPTED,
       0,
       new Date(this.fixedDate.getDate()),
       null,
