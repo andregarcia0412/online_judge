@@ -50,8 +50,8 @@ export class SubmissionService implements SubmissionServicePort {
   }
 
   async findAll(): Promise<ReturnSubmissionDto[]> {
-    return (await this.findAllSubmissionUseCase.execute()).map(
-      ReturnSubmissionDto.fromEntity,
+    return (await this.findAllSubmissionUseCase.execute()).map((submission) =>
+      ReturnSubmissionDto.fromEntity(submission),
     );
   }
 
@@ -63,7 +63,7 @@ export class SubmissionService implements SubmissionServicePort {
 
   async findAllByUserId(idUser: string): Promise<ReturnSubmissionDto[]> {
     return (await this.findAllSubmissionByUserIdUseCase.execute(idUser)).map(
-      ReturnSubmissionDto.fromEntity,
+      (submission) => ReturnSubmissionDto.fromEntity(submission),
     );
   }
 

@@ -41,7 +41,9 @@ export class UserService implements UserServicePort {
   }
 
   async findAll(): Promise<ReturnUserDto[]> {
-    return (await this.findAllUseCase.execute()).map(ReturnUserDto.fromEntity);
+    return (await this.findAllUseCase.execute()).map((user) =>
+      ReturnUserDto.fromEntity(user),
+    );
   }
 
   async findOneById(id: string): Promise<ReturnUserDto> {
