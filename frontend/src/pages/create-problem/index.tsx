@@ -21,6 +21,7 @@ import { useFetch } from "../../hooks/useFetch";
 import { normalizeNewLines } from "../../utils/normalizeNewLines";
 import { createProblemSchema } from "../../validations/create-problem.schema";
 import "./style.css";
+import { useClickOutside } from "../../hooks/useClickOutside";
 
 type TestCase = {
   input: string;
@@ -60,6 +61,9 @@ export const CreateProblem = () => {
   const [testCases, setTestCases] = React.useState<TestCase[]>([]);
   const [loadingCreate, setLoadingCreate] = React.useState<boolean>(false);
   const [visiblePopover, setVisiblePopover] = React.useState<boolean>(false);
+  const popoverRef = React.useRef<HTMLDivElement | null>(null);
+
+  useClickOutside(popoverRef, () => setVisiblePopover(false));
 
   const { data: availableCategoriesData, error: categoriesError } = useFetch<
     CategoryDto[]
@@ -264,7 +268,7 @@ export const CreateProblem = () => {
             </ConfigProvider>
           </div>
 
-          <div className="create-categories-wrapper">
+          <div className="create-categories-wrapper" ref={popoverRef}>
             <div className="create-categories-title">
               <p>Categories</p>
 
