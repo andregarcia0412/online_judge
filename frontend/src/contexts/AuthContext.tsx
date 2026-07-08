@@ -5,9 +5,9 @@ import type {
   RegisterDto,
 } from "../data/dto/auth.dto";
 import { api } from "../api/api.client";
-import { loginService, registerService } from "../api/services/auth.service";
 import { userService } from "../api/services/user.service";
 import type { User } from "../data/dto/user.dto";
+import { authService } from "../api/services/auth.service";
 
 type AuthContextType = {
   tokens: AuthResponseDto | null;
@@ -64,7 +64,7 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
   }, [getUserData]);
 
   const login = async (loginData: LoginDto, rememberMe: boolean) => {
-    const response = await loginService(loginData);
+    const response = await authService.login(loginData);
 
     if (!response) {
       throw new Error("Email ou senha incorretos");
@@ -86,7 +86,7 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
   };
 
   const register = async (registerData: RegisterDto, rememberMe: boolean) => {
-    const response = await registerService(registerData);
+    const response = await authService.register(registerData);
 
     if (!response) {
       throw new Error("Erro ao registrar");
