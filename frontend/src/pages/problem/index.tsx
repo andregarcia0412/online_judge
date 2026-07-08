@@ -1,7 +1,7 @@
 import { Editor } from "@monaco-editor/react";
 import { ConfigProvider, Select, theme } from "antd";
 import React from "react";
-import { Navigate, useParams } from "react-router-dom";
+import { Navigate, useNavigate, useParams } from "react-router-dom";
 import { problemService } from "../../api/services/problem.service";
 import { submissionService } from "../../api/services/submission.service";
 import play from "../../assets/play.svg";
@@ -22,6 +22,7 @@ export const ProblemScreen = () => {
   const isInvalidId = Number.isNaN(safeIdProblem);
 
   const { user } = useAuthContext();
+  const navigate = useNavigate();
   const [language, setLanguage] = React.useState<string>("java");
   const [code, setCode] = React.useState<string>(
     LanguageConstants[language].text,
@@ -33,6 +34,13 @@ export const ProblemScreen = () => {
     null,
   );
   const [quickSearchText, setQuickSearchText] = React.useState<string>("");
+
+  React.useEffect(() => {
+    setShowPopup(false);
+    setSubmissionInfo(null);
+    setLanguage("java");
+    setCode(LanguageConstants["java"].text);
+  }, [safeIdProblem]);
 
   const {
     data: problem,
@@ -251,7 +259,9 @@ export const ProblemScreen = () => {
           submissionDate={submissionInfo.submission_date}
           status={submissionInfo.status}
           onClose={() => setShowPopup(false)}
-          onClickRight={() => console.log("A")}
+          onClickRight={() => {
+            navigate(`/problem/${safeIdProblem + 1}`);
+          }}
         />
       )}
     </div>
