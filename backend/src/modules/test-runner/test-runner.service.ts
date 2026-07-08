@@ -50,10 +50,25 @@ export class TestRunnerService implements TestRunnerServicePort {
         result.memoryUsage === undefined
       ) {
         return new TestResult(
-          StatusEnum.REJECTED,
+          StatusEnum.SUBMISSION_ERROR,
           biggestRuntime,
           null,
           'Execution failed',
+          0,
+          testCasesPassed,
+        );
+      }
+
+      if (
+        result.status === StatusEnum.COMPILATION_ERROR ||
+        result.status === StatusEnum.TIME_LIMIT_EXCEEDED ||
+        result.errorOcurred
+      ) {
+        return new TestResult(
+          result.status ?? StatusEnum.RUNTIME_ERROR,
+          biggestRuntime,
+          null,
+          result.errOutput,
           0,
           testCasesPassed,
         );
@@ -68,8 +83,19 @@ export class TestRunnerService implements TestRunnerServicePort {
       }
 
       if (testCase.output != result.output) {
+        if (this.normalize(result.output) === this.normalize(testCase.output)) {
+          return new TestResult(
+            StatusEnum.PRESENTATION_ERROR,
+            Math.trunc(biggestRuntime),
+            result.output,
+            null,
+            biggestUsage,
+            testCasesPassed,
+          );
+        }
+
         return new TestResult(
-          StatusEnum.REJECTED,
+          StatusEnum.WRONG_ANSWER,
           Math.trunc(biggestRuntime),
           result.output,
           result.errorOcurred ? result.errOutput : null,
@@ -93,5 +119,14 @@ export class TestRunnerService implements TestRunnerServicePort {
       biggestUsage,
       testCasesPassed,
     );
+  }
+
+  private normalize(s: string): string {
+    return s
+      .replace(/\r\n/g, '\n')
+      .split('\n')
+      .map((line) => line.replace(/\s+/g, ' ').trim())
+      .join('\n')
+      .replace(/\n+$/g, '');
   }
 }
