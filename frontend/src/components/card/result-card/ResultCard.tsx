@@ -1,12 +1,12 @@
+import React from "react";
 import checkCircle from "../../../assets/check-circle.svg";
 import clock from "../../../assets/clock.svg";
-import database from "../../../assets/database.svg";
 import close from "../../../assets/close.svg";
+import database from "../../../assets/database.svg";
 import xcircle from "../../../assets/xcircle.svg";
-import "./style.result-card.css";
-import Button from "../../input/button/Button";
-import React from "react";
 import { useLockBodyScroll } from "../../../hooks/useLockBodyScroll";
+import Button from "../../input/button/Button";
+import "./style.result-card.css";
 
 type ResultCardProps = {
   accepted?: boolean;
@@ -17,6 +17,7 @@ type ResultCardProps = {
   language: string;
   points: number;
   submissionDate: Date;
+  status: string;
   onClose: () => void;
   onClickLeft?: () => void;
   onClickRight: () => void;
@@ -31,6 +32,7 @@ export const ResultCard = ({
   language,
   points,
   submissionDate,
+  status,
   onClose,
   onClickLeft,
   onClickRight,
@@ -104,12 +106,17 @@ export const ResultCard = ({
 
           <div className="result-card-footer">
             <div className="result-card-footer-inner">
+              <p style={{ color: "rgba(255,255,255,0.8)" }}>Status</p>
+              <p>{status}</p>
+            </div>
+
+            <div className="result-card-footer-inner">
               <p style={{ color: "rgba(255,255,255,0.8)" }}>Language</p>
               <p>{language}</p>
             </div>
             <div className="result-card-footer-inner">
               <p style={{ color: "rgba(255,255,255,0.8)" }}>Points Awarded</p>
-              <p>{points}</p>
+              <p>{accepted ? points : "0.00"}</p>
             </div>
             <div className="result-card-footer-inner">
               <p style={{ color: "rgba(255, 255, 255, 0.8)" }}>Date/Hour</p>

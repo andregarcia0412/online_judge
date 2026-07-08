@@ -246,6 +246,7 @@ export const ProblemScreen = () => {
           totalTestCases={problem.test_cases.length}
           accepted={submissionInfo.status === "accepted"}
           submissionDate={submissionInfo.submission_date}
+          status={submissionInfo.status}
           onClose={() => setShowPopup(false)}
           onClickRight={() => console.log("A")}
         />
