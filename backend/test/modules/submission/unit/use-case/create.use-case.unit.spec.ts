@@ -1,6 +1,6 @@
 import { NotFoundException } from '@nestjs/common';
 import { CreateSubmissionUseCase } from 'src/modules/submission/use-case/create.use-case';
-import { SubmissionStatusEnum } from 'src/modules/submission/enum/submission-status';
+import { SubmissionStatusEnum } from 'src/shared/enum/submission-status';
 import { TestResult } from 'src/modules/test-runner/dto/test-result.dto';
 import { ProblemFactory } from 'test/factories/problem.factory';
 import { SubmissionFactory } from 'test/factories/submission.factory';

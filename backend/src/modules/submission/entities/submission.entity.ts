@@ -1,5 +1,5 @@
 import { Entity, PrimaryGeneratedColumn, Column } from 'typeorm';
-import { SubmissionStatusEnum } from '../enum/submission-status';
+import { SubmissionStatusEnum } from '../../../shared/enum/submission-status';
 
 @Entity('Submission')
 export class Submission {

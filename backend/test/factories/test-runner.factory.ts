@@ -1,4 +1,4 @@
-import { SubmissionStatusEnum } from 'src/modules/submission/enum/submission-status';
+import { SubmissionStatusEnum } from 'src/shared/enum/submission-status';
 import { TestResult } from 'src/modules/test-runner/dto/test-result.dto';
 
 export class TestRunnerFactory {

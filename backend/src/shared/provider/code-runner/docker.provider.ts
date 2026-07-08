@@ -9,7 +9,7 @@ import { ExecuteCodeDto } from 'src/shared/provider/code-runner/dto/execute-code
 import { TarPackProviderPort } from '../tar-pack/tar-pack.provider.port';
 import { CodeRunnerProviderPort } from './code-runner.provider.port';
 import { LANGUAGES } from './infra/languages/languages';
-import { SubmissionStatusEnum } from 'src/modules/submission/enum/submission-status';
+import { SubmissionStatusEnum } from 'src/shared/enum/submission-status';
 
 @Injectable()
 export class DockerProvider implements CodeRunnerProviderPort {

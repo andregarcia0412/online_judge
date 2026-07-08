@@ -2,7 +2,7 @@ import { BadRequestException, Inject, Injectable } from '@nestjs/common';
 import { TestCase } from 'src/modules/problem/entities/test-case.entity';
 import { CodeRunnerProviderPort } from 'src/shared/provider/code-runner/code-runner.provider.port';
 import { ExecuteCodeDto } from '../../shared/provider/code-runner/dto/execute-code.dto';
-import { SubmissionStatusEnum } from '../submission/enum/submission-status';
+import { SubmissionStatusEnum } from '../../shared/enum/submission-status';
 import { TestResult } from './dto/test-result.dto';
 import { TestRunnerServicePort } from './interface/test-runner.service.port';
 

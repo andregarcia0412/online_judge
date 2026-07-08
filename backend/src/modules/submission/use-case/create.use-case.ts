@@ -8,7 +8,7 @@ import { User } from 'src/modules/user/entities/user.entity';
 import { UserServicePort } from 'src/modules/user/interface/user.service.port';
 import { CreateSubmissionDto } from '../dto/create-submission.dto';
 import { ReturnSubmissionDto } from '../dto/return-submission.dto';
-import { SubmissionStatusEnum } from '../enum/submission-status';
+import { SubmissionStatusEnum } from '../../../shared/enum/submission-status';
 import { SubmissionRepositoryPort } from '../interface/submission.repository.port';
 import { TransactionHost } from '@nestjs-cls/transactional';
 import { TransactionalAdapterTypeOrm } from '@nestjs-cls/transactional-adapter-typeorm';
