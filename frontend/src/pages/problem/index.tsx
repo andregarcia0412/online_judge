@@ -233,6 +233,7 @@ export const ProblemScreen = () => {
                 minimap: { enabled: false },
                 fontFamily: "JetBrains Mono",
                 automaticLayout: true,
+                stickyScroll: { enabled: !showPopup },
               }}
             />
           </div>
