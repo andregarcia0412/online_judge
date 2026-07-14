@@ -13,6 +13,8 @@ import { SubmissionModule } from './modules/submission/submission.module';
 import { SystemModule } from './modules/system/system.module';
 import { UserModule } from './modules/user/user.module';
 import { SeedsModule } from './modules/seeds/seeds.module';
+import { ThrottlerGuard, ThrottlerModule } from '@nestjs/throttler';
+import { APP_GUARD } from '@nestjs/core';
 
 @Module({
   imports: [
@@ -28,6 +30,8 @@ import { SeedsModule } from './modules/seeds/seeds.module';
           then: Joi.required(),
           otherwise: Joi.optional(),
         }),
+        THROTTLE_TTL: Joi.number().min(10000).default(60000),
+        THROTTLE_LIMIT: Joi.number().min(10).default(100),
 
         DB_HOST: Joi.string().required(),
         DB_PORT: Joi.number().port().required(),
@@ -76,6 +80,17 @@ import { SeedsModule } from './modules/seeds/seeds.module';
         }),
       ],
     }),
+    ThrottlerModule.forRootAsync({
+      useFactory: (configService: ConfigService) => ({
+        throttlers: [
+          {
+            ttl: configService.getOrThrow<number>('THROTTLE_TTL'),
+            limit: configService.getOrThrow<number>('THROTTLE_LIMIT'),
+          },
+        ],
+      }),
+      inject: [ConfigService],
+    }),
     SubmissionModule,
     UserModule,
     ProblemModule,
@@ -83,6 +98,12 @@ import { SeedsModule } from './modules/seeds/seeds.module';
     LlmModule,
     SystemModule,
     SeedsModule,
+  ],
+  providers: [
+    {
+      provide: APP_GUARD,
+      useClass: ThrottlerGuard,
+    },
   ],
 })
 export class AppModule {}
