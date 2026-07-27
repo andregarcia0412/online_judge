@@ -268,7 +268,7 @@ export const CreateProblem = () => {
             </ConfigProvider>
           </div>
 
-          <div className="create-categories-wrapper" ref={popoverRef}>
+          <div className="create-categories-wrapper">
             <div className="create-categories-title">
               <p>Categories</p>
 
@@ -277,7 +277,7 @@ export const CreateProblem = () => {
               </button>
 
               {
-                <Popover open={visiblePopover}>
+                <Popover open={visiblePopover} ref={popoverRef}>
                   {availableCategories.length > 0 ? (
                     availableCategories.map((category) => {
                       const isSelected = createProblemForm.categories.some(
