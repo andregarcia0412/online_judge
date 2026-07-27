@@ -1,4 +1,4 @@
-FROM llama3.2:1b
+FROM qwen2.5-coder:7b
 
 # Deterministic, no creativity: we need a single strict output format
 PARAMETER temperature 0
