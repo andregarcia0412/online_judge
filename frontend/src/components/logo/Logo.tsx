@@ -1,4 +1,3 @@
-import "./style.logo.css";
 import Code from "../../assets/code.svg";
 
 export const Logo = () => {
