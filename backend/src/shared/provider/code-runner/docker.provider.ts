@@ -288,8 +288,9 @@ export class DockerProvider implements CodeRunnerProviderPort {
 
       if (input) {
         stream.write(input);
-        stream.end();
       }
+
+      stream.end();
     });
   }
 }
