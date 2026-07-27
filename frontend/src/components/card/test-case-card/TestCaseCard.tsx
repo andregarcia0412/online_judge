@@ -1,5 +1,5 @@
+import closeSmall from "../../../assets/close_small.svg";
 import "./style.test-case-card.css";
-import CloseSmall from "../../../assets/close_small.svg";
 
 type TestCaseCardProps = {
   index: number;
@@ -18,7 +18,7 @@ export const TestCaseCard = ({
     <div className="test-case-card">
       <div className="test-case-card-title">
         <p>Test Case #{index}</p>
-        <img src={CloseSmall} onClick={onDelete} />
+        <img src={closeSmall} onClick={onDelete} />
       </div>
 
       <div className="test-case-card-input-row">

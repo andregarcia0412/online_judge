@@ -2,8 +2,8 @@ import { ConfigProvider, notification, Select, theme } from "antd";
 import axios from "axios";
 import React from "react";
 import { problemService } from "../../api/services/problem.service";
-import Add from "../../assets/add.svg";
-import RingResize from "../../assets/ring-resize.svg";
+import add from "../../assets/add.svg";
+import ringResize from "../../assets/ring-resize.svg";
 import { CategoryBadge } from "../../components/card/category-badge/CategoryBadge";
 import { CreateProblemCard } from "../../components/card/create-problem-card/CreateProblemCard";
 import { TestCaseCard } from "../../components/card/test-case-card/TestCaseCard";
@@ -17,11 +17,11 @@ import type {
   CreateProblemDto,
   CreateProblemForm,
 } from "../../data/dto/problem.dto";
+import { useClickOutside } from "../../hooks/useClickOutside";
 import { useFetch } from "../../hooks/useFetch";
 import { normalizeNewLines } from "../../utils/normalizeNewLines";
 import { createProblemSchema } from "../../validations/create-problem.schema";
 import "./style.css";
-import { useClickOutside } from "../../hooks/useClickOutside";
 
 type TestCase = {
   input: string;
@@ -273,7 +273,7 @@ export const CreateProblem = () => {
               <p>Categories</p>
 
               <button onClick={() => setVisiblePopover((prev) => !prev)}>
-                <img src={Add} />
+                <img src={add} />
               </button>
 
               {
@@ -308,7 +308,7 @@ export const CreateProblem = () => {
                       );
                     })
                   ) : (
-                    <img src={RingResize} />
+                    <img src={ringResize} />
                   )}
                 </Popover>
               }

@@ -1,4 +1,4 @@
-import Search from "../../../assets/search.svg";
+import search from "../../../assets/search.svg";
 
 type QuickSearchProps = {
   setText: (text: string) => void;
@@ -14,7 +14,7 @@ export const QuickSearch = ({
   return (
     <div className="flex justify-center items-center bg-[rgba(17,24,39,0.4)] py-1.5 px-3 gap-3 border border-[#374151] rounded-full">
       <img
-        src={Search}
+        src={search}
         onClick={handleSearch}
         className="opacity-40 h-5 w-5 cursor-pointer"
       />

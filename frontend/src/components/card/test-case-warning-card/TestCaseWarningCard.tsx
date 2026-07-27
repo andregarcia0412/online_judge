@@ -1,11 +1,11 @@
+import error from "../../../assets/error.svg";
 import "./style.warning-card.css";
-import Error from "../../../assets/error.svg";
 
 export const TestCaseWarningCard = () => {
   return (
     <div className="test-case-warning-card">
       <div className="test-case-warning-card-title">
-        <img src={Error} />
+        <img src={error} />
         <p>About Test Cases</p>
       </div>
       <p className="test-case-warning-card-description">

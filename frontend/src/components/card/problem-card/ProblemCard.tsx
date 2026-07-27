@@ -1,10 +1,10 @@
 import { Progress } from "antd";
+import check from "../../../assets/check-circle.svg";
+import circle from "../../../assets/circle.svg";
+import whiteCircle from "../../../assets/circle_white.svg";
 import type { Problem } from "../../../data/dto/problem.dto";
-import "./style.problem-card.css";
 import type { Submission } from "../../../data/dto/submission.dto";
-import Check from "../../../assets/check-circle.svg";
-import Circle from "../../../assets/circle.svg";
-import WhiteCircle from "../../../assets/circle_white.svg";
+import "./style.problem-card.css";
 
 type ProblemCardProps = {
   problem: Problem;
@@ -30,7 +30,7 @@ export const ProblemCard = ({
     );
 
     if (!submission) {
-      return WhiteCircle;
+      return whiteCircle;
     }
 
     const acceptedSubmission = userSubmissions.find(
@@ -40,10 +40,10 @@ export const ProblemCard = ({
     );
 
     if (acceptedSubmission) {
-      return Check;
+      return check;
     }
 
-    return Circle;
+    return circle;
   };
   return (
     <div className="home-problem-card" onClick={onRedirect}>
