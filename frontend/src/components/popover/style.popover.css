@@ -32,6 +32,38 @@
   pointer-events: auto;
 }
 
+.popover::-webkit-scrollbar {
+  width: 12px;
+  height: 12px;
+}
+
+.popover::-webkit-scrollbar-track,
+.popover::-webkit-scrollbar-corner {
+  background: transparent;
+}
+
+.popover::-webkit-scrollbar-thumb {
+  background-color: transparent;
+  border-radius: 999px;
+  border: 3px solid transparent;
+  background-clip: padding-box;
+  transition: background-color 0.2s ease;
+}
+
+.popover:hover::-webkit-scrollbar-thumb {
+  background-color: rgba(0, 0, 0, 0.25);
+}
+
+.popover::-webkit-scrollbar-thumb:hover {
+  background-color: rgba(0, 0, 0, 0.45);
+}
+
+@supports not selector(::-webkit-scrollbar) {
+  .window-content-wrapper {
+    scrollbar-width: thin;
+    scrollbar-color: rgba(0, 0, 0, 0.25) transparent;
+  }
+}
 @media (max-width: 640px) {
   .popover {
     right: 0;
