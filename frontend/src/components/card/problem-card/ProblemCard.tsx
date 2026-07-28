@@ -4,7 +4,6 @@ import circle from "../../../assets/circle.svg";
 import whiteCircle from "../../../assets/circle_white.svg";
 import type { Problem } from "../../../data/dto/problem.dto";
 import type { Submission } from "../../../data/dto/submission.dto";
-import "./style.problem-card.css";
 
 type ProblemCardProps = {
   problem: Problem;
@@ -46,18 +45,21 @@ export const ProblemCard = ({
     return circle;
   };
   return (
-    <div className="home-problem-card" onClick={onRedirect}>
-      <div className="home-problem-status">
+    <div
+      className="grid grid-cols-[32px_minmax(260px,1fr)_220px_90px] items-center gap-x-7 w-full bg-[rgba(17,24,39,0.4)] border border-[#30363d] text-white py-5 px-6 rounded-xl cursor-pointer transition-colors duration-150 ease hover:border-[#8b5cf6]"
+      onClick={onRedirect}
+    >
+      <div className="flex items-center justify-center">
         <img src={iconSrc()} />
       </div>
 
-      <div className="home-problem-title">
+      <div>
         <p>
           {problem.id}. {problem.title}
         </p>
       </div>
 
-      <div className="home-problem-acceptance">
+      <div className="min-w-55">
         <Progress
           strokeColor={"#4ADE80"}
           railColor="#1F2937"
@@ -74,7 +76,7 @@ export const ProblemCard = ({
         />
       </div>
 
-      <div className="home-problem-difficulty">
+      <div className="text-left font-semibold">
         <p style={{ color }}>
           {problem.difficulty[0].toUpperCase() +
             problem.difficulty.substring(1)}
