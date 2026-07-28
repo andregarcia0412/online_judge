@@ -3,7 +3,6 @@ import { useNavigate } from "react-router-dom";
 import { problemService } from "../../api/services/problem.service";
 import { submissionService } from "../../api/services/submission.service";
 import fire from "../../assets/fire.svg";
-import search from "../../assets/search.svg";
 import trackChanges from "../../assets/track_changes.svg";
 import trendingUp from "../../assets/trending_up.svg";
 import trophy from "../../assets/trophy.svg";
@@ -14,7 +13,9 @@ import { useAuthContext } from "../../contexts/AuthContext";
 import type { Problem } from "../../data/dto/problem.dto";
 import type { Submission } from "../../data/dto/submission.dto";
 import { useFetch } from "../../hooks/useFetch";
+import { HomeSearch } from "./components/HomeSearch";
 import "./style.css";
+import { HomeTitle } from "./components/HomeTitle";
 
 export const Home = () => {
   const { user, getUserData } = useAuthContext();
@@ -44,35 +45,21 @@ export const Home = () => {
   }
 
   return (
-    <div>
+    <>
       <HomeHeader
         setText={setQuickSearchText}
         handleSearch={handleSearch}
         text={quickSearchText}
       />
-      <div className="home-container">
-        <div className="home-title">
-          <h1>
-            Master Your <span>Coding Skills</span>
-          </h1>
+      <div className="home-container w-full h-screen p-6 mt-8">
+        <HomeTitle />
 
-          <p>
-            Practice coding problems, compete in contests, and improve your
-            algorithms.
-          </p>
-        </div>
+        <HomeSearch
+          value={homeSearchText}
+          onChange={(e) => setHomeSearchText(e.target.value)}
+        />
 
-        <div className="home-search-input">
-          <img src={search} />
-          <input
-            type="text"
-            placeholder="Search problem by name or ID"
-            value={homeSearchText}
-            onChange={(e) => setHomeSearchText(e.target.value)}
-          ></input>
-        </div>
-
-        <div className="stat-cards-container">
+        <div className="grid grid-cols-4 gap-5 w-full">
           <StatCard
             color="green"
             title="Problems Solved"
@@ -103,10 +90,12 @@ export const Home = () => {
           />
         </div>
 
-        <div className="home-problem-card-container">
-          <div className="home-problem-card-header">
+        <div>
+          <div className="mt-16 mb-8 text-white">
             <h2>Problems</h2>
-            <p>Challenge yourself with coding problems</p>
+            <p className="opacity-60">
+              Challenge yourself with coding problems
+            </p>
           </div>
 
           <div style={{ display: "flex", flexDirection: "column" }}>
@@ -117,7 +106,7 @@ export const Home = () => {
               <p>Difficulty</p>
             </div>
 
-            <div className="home-problem-card-wrapper">
+            <div className="flex flex-col gap-4">
               {problems?.map((problem: Problem) => {
                 return (
                   <ProblemCard
@@ -132,6 +121,6 @@ export const Home = () => {
           </div>
         </div>
       </div>
-    </div>
+    </>
   );
 };
