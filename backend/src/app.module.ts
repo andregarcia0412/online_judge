@@ -44,6 +44,18 @@ import { APP_GUARD } from '@nestjs/core';
         JWT_ACCESS_EXPIRATION_TIME: Joi.string().required(),
         JWT_REFRESH_EXPIRATION_TIME: Joi.string().required(),
 
+        RESEND_API_KEY: Joi.string().when('NODE_ENV', {
+          is: 'production',
+          then: Joi.required(),
+          otherwise: Joi.optional(),
+        }),
+
+        MAIL_FROM: Joi.string().when('NODE_ENV', {
+          is: 'production',
+          then: Joi.required(),
+          otherwise: Joi.optional(),
+        }),
+
         BCRYPT_SALT: Joi.number().integer().min(4).max(31).default(10),
 
         LLM_API_URL: Joi.string().required(),
