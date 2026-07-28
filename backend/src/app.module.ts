@@ -43,6 +43,8 @@ import { APP_GUARD } from '@nestjs/core';
         JWT_REFRESH_SECRET: Joi.string().required(),
         JWT_ACCESS_EXPIRATION_TIME: Joi.string().required(),
         JWT_REFRESH_EXPIRATION_TIME: Joi.string().required(),
+        PASSWORD_RESET_SECRET: Joi.string().required(),
+        MAX_RESET_PASSWORD_TRIES: Joi.number().positive().default(10),
 
         RESEND_API_KEY: Joi.string().when('NODE_ENV', {
           is: 'production',
