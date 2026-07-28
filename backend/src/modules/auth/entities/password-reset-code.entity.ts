@@ -19,7 +19,7 @@ export class PasswordResetCode {
   usedAt!: Date | null;
 
   @Column({ type: 'int', default: 0 })
-  attemps!: number;
+  attempts!: number;
 
   @Column({
     name: 'created_at',
