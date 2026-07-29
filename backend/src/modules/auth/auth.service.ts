@@ -23,6 +23,7 @@ import { IncrementAttemptsUseCase } from './use-case/increment-attempts.use-case
 import { InvalidateAllUseCase } from './use-case/invalidate-all.use-case';
 import { MarkAsUsedUseCase } from './use-case/mark-used.use-case';
 import { ValidateCodeUseCase } from './use-case/validate-code.use-case';
+import { CacheProviderPort } from 'src/shared/provider/cache/cache.provider.port';
 
 @Injectable()
 export class AuthService implements AuthServicePort {
@@ -47,6 +48,8 @@ export class AuthService implements AuthServicePort {
     private readonly markAsUsedUseCase: MarkAsUsedUseCase,
     @Inject(ValidateCodeUseCase)
     private readonly validateCodeUseCase: ValidateCodeUseCase,
+    @Inject(CacheProviderPort)
+    private readonly cacheProvider: CacheProviderPort,
     private readonly configService: ConfigService,
   ) {}
 
@@ -71,7 +74,22 @@ export class AuthService implements AuthServicePort {
     );
 
     const sub = typeof payload === 'string' ? payload : payload.sub;
-    if (!sub) throw new UnauthorizedException('Invalid refresh token');
+    if (!sub)
+      throw new UnauthorizedException('Invalid or expired refresh token');
+
+    if (
+      await this.cacheProvider.get<boolean>(
+        `blacklist:${refreshTokenDto.refreshToken}`,
+      )
+    )
+      throw new UnauthorizedException('Invalid or expired refresh token');
+
+    const ttl = payload.exp - Math.floor(Date.now() / 1000);
+    await this.cacheProvider.set(
+      `blacklist:${refreshTokenDto.refreshToken}`,
+      true,
+      ttl,
+    );
 
     try {
       await this.userService.findOneById(sub);
@@ -87,6 +105,30 @@ export class AuthService implements AuthServicePort {
     const user = await this.userService.create(createUserDto);
 
     return this.generateTokens(user.id);
+  }
+
+  async revokeSession(refreshTokenDto: RefreshTokenDto): Promise<void> {
+    const payload = this.jwtProvider.verifyRefreshToken(
+      refreshTokenDto.refreshToken,
+    );
+
+    const sub = typeof payload === 'string' ? payload : payload.sub;
+    if (!sub)
+      throw new UnauthorizedException('Invalid or expired refresh token');
+
+    if (
+      await this.cacheProvider.get<boolean>(
+        `blacklist:${refreshTokenDto.refreshToken}`,
+      )
+    )
+      return;
+
+    const ttl = payload.exp - Math.floor(Date.now() / 1000);
+    await this.cacheProvider.set(
+      `blacklist:${refreshTokenDto.refreshToken}`,
+      true,
+      ttl,
+    );
   }
 
   async requestPasswordReset(

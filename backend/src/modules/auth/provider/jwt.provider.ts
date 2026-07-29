@@ -1,5 +1,5 @@
 import { Injectable, UnauthorizedException } from '@nestjs/common';
-import { JwtProviderPort } from './jwt.provider.port';
+import { JwtProviderPort, RefreshTokenPayload } from './jwt.provider.port';
 import { ConfigService } from '@nestjs/config';
 import { JwtPayload, sign, SignOptions, verify } from 'jsonwebtoken';
 
@@ -38,11 +38,24 @@ export class JwtProvider implements JwtProviderPort {
       expiresIn: this.refreshExpiresIn as SignOptions['expiresIn'],
     });
   }
-  verifyRefreshToken(token: string): string | JwtPayload {
+
+  verifyRefreshToken(token: string): RefreshTokenPayload {
+    let decoded: string | JwtPayload;
     try {
-      return verify(token, this.refreshSecret);
+      decoded = verify(token, this.refreshSecret);
     } catch {
       throw new UnauthorizedException('Invalid or expired refresh token');
     }
+
+    if (
+      typeof decoded === 'string' ||
+      typeof decoded.sub !== 'string' ||
+      typeof decoded.exp !== 'number' ||
+      typeof decoded.iat !== 'number'
+    ) {
+      throw new UnauthorizedException('Invalid or expired refresh token');
+    }
+
+    return decoded as RefreshTokenPayload;
   }
 }

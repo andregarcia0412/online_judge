@@ -19,6 +19,7 @@ services:
     env_file: ./backend/.env
     depends_on:
       - db
+      - redis
     ports:
       - "3000:3000"
     networks:
@@ -28,6 +29,18 @@ services:
       - ./backend:/app
       - /app/node_modules
       - /var/run/docker.sock:/var/run/docker.sock
+
+  redis:
+    image: redis:alpine
+    container_name: online_judge_redis
+    restart: always
+    ports:
+      - "6379:6379"
+    volumes:
+      - ./volumes/redisdata:/data
+    command: redis-server --appendonly yes
+    networks:
+      - app_network
 
   frontend:
     build: ./frontend
@@ -50,8 +63,8 @@ services:
       dockerfile: Dockerfile
     container_name: online_judge_llm_microservice
     ports:
-    - "8000:8000"
-    volumes: 
+      - "8000:8000"
+    volumes:
       - ./llm-microservice:/app
     command: python -m fastapi dev src/main.py --host 0.0.0.0 --port 8000
     environment:

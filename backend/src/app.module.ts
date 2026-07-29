@@ -11,6 +11,7 @@ import { SubmissionModule } from './modules/submission/submission.module';
 import { SystemModule } from './modules/system/system.module';
 import { UserModule } from './modules/user/user.module';
 import { DatabaseModule } from './shared/database/database.module';
+import { CacheModule } from './shared/provider/cache/cache.module';
 
 @Module({
   imports: [
@@ -34,6 +35,9 @@ import { DatabaseModule } from './shared/database/database.module';
         DB_USERNAME: Joi.string().required(),
         DB_PASSWORD: Joi.string().required(),
         DB_NAME: Joi.string().required(),
+
+        REDIS_HOST: Joi.string().required(),
+        REDIS_PORT: Joi.number().port().required(),
 
         JWT_ACCESS_SECRET: Joi.string().required(),
         JWT_REFRESH_SECRET: Joi.string().required(),
@@ -77,6 +81,7 @@ import { DatabaseModule } from './shared/database/database.module';
       inject: [ConfigService],
     }),
     DatabaseModule,
+    CacheModule,
     SubmissionModule,
     UserModule,
     ProblemModule,

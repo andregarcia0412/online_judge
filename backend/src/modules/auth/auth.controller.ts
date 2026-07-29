@@ -51,6 +51,13 @@ export class AuthController {
   }
 
   @HttpCode(HttpStatus.NO_CONTENT)
+  @Post('/logout')
+  @ApiNoContentResponse()
+  async logout(@Body() refreshTokenDto: RefreshTokenDto): Promise<void> {
+    await this.authService.revokeSession(refreshTokenDto);
+  }
+
+  @HttpCode(HttpStatus.NO_CONTENT)
   @Post('/forgot-password')
   @ApiNoContentResponse()
   async forgotPassword(
