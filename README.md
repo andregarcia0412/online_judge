@@ -10,8 +10,6 @@ A self-hosted competitive-programming platform that compiles, runs and judges un
 [![Docker](https://img.shields.io/badge/Docker_Compose-2496ED?logo=docker&logoColor=white)](https://docs.docker.com/compose/)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE.md)
 
-<!-- TODO: add a screenshot or GIF of the problem page with the Monaco editor here.
-     It is the single highest-impact addition to this README. -->
 
 ---
 
