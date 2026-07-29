@@ -7,8 +7,9 @@ import { ResetPasswordDto } from '../dto/reset-password.dto';
 
 export interface AuthServicePort {
   login(loginDto: LoginDto): Promise<AuthResponseDto>;
-  refresh(refreshToken: RefreshTokenDto): Promise<AuthResponseDto>;
+  refresh(refreshTokenDto: RefreshTokenDto): Promise<AuthResponseDto>;
   register(createUserDto: CreateUserDto): Promise<AuthResponseDto>;
+  revokeSession(refreshTokenDto: RefreshTokenDto): Promise<void>;
   requestPasswordReset(
     passwordResetDto: PasswordResetRequestDto,
   ): Promise<void>;
