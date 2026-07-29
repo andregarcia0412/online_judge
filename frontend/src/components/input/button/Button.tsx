@@ -1,4 +1,4 @@
-import Spinner from "../../../assets/ring-resize.svg";
+import spinner from "../../../assets/ring-resize.svg";
 
 interface ButtonProps {
   text: string;
@@ -34,7 +34,7 @@ const Button = ({
       <div className="flex justify-center items-center w-full gap-3">
         {!loading && icon && <img src={icon} className="w-6 h-6" />}
         {loading ? (
-          <img src={Spinner} className="w-6 h-6" />
+          <img src={spinner} className="w-6 h-6" />
         ) : (
           <span>{text}</span>
         )}

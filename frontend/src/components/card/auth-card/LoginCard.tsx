@@ -1,9 +1,9 @@
-import Button from "../../input/button/Button";
-import AuthInput from "../../input/auth-input/AuthInput";
-import Checkbox from "../../input/checkbox/Checkbox";
+import githubIcon from "../../../assets/github-original.svg";
+import googleIcon from "../../../assets/google-icon-logo-svgrepo-com.svg";
 import { Divider } from "../../divider/Divider";
-import GoogleIcon from "../../../assets/google-icon-logo-svgrepo-com.svg";
-import GithubIcon from "../../../assets/github-original.svg";
+import AuthInput from "../../input/auth-input/AuthInput";
+import Button from "../../input/button/Button";
+import Checkbox from "../../input/checkbox/Checkbox";
 
 type AuthCardProps = {
   login: () => void;
@@ -76,8 +76,8 @@ export const LoginCard = ({
       <Divider text="Or" />
 
       <div className="flex justify-center items-center gap-8 w-full">
-        <img src={GoogleIcon} className="h-9 w-9 cursor-pointer" />
-        <img src={GithubIcon} className="h-9 w-9 cursor-pointer invert" />
+        <img src={googleIcon} className="h-9 w-9 cursor-pointer" />
+        <img src={githubIcon} className="h-9 w-9 cursor-pointer invert" />
       </div>
 
       <p className="absolute text-white justify-self-end bottom-[1.5%]">

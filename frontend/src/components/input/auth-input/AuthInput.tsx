@@ -1,6 +1,6 @@
-import Visibility from "../../../assets/visibility.svg";
-import VisibilityOff from "../../../assets/visibility_off.svg";
 import React from "react";
+import visibility from "../../../assets/visibility.svg";
+import visibilityOff from "../../../assets/visibility_off.svg";
 
 interface AuthInputProps {
   placeholder: string;
@@ -45,7 +45,7 @@ const AuthInput = ({
           />
           <img
             className="absolute left-[88%] cursor-pointer"
-            src={visible ? VisibilityOff : Visibility}
+            src={visible ? visibilityOff : visibility}
             onClick={() => setVisible(!visible)}
           />
         </div>

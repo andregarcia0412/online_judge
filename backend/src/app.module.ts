@@ -43,6 +43,20 @@ import { APP_GUARD } from '@nestjs/core';
         JWT_REFRESH_SECRET: Joi.string().required(),
         JWT_ACCESS_EXPIRATION_TIME: Joi.string().required(),
         JWT_REFRESH_EXPIRATION_TIME: Joi.string().required(),
+        PASSWORD_RESET_SECRET: Joi.string().required(),
+        MAX_RESET_PASSWORD_TRIES: Joi.number().positive().default(10),
+
+        RESEND_API_KEY: Joi.string().when('NODE_ENV', {
+          is: 'production',
+          then: Joi.required(),
+          otherwise: Joi.optional(),
+        }),
+
+        MAIL_FROM: Joi.string().when('NODE_ENV', {
+          is: 'production',
+          then: Joi.required(),
+          otherwise: Joi.optional(),
+        }),
 
         BCRYPT_SALT: Joi.number().integer().min(4).max(31).default(10),
 
@@ -66,7 +80,7 @@ import { APP_GUARD } from '@nestjs/core';
         database: configService.get<string>('DB_NAME'),
 
         autoLoadEntities: true,
-        synchronize: true,
+        synchronize: configService.get<string>('NODE_ENV') !== 'production',
       }),
       inject: [ConfigService],
     }),

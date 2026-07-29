@@ -1,7 +1,7 @@
-import { Logo } from "../logo/Logo";
-import { QuickSearch } from "../input/quick-search/QuickSearch";
 import { useNavigate } from "react-router-dom";
-import Target from "../../assets/target.svg";
+import target from "../../assets/target.svg";
+import { QuickSearch } from "../input/quick-search/QuickSearch";
+import { Logo } from "../logo/Logo";
 
 type HomeHeaderProps = {
   setText: (text: string) => void;
@@ -33,7 +33,7 @@ export const HomeHeader = ({
       </div>
 
       <div className="flex gap-2 items-center text-white opacity-80">
-        <img src={Target} />
+        <img src={target} />
         <p>Problems</p>
       </div>
       <QuickSearch setText={setText} handleSearch={handleSearch} text={text} />

@@ -1,4 +1,4 @@
-import CheckCircleWhite from "../../../assets/check_circle_white.svg";
+import checkCircleWhite from "../../../assets/check_circle_white.svg";
 
 type CategoryBadgeProps = {
   title: string;
@@ -31,7 +31,7 @@ export const CategoryBadge = ({
       }}
     >
       <div className="flex justify-center items-center gap-2">
-        {isMarked && <img className="h-4 w-4" src={CheckCircleWhite} />}
+        {isMarked && <img className="h-4 w-4" src={checkCircleWhite} />}
         <p className={readonly ? "text-white!" : ""}>{title}</p>
       </div>
     </div>

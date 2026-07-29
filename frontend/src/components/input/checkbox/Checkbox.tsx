@@ -1,4 +1,4 @@
-import Check from "../../../assets/check.svg";
+import check from "../../../assets/check.svg";
 
 interface CheckboxProps {
   label: string | null;
@@ -22,7 +22,7 @@ const Checkbox = ({
         className={`flex justify-center items-center w-4 h-4 bg-white rounded-sm ${checked ? "bg-linear-to-b from-[#7cc1f3] to-[#d27eef]" : ""}`}
         style={checkedColor && checked ? { background: checkedColor } : {}}
       >
-        {checked && <img src={Check} className="w-4 h-4" />}
+        {checked && <img src={check} className="w-4 h-4" />}
       </div>
       {label && <label>{label}</label>}
     </div>

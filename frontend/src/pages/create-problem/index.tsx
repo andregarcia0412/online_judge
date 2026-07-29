@@ -2,8 +2,8 @@ import { ConfigProvider, notification, Select, theme } from "antd";
 import axios from "axios";
 import React from "react";
 import { problemService } from "../../api/services/problem.service";
-import Add from "../../assets/add.svg";
-import RingResize from "../../assets/ring-resize.svg";
+import add from "../../assets/add.svg";
+import ringResize from "../../assets/ring-resize.svg";
 import { CategoryBadge } from "../../components/card/category-badge/CategoryBadge";
 import { CreateProblemCard } from "../../components/card/create-problem-card/CreateProblemCard";
 import { TestCaseCard } from "../../components/card/test-case-card/TestCaseCard";
@@ -17,11 +17,11 @@ import type {
   CreateProblemDto,
   CreateProblemForm,
 } from "../../data/dto/problem.dto";
+import { useClickOutside } from "../../hooks/useClickOutside";
 import { useFetch } from "../../hooks/useFetch";
 import { normalizeNewLines } from "../../utils/normalizeNewLines";
 import { createProblemSchema } from "../../validations/create-problem.schema";
 import "./style.css";
-import { useClickOutside } from "../../hooks/useClickOutside";
 
 type TestCase = {
   input: string;
@@ -159,13 +159,17 @@ export const CreateProblem = () => {
     }
   };
 
+  const inputsRowStyle = "flex justify-center gap-6 *:flex-1";
+
   return (
     <div>
       <HomeHeader setText={() => {}} handleSearch={() => {}} text="" />
-      <div className="create-container">
-        <div className="create-title">
+      <div className="create-container flex flex-col gap-8 w-full h-screen p-6">
+        <div className="flex flex-col text-white gap-2">
           <h1>Create New Problem</h1>
-          <p>Fill in the fields below to create a new programming problem</p>
+          <p className="opacity-70">
+            Fill in the fields below to create a new programming problem
+          </p>
         </div>
 
         <ConfigProvider
@@ -200,7 +204,7 @@ export const CreateProblem = () => {
             title="Problem Title"
           />
 
-          <div className="inputs-row">
+          <div className={inputsRowStyle}>
             <CreateProblemInput
               placeholder="Your name or username"
               text={createProblemForm.author}
@@ -225,8 +229,8 @@ export const CreateProblem = () => {
               title="Points"
             />
           </div>
-          <div className="create-selector">
-            <p>Difficulty</p>
+          <div className="flex flex-col justify-center gap-2">
+            <p className="font-sm">Difficulty</p>
             <ConfigProvider
               theme={{
                 algorithm: theme.darkAlgorithm,
@@ -268,12 +272,15 @@ export const CreateProblem = () => {
             </ConfigProvider>
           </div>
 
-          <div className="create-categories-wrapper">
-            <div className="create-categories-title">
-              <p>Categories</p>
+          <div className="flex flex-col gap-2">
+            <div className="relative flex items-center gap-2">
+              <p className="text-sm">Categories</p>
 
-              <button onClick={() => setVisiblePopover((prev) => !prev)}>
-                <img src={Add} />
+              <button
+                className="flex justify-center items-center border-none rounded-md cursor-pointer p-1 bg-linear-to-r from-[#9333ea] to-[#2563eb] hover:opacity-70"
+                onClick={() => setVisiblePopover((prev) => !prev)}
+              >
+                <img className="h-5 w-5" src={add} />
               </button>
 
               {
@@ -308,14 +315,16 @@ export const CreateProblem = () => {
                       );
                     })
                   ) : (
-                    <img src={RingResize} />
+                    <img src={ringResize} />
                   )}
                 </Popover>
               }
             </div>
-            <div className="create-categories">
+            <div className="bg-black border border-[#30363d] p-3 flex gap-3">
               {createProblemForm.categories.length <= 0 ? (
-                <p>No selected categories</p>
+                <p className="text-white opacity-50 text-sm">
+                  No selected categories
+                </p>
               ) : (
                 createProblemForm.categories.map((category) => {
                   return (
@@ -379,7 +388,7 @@ export const CreateProblem = () => {
         </CreateProblemCard>
 
         <CreateProblemCard title="Examples">
-          <div className="inputs-row">
+          <div className={inputsRowStyle}>
             <CreateProblemInput
               placeholder="5\n10\n"
               setText={(text) =>
@@ -416,7 +425,7 @@ export const CreateProblem = () => {
           title="Test Cases"
           subtitle="Add the test cases that will be used to validate the submissions"
         >
-          <div className="create-test-case-card-inner">
+          <div className="flex flex-col gap-6">
             <TestCaseWarningCard />
 
             {testCases.length > 0 &&
@@ -433,9 +442,9 @@ export const CreateProblem = () => {
                 );
               })}
 
-            <div className="create-test-case-container">
+            <div className="flex flex-col p-6 border-2 border-dashed border-[#30363d] rounded-xl gap-4">
               <p>Add new test case</p>
-              <div className="inputs-row">
+              <div className={inputsRowStyle}>
                 <CreateProblemInput
                   text={createProblemForm.testCaseInput}
                   setText={(text) =>
@@ -478,7 +487,7 @@ export const CreateProblem = () => {
           </div>
         </CreateProblemCard>
 
-        <div className="create-button-row">
+        <div className="flex gap-4 pb-12">
           <Button
             background="rgba(0, 0, 0, 0.5)"
             loading={false}

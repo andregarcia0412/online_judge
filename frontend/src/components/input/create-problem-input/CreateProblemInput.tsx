@@ -1,5 +1,3 @@
-import "./style.create-problem-input.css";
-
 type CreateProblemInputProps = {
   text: string;
   setText: (text: string) => void;
@@ -19,15 +17,18 @@ export const CreateProblemInput = ({
   height,
   type = "input",
 }: CreateProblemInputProps) => {
+  const inputStyle =
+    "w-full text-white outline-none bg-[rgba(17,24,39,0.4)] border border-[#374151] rounded-lg py-2 px-3 resize-none transition-colors duration-150 ease-in focus:border-[#8b5cf6]";
+
   return (
     <div>
-      <div className="create-input-row">
-        <p>{title}</p>
+      <div className="flex justify-center flex-col gap-2">
+        <p className="text-sm">{title}</p>
 
         {type == "input" ? (
           <input
             style={{ height }}
-            className="create-problem-input"
+            className={inputStyle}
             value={text}
             onChange={(e) => setText(e.target.value)}
             placeholder={placeholder}
@@ -36,7 +37,7 @@ export const CreateProblemInput = ({
         ) : (
           <textarea
             style={{ height }}
-            className="create-problem-input"
+            className={inputStyle}
             value={text}
             onChange={(e) => setText(e.target.value)}
             placeholder={placeholder}
@@ -44,7 +45,7 @@ export const CreateProblemInput = ({
           />
         )}
         {maxLength && (
-          <p className="create-input-length">
+          <p className="text-xs opacity-70">
             {text.length}/{maxLength} characters
           </p>
         )}
