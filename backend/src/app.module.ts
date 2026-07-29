@@ -1,20 +1,16 @@
-import { ClsPluginTransactional } from '@nestjs-cls/transactional';
-import { TransactionalAdapterTypeOrm } from '@nestjs-cls/transactional-adapter-typeorm';
 import { Module } from '@nestjs/common';
 import { ConfigModule, ConfigService } from '@nestjs/config';
-import { TypeOrmModule } from '@nestjs/typeorm';
+import { APP_GUARD } from '@nestjs/core';
+import { ThrottlerGuard, ThrottlerModule } from '@nestjs/throttler';
 import * as Joi from 'joi';
-import { ClsModule } from 'nestjs-cls';
-import { DataSource } from 'typeorm';
 import { AuthModule } from './modules/auth/auth.module';
 import { LlmModule } from './modules/llm/llm.module';
 import { ProblemModule } from './modules/problem/problem.module';
+import { SeedsModule } from './modules/seeds/seeds.module';
 import { SubmissionModule } from './modules/submission/submission.module';
 import { SystemModule } from './modules/system/system.module';
 import { UserModule } from './modules/user/user.module';
-import { SeedsModule } from './modules/seeds/seeds.module';
-import { ThrottlerGuard, ThrottlerModule } from '@nestjs/throttler';
-import { APP_GUARD } from '@nestjs/core';
+import { DatabaseModule } from './shared/database/database.module';
 
 @Module({
   imports: [
@@ -69,31 +65,6 @@ import { APP_GUARD } from '@nestjs/core';
         abortEarly: false,
       },
     }),
-    TypeOrmModule.forRootAsync({
-      imports: [ConfigModule],
-      useFactory: (configService: ConfigService) => ({
-        type: 'postgres',
-        host: configService.get<string>('DB_HOST'),
-        port: configService.get<number>('DB_PORT'),
-        username: configService.get<string>('DB_USERNAME'),
-        password: configService.get<string>('DB_PASSWORD'),
-        database: configService.get<string>('DB_NAME'),
-
-        autoLoadEntities: true,
-        synchronize: configService.get<string>('NODE_ENV') !== 'production',
-      }),
-      inject: [ConfigService],
-    }),
-    ClsModule.forRoot({
-      plugins: [
-        new ClsPluginTransactional({
-          imports: [TypeOrmModule],
-          adapter: new TransactionalAdapterTypeOrm({
-            dataSourceToken: DataSource,
-          }),
-        }),
-      ],
-    }),
     ThrottlerModule.forRootAsync({
       useFactory: (configService: ConfigService) => ({
         throttlers: [
@@ -105,6 +76,7 @@ import { APP_GUARD } from '@nestjs/core';
       }),
       inject: [ConfigService],
     }),
+    DatabaseModule,
     SubmissionModule,
     UserModule,
     ProblemModule,
