@@ -107,7 +107,7 @@ export class AuthService implements AuthServicePort {
     return this.generateTokens(user.id);
   }
 
-  async revokeSession(refreshTokenDto: RefreshTokenDto) {
+  async revokeSession(refreshTokenDto: RefreshTokenDto): Promise<void> {
     const payload = this.jwtProvider.verifyRefreshToken(
       refreshTokenDto.refreshToken,
     );
