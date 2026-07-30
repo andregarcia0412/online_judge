@@ -32,12 +32,18 @@ export class ProblemRepository implements ProblemRepositoryPort {
     const repository = this.getRepository(manager);
     return await repository.save(problem);
   }
-  async findAllOrdered(manager?: EntityManager): Promise<Problem[]> {
+  async findAllOrdered(
+    page: number,
+    limit: number,
+    manager?: EntityManager,
+  ): Promise<[Problem[], number]> {
     const repository = this.getRepository(manager);
-    return await repository.find({
+    return await repository.findAndCount({
       order: {
         id: 'ASC',
       },
+      take: limit,
+      skip: (page - 1) * limit,
     });
   }
   async findById(id: number, manager?: EntityManager): Promise<Problem | null> {

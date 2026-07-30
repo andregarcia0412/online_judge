@@ -9,6 +9,7 @@ import {
   Param,
   Patch,
   Post,
+  Query,
   UseGuards,
 } from '@nestjs/common';
 import {
@@ -31,6 +32,8 @@ import { CategoryServicePort } from './interface/service/category.service.port';
 import { ProblemServicePort } from './interface/service/problem.service.port';
 import { TestCaseServicePort } from './interface/service/test-case.service.port';
 import { JwtAuthGuard } from '../auth/common/jwt-auth.guard';
+import { ReturnProblemListDto } from './dto/problem/return-problem-list.dto';
+import { PaginationQueryDto } from 'src/shared/dto/pagination-query.dto';
 
 @Controller()
 export class ProblemController {
@@ -56,9 +59,11 @@ export class ProblemController {
   @Get('/problem')
   @UseGuards(JwtAuthGuard)
   @ApiBearerAuth()
-  @ApiOkResponse({ type: [ReturnProblemDto] })
-  async findAll(): Promise<ReturnProblemDto[]> {
-    return await this.problemService.findAll();
+  @ApiOkResponse({ type: ReturnProblemListDto })
+  async findAll(
+    @Query() query: PaginationQueryDto,
+  ): Promise<ReturnProblemListDto> {
+    return await this.problemService.findAll(query);
   }
 
   @Get('/problem/:id')

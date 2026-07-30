@@ -10,6 +10,8 @@ import { FindProblemByTitleUseCase } from '../use-case/problem/find-by-title.use
 import { RemoveProblemUseCase } from '../use-case/problem/remove.use-case';
 import { UpdateProblemUseCase } from '../use-case/problem/update.use-case';
 import { Problem } from '../entities/problem.entity';
+import { ReturnProblemListDto } from '../dto/problem/return-problem-list.dto';
+import { PaginationQueryDto } from 'src/shared/dto/pagination-query.dto';
 
 @Injectable()
 export class ProblemService implements ProblemServicePort {
@@ -34,10 +36,18 @@ export class ProblemService implements ProblemServicePort {
     return ReturnProblemDto.fromEntity(problem);
   }
 
-  async findAll(): Promise<ReturnProblemDto[]> {
-    const problems = await this.findAllProblemUseCase.execute();
+  async findAll(
+    paginationQueryDto: PaginationQueryDto,
+  ): Promise<ReturnProblemListDto> {
+    const page = paginationQueryDto.page || 1;
+    const limit = paginationQueryDto.limit || 10;
+    const [problems, count] = await this.findAllProblemUseCase.execute(
+      page,
+      limit,
+    );
 
-    return problems.map((problem) => ReturnProblemDto.fromEntity(problem));
+    const totalPages = Math.ceil(count / limit);
+    return ReturnProblemListDto.fromEntity(problems, page, limit, totalPages);
   }
 
   async findOneById(id: number): Promise<ReturnProblemDto> {

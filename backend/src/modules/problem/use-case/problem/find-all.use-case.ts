@@ -9,7 +9,7 @@ export class FindAllProblemUseCase {
     private readonly problemRepository: ProblemRepositoryPort,
   ) {}
 
-  async execute(): Promise<Problem[]> {
-    return await this.problemRepository.findAllOrdered();
+  async execute(page: number, limit: number): Promise<[Problem[], number]> {
+    return await this.problemRepository.findAllOrdered(page, limit);
   }
 }

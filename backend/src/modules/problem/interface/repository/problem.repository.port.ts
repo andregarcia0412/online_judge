@@ -11,7 +11,11 @@ export interface ProblemRepositoryPort {
     problem: Problem,
     manager?: EntityManager,
   ): Promise<Problem>;
-  findAllOrdered(manager?: EntityManager): Promise<Problem[]>;
+  findAllOrdered(
+    page: number,
+    limit: number,
+    manager?: EntityManager,
+  ): Promise<[Problem[], number]>;
   findById(id: number, manager?: EntityManager): Promise<Problem | null>;
   updateById(
     id: number,
