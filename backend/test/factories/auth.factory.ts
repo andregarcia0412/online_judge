@@ -2,6 +2,7 @@ import { CreateUserDto } from 'src/modules/user/dto/create-user.dto';
 import { LoginDto } from 'src/modules/auth/dto/login.dto';
 import { RefreshTokenDto } from 'src/modules/auth/dto/refresh-token.dto';
 import { User } from 'src/modules/user/entities/user.entity';
+import { RefreshTokenPayload } from 'src/modules/auth/provider/jwt.provider.port';
 
 export class AuthFactory {
   private static readonly fixedDate = new Date('2026-01-01T00:00:00.000Z');
@@ -16,7 +17,9 @@ export class AuthFactory {
     return dto;
   }
 
-  static makeRefreshTokenDto(refreshToken = 'valid-refresh-token'): RefreshTokenDto {
+  static makeRefreshTokenDto(
+    refreshToken = 'valid-refresh-token',
+  ): RefreshTokenDto {
     const dto = new RefreshTokenDto();
     dto.refreshToken = refreshToken;
     return dto;
@@ -42,11 +45,15 @@ export class AuthFactory {
   }
 
   static makeTokenPayload(
-    overrides: Partial<{ sub: string; email: string }> = {},
-  ) {
+    overrides: Partial<RefreshTokenPayload> = {},
+  ): RefreshTokenPayload {
+    const issuedAt = Math.floor(Date.now() / 1000);
+
     return {
       sub: '123',
-      email: 'user@example.com',
+      jti: 'token-id',
+      iat: issuedAt,
+      exp: issuedAt + 604800,
       ...overrides,
     };
   }
@@ -72,6 +79,38 @@ export class AuthFactory {
     return {
       generateHash: jest.fn(),
       compare: jest.fn(),
+    };
+  }
+
+  static makeCacheProviderMock() {
+    return {
+      get: jest.fn().mockResolvedValue(null),
+      set: jest.fn().mockResolvedValue(undefined),
+      delete: jest.fn().mockResolvedValue(undefined),
+      clear: jest.fn().mockResolvedValue(undefined),
+    };
+  }
+
+  static makeEmailSenderProviderMock() {
+    return {
+      send: jest.fn().mockResolvedValue(undefined),
+    };
+  }
+
+  static makePasswordResetUseCaseMocks() {
+    return {
+      findActivePasswordResetCodeUseCase: { execute: jest.fn() },
+      generatePasswordResetCodeUseCase: { execute: jest.fn() },
+      incrementAttemptsUseCase: { execute: jest.fn() },
+      invalidateAllUseCase: { execute: jest.fn() },
+      markAsUsedUseCase: { execute: jest.fn() },
+      validateCodeUseCase: { execute: jest.fn() },
+    };
+  }
+
+  static makeConfigServiceMock() {
+    return {
+      get: jest.fn(),
     };
   }
 }

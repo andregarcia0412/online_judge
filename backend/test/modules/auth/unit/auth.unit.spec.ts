@@ -1,4 +1,8 @@
-import { ConflictException, UnauthorizedException } from '@nestjs/common';
+import {
+  ConflictException,
+  NotFoundException,
+  UnauthorizedException,
+} from '@nestjs/common';
 import { AuthService } from 'src/modules/auth/auth.service';
 import { AuthResponseDto } from 'src/modules/auth/dto/auth-response.dto';
 import { AuthFactory } from 'test/factories/auth.factory';
@@ -8,17 +12,38 @@ describe('AuthService', () => {
   let hashProviderMock: ReturnType<typeof AuthFactory.makeHashProviderMock>;
   let userServiceMock: ReturnType<typeof AuthFactory.makeUserServiceMock>;
   let jwtProviderMock: ReturnType<typeof AuthFactory.makeJwtProviderMock>;
+  let emailSenderProviderMock: ReturnType<
+    typeof AuthFactory.makeEmailSenderProviderMock
+  >;
+  let useCaseMocks: ReturnType<
+    typeof AuthFactory.makePasswordResetUseCaseMocks
+  >;
+  let cacheProviderMock: ReturnType<typeof AuthFactory.makeCacheProviderMock>;
+  let configServiceMock: ReturnType<typeof AuthFactory.makeConfigServiceMock>;
   let service: AuthService;
 
   beforeEach(() => {
     hashProviderMock = AuthFactory.makeHashProviderMock();
     userServiceMock = AuthFactory.makeUserServiceMock();
     jwtProviderMock = AuthFactory.makeJwtProviderMock();
+    emailSenderProviderMock = AuthFactory.makeEmailSenderProviderMock();
+    useCaseMocks = AuthFactory.makePasswordResetUseCaseMocks();
+    cacheProviderMock = AuthFactory.makeCacheProviderMock();
+    configServiceMock = AuthFactory.makeConfigServiceMock();
 
     service = new AuthService(
       hashProviderMock as any,
       userServiceMock as any,
       jwtProviderMock as any,
+      emailSenderProviderMock as any,
+      useCaseMocks.findActivePasswordResetCodeUseCase as any,
+      useCaseMocks.generatePasswordResetCodeUseCase as any,
+      useCaseMocks.incrementAttemptsUseCase as any,
+      useCaseMocks.invalidateAllUseCase as any,
+      useCaseMocks.markAsUsedUseCase as any,
+      useCaseMocks.validateCodeUseCase as any,
+      cacheProviderMock as any,
+      configServiceMock as any,
     );
   });
 
@@ -47,7 +72,9 @@ describe('AuthService', () => {
       );
       expect(userServiceMock.updateUserStreak).toHaveBeenCalledWith(user);
       expect(jwtProviderMock.generateAccessToken).toHaveBeenCalledWith(user.id);
-      expect(jwtProviderMock.generateRefreshToken).toHaveBeenCalledWith(user.id);
+      expect(jwtProviderMock.generateRefreshToken).toHaveBeenCalledWith(
+        user.id,
+      );
 
       expect(result).toBeInstanceOf(AuthResponseDto);
       expect(result).toMatchObject({
@@ -101,6 +128,8 @@ describe('AuthService', () => {
 
   describe('Refresh', () => {
     it('should return AuthResponseDto when refresh token is valid', async () => {
+      jest.useFakeTimers().setSystemTime(new Date('2026-01-01T00:00:00.000Z'));
+
       const refreshTokenDto = AuthFactory.makeRefreshTokenDto();
       const payload = AuthFactory.makeTokenPayload({ sub: '123' });
 
@@ -113,6 +142,15 @@ describe('AuthService', () => {
       expect(jwtProviderMock.verifyRefreshToken).toHaveBeenCalledWith(
         refreshTokenDto.refreshToken,
       );
+      expect(cacheProviderMock.get).toHaveBeenCalledWith(
+        `blacklist:${refreshTokenDto.refreshToken}`,
+      );
+      expect(cacheProviderMock.set).toHaveBeenCalledWith(
+        `blacklist:${refreshTokenDto.refreshToken}`,
+        true,
+        payload.exp - Math.floor(Date.now() / 1000),
+      );
+      expect(userServiceMock.findOneById).toHaveBeenCalledWith(payload.sub);
       expect(jwtProviderMock.generateAccessToken).toHaveBeenCalledWith(
         payload.sub,
       );
@@ -124,6 +162,42 @@ describe('AuthService', () => {
         accessToken: 'new-access-token',
         refreshToken: 'new-refresh-token',
       });
+
+      jest.useRealTimers();
+    });
+
+    it('should throw UnauthorizedException when the refresh token is blacklisted', async () => {
+      const refreshTokenDto = AuthFactory.makeRefreshTokenDto();
+
+      jwtProviderMock.verifyRefreshToken.mockReturnValue(
+        AuthFactory.makeTokenPayload(),
+      );
+      cacheProviderMock.get.mockResolvedValue(true);
+
+      const refreshPromise = service.refresh(refreshTokenDto);
+
+      await expect(refreshPromise).rejects.toThrow(UnauthorizedException);
+      await expect(refreshPromise).rejects.toThrow(
+        'Invalid or expired refresh token',
+      );
+      expect(cacheProviderMock.set).not.toHaveBeenCalled();
+      expect(jwtProviderMock.generateAccessToken).not.toHaveBeenCalled();
+    });
+
+    it('should throw UnauthorizedException when the user no longer exists', async () => {
+      const refreshTokenDto = AuthFactory.makeRefreshTokenDto();
+
+      jwtProviderMock.verifyRefreshToken.mockReturnValue(
+        AuthFactory.makeTokenPayload(),
+      );
+      userServiceMock.findOneById.mockRejectedValue(
+        new NotFoundException('User not found'),
+      );
+
+      await expect(service.refresh(refreshTokenDto)).rejects.toThrow(
+        UnauthorizedException,
+      );
+      expect(jwtProviderMock.generateAccessToken).not.toHaveBeenCalled();
     });
 
     it('should throw UnauthorizedException when token payload has no subject', async () => {
@@ -134,7 +208,10 @@ describe('AuthService', () => {
       const refreshPromise = service.refresh(refreshTokenDto);
 
       await expect(refreshPromise).rejects.toThrow(UnauthorizedException);
-      await expect(refreshPromise).rejects.toThrow('Invalid refresh token');
+      await expect(refreshPromise).rejects.toThrow(
+        'Invalid or expired refresh token',
+      );
+      expect(cacheProviderMock.get).not.toHaveBeenCalled();
       expect(jwtProviderMock.generateAccessToken).not.toHaveBeenCalled();
     });
 
