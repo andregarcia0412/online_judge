@@ -267,7 +267,7 @@ describe('CreateSubmissionUseCase', () => {
     const savedTestCase = TestCaseFactory.makeTestCaseEntity();
     const savedSubmission = SubmissionFactory.makeSubmissionEntity();
     const rejectedResult = new TestResult(
-      SubmissionStatusEnum.REJECTED,
+      SubmissionStatusEnum.WRONG_ANSWER,
       10,
       '0\n',
       'Wrong Answer',
