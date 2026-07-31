@@ -14,6 +14,14 @@ export class User {
   @Column({ type: 'varchar', length: 255 })
   password!: string;
 
+  @Column({
+    name: 'avatar_key',
+    type: 'varchar',
+    length: 512,
+    nullable: true,
+  })
+  avatarKey!: string | null;
+
   @Column({ type: 'decimal', precision: 10, scale: 2, default: 0 })
   points!: number;
 
