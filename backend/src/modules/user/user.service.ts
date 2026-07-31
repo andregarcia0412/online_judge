@@ -12,6 +12,9 @@ import { FindOneUserByIdUseCase } from './use-case/find-one-by-id.use-case';
 import { UpdateUserStreakOnSubmissionUseCase } from './use-case/update-streak-on-submission.use-case';
 import { UpdateUserStreakUseCase } from './use-case/update-streak.use-case';
 import { UpdateUserUseCase } from './use-case/update.use-case';
+import { GetAvatarUseCase } from './use-case/get-avatar.use-case';
+import { PutAvatarUseCase } from './use-case/put-avatar.use-case';
+import { ReturnAvatarDto } from './dto/return-avatar.dto';
 
 @Injectable()
 export class UserService implements UserServicePort {
@@ -32,6 +35,10 @@ export class UserService implements UserServicePort {
     private readonly deleteUserUseCase: DeleteUserUseCase,
     @Inject(UpdateUserStreakOnSubmissionUseCase)
     private readonly updateUserStreakOnSubmissionUseCase: UpdateUserStreakOnSubmissionUseCase,
+    @Inject(GetAvatarUseCase)
+    private readonly getAvatarUseCase: GetAvatarUseCase,
+    @Inject(PutAvatarUseCase)
+    private readonly putAvatarUseCase: PutAvatarUseCase,
   ) {}
 
   async create(createUserDto: CreateUserDto): Promise<ReturnUserDto> {
@@ -80,5 +87,16 @@ export class UserService implements UserServicePort {
 
   updateUserStreakOnSubmission(user: User): void {
     this.updateUserStreakOnSubmissionUseCase.execute(user);
+  }
+
+  async createUserAvatar(
+    id: string,
+    file: Express.Multer.File,
+  ): Promise<ReturnAvatarDto> {
+    return new ReturnAvatarDto(await this.putAvatarUseCase.execute(id, file));
+  }
+
+  async getUserAvatar(id: string): Promise<ReturnAvatarDto> {
+    return new ReturnAvatarDto(await this.getAvatarUseCase.execute(id));
   }
 }

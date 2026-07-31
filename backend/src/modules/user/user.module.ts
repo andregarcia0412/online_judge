@@ -16,6 +16,10 @@ import { UpdateUserStreakUseCase } from './use-case/update-streak.use-case';
 import { UpdateUserUseCase } from './use-case/update.use-case';
 import { UserController } from './user.controller';
 import { UserService } from './user.service';
+import { StorageProviderPort } from 'src/shared/provider/storage/storage.provider.port';
+import { S3Provider } from 'src/shared/provider/storage/s3.provider';
+import { GetAvatarUseCase } from './use-case/get-avatar.use-case';
+import { PutAvatarUseCase } from './use-case/put-avatar.use-case';
 
 @Module({
   imports: [TypeOrmModule.forFeature([User])],
@@ -24,6 +28,7 @@ import { UserService } from './user.service';
     { provide: UserServicePort, useClass: UserService },
     { provide: UserRepositoryPort, useClass: UserRepository },
     { provide: HashProviderPort, useClass: BcryptProvider },
+    { provide: StorageProviderPort, useClass: S3Provider },
     CreateUserUseCase,
     FindAllUserUseCase,
     FindOneUserByIdUseCase,
@@ -32,6 +37,8 @@ import { UserService } from './user.service';
     UpdateUserUseCase,
     DeleteUserUseCase,
     UpdateUserStreakOnSubmissionUseCase,
+    GetAvatarUseCase,
+    PutAvatarUseCase,
   ],
   exports: [UserServicePort],
 })
