@@ -16,17 +16,19 @@ describe('FindAllProblemUseCase', () => {
     jest.restoreAllMocks();
   });
 
-  it('should return each problem with its eager relations', async () => {
+  it('should return each problem with its eager relations and the total count', async () => {
     const savedProblem = ProblemFactory.makeProblemEntity();
 
-    problemRepositoryMock.findAllOrdered.mockResolvedValue([savedProblem]);
+    problemRepositoryMock.findAllOrdered.mockResolvedValue([[savedProblem], 1]);
 
-    const result = await useCase.execute();
+    const [problems, count] = await useCase.execute(1, 10);
 
+    expect(problemRepositoryMock.findAllOrdered).toHaveBeenCalledWith(1, 10);
     expect(problemRepositoryMock.findAllOrdered).toHaveBeenCalledTimes(1);
-    expect(result).toHaveLength(1);
-    expect(result[0]).toBe(savedProblem);
-    expect(result[0].categories).toEqual(savedProblem.categories);
-    expect(result[0].testCases).toEqual(savedProblem.testCases);
+    expect(count).toBe(1);
+    expect(problems).toHaveLength(1);
+    expect(problems[0]).toBe(savedProblem);
+    expect(problems[0].categories).toEqual(savedProblem.categories);
+    expect(problems[0].testCases).toEqual(savedProblem.testCases);
   });
 });

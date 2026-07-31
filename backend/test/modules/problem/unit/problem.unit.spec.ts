@@ -1,4 +1,5 @@
 import { ConflictException, NotFoundException } from '@nestjs/common';
+import { ReturnProblemListDto } from 'src/modules/problem/dto/problem/return-problem-list.dto';
 import { ReturnProblemDto } from 'src/modules/problem/dto/problem/return-problem.dto';
 import { ProblemService } from 'src/modules/problem/service/problem.service';
 import { ProblemFactory } from 'test/factories/problem.factory';
@@ -73,20 +74,49 @@ describe('ProblemService', () => {
   });
 
   describe('Find All Problems', () => {
-    it('should delegate to FindAllProblemUseCase and map to ReturnProblemDto', async () => {
+    it('should delegate to FindAllProblemUseCase and map to ReturnProblemListDto', async () => {
       const problem = ProblemFactory.makeProblemEntity();
 
-      useCaseMocks.findAllProblemUseCase.execute.mockResolvedValue([problem]);
+      useCaseMocks.findAllProblemUseCase.execute.mockResolvedValue([
+        [problem],
+        3,
+      ]);
 
-      const result = await service.findAll();
+      const result = await service.findAll({ page: 2, limit: 2 });
 
-      expect(useCaseMocks.findAllProblemUseCase.execute).toHaveBeenCalledWith();
-      expect(result).toHaveLength(1);
-      expect(result[0]).toBeInstanceOf(ReturnProblemDto);
-      expect(result[0]).toMatchObject({
+      expect(useCaseMocks.findAllProblemUseCase.execute).toHaveBeenCalledWith(
+        2,
+        2,
+      );
+      expect(result).toBeInstanceOf(ReturnProblemListDto);
+      expect(result).toMatchObject({
+        page: 2,
+        limit: 2,
+        totalPages: 2,
+      });
+      expect(result.problems).toHaveLength(1);
+      expect(result.problems[0]).toBeInstanceOf(ReturnProblemDto);
+      expect(result.problems[0]).toMatchObject({
         id: problem.id,
         title: problem.title,
       });
+    });
+
+    it('should default to the first page with ten items when pagination is not provided', async () => {
+      const problem = ProblemFactory.makeProblemEntity();
+
+      useCaseMocks.findAllProblemUseCase.execute.mockResolvedValue([
+        [problem],
+        1,
+      ]);
+
+      const result = await service.findAll({});
+
+      expect(useCaseMocks.findAllProblemUseCase.execute).toHaveBeenCalledWith(
+        1,
+        10,
+      );
+      expect(result).toMatchObject({ page: 1, limit: 10, totalPages: 1 });
     });
   });
 
@@ -187,7 +217,9 @@ describe('ProblemService', () => {
         id,
         updateProblemDto,
       );
-      expect(useCaseMocks.updateProblemUseCase.execute).toHaveBeenCalledTimes(1);
+      expect(useCaseMocks.updateProblemUseCase.execute).toHaveBeenCalledTimes(
+        1,
+      );
       expect(result).toBeInstanceOf(ReturnProblemDto);
       expect(result).toMatchObject({
         id: problem.id,
@@ -219,8 +251,12 @@ describe('ProblemService', () => {
 
       const result = await service.remove(id);
 
-      expect(useCaseMocks.removeProblemUseCase.execute).toHaveBeenCalledWith(id);
-      expect(useCaseMocks.removeProblemUseCase.execute).toHaveBeenCalledTimes(1);
+      expect(useCaseMocks.removeProblemUseCase.execute).toHaveBeenCalledWith(
+        id,
+      );
+      expect(useCaseMocks.removeProblemUseCase.execute).toHaveBeenCalledTimes(
+        1,
+      );
       expect(result).toBeUndefined();
     });
   });
