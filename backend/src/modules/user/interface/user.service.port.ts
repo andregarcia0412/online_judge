@@ -1,4 +1,5 @@
 import { CreateUserDto } from '../dto/create-user.dto';
+import { ReturnAvatarDto } from '../dto/return-avatar.dto';
 import { ReturnUserDto } from '../dto/return-user.dto';
 import { UpdateUserDto } from '../dto/update-user.dto';
 import { User } from '../entities/user.entity';
@@ -13,6 +14,11 @@ export interface UserServicePort {
   remove(id: string): Promise<void>;
   updateUserStreak(user: User): Promise<void>;
   updateUserStreakOnSubmission(user: User): void;
+  createUserAvatar(
+    id: string,
+    file: Express.Multer.File,
+  ): Promise<ReturnAvatarDto>;
+  getUserAvatar(id: string): Promise<ReturnAvatarDto>;
 }
 
 export const UserServicePort = Symbol('UserServicePort');
