@@ -16,6 +16,13 @@ export type Problem = {
   creation_date: Date;
 };
 
+export type ProblemList = {
+  problems: Problem[];
+  page: number;
+  limit: number;
+  total_pages: number;
+};
+
 export type CreateProblemForm = {
   title: string;
   author: string;

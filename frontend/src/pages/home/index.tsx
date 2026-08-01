@@ -10,12 +10,12 @@ import { StatCard } from "../../components/card/info-card/StatCard";
 import { ProblemCard } from "../../components/card/problem-card/ProblemCard";
 import { HomeHeader } from "../../components/home-header/HomeHeader";
 import { useAuthContext } from "../../contexts/AuthContext";
-import type { Problem } from "../../data/dto/problem.dto";
+import type { Problem, ProblemList } from "../../data/dto/problem.dto";
 import type { Submission } from "../../data/dto/submission.dto";
 import { useFetch } from "../../hooks/useFetch";
 import { HomeSearch } from "./components/HomeSearch";
-import "./style.css";
 import { HomeTitle } from "./components/HomeTitle";
+import "./style.css";
 
 export const Home = () => {
   const { user, getUserData } = useAuthContext();
@@ -31,8 +31,8 @@ export const Home = () => {
     getUserData();
   }, [getUserData]);
 
-  const { data: problems } = useFetch<Problem[]>(
-    () => problemService.findAll(),
+  const { data: problemList } = useFetch<ProblemList>(
+    () => problemService.findAll(1, 20),
     [],
   );
   const { data: userSubmissions } = useFetch<Submission[]>(
@@ -107,7 +107,7 @@ export const Home = () => {
             </div>
 
             <div className="flex flex-col gap-4">
-              {problems?.map((problem: Problem) => {
+              {problemList?.problems.map((problem: Problem) => {
                 return (
                   <ProblemCard
                     key={problem.id}

@@ -2,8 +2,9 @@ import type {
   CategoryDto,
   CreateProblemDto,
   Problem,
+  ProblemList,
+  TestCase,
 } from "../../data/dto/problem.dto";
-import type { TestCase } from "../../data/dto/problem.dto";
 import { api } from "../api.client";
 
 export const problemService = {
@@ -48,9 +49,9 @@ export const problemService = {
     }
   },
 
-  async findAll(): Promise<Problem[]> {
+  async findAll(page: number, limit: number): Promise<ProblemList> {
     try {
-      const { data } = await api.get("/problem");
+      const { data } = await api.get(`/problem?page=${page}&limit=${limit}`);
       return data;
     } catch (e) {
       console.error(
