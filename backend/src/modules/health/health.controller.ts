@@ -1,10 +1,12 @@
 import { Controller, Get } from '@nestjs/common';
+import { ApiOkResponse } from '@nestjs/swagger';
 import {
   HealthCheck,
   HealthCheckService,
   MemoryHealthIndicator,
   TypeOrmHealthIndicator,
 } from '@nestjs/terminus';
+import { LivenessResponseDto } from './dto/liveness-response.dto';
 import { RedisHealthIndicator } from './indicator/redis-health.indicator';
 
 @Controller('health')
@@ -17,7 +19,7 @@ export class HealthController {
   ) {}
 
   @Get('ready')
-  @HealthCheck()
+  @HealthCheck({ noCache: true, swaggerDocumentation: true })
   ready() {
     return this.health.check([
       () => this.db.pingCheck('database', { timeout: 1500 }),
@@ -27,11 +29,14 @@ export class HealthController {
   }
 
   @Get('live')
-  live() {
-    return {
-      status: 'ok',
-      uptime: process.uptime(),
-      startedAt: new Date(Date.now() - process.uptime() * 1000).toISOString(),
-    };
+  @ApiOkResponse({ type: LivenessResponseDto })
+  live(): LivenessResponseDto {
+    const uptime = process.uptime();
+
+    return new LivenessResponseDto(
+      'ok',
+      uptime,
+      new Date(Date.now() - uptime * 1000).toISOString(),
+    );
   }
 }
