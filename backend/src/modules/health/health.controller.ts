@@ -30,7 +30,7 @@ export class HealthController {
   live() {
     return {
       status: 'ok',
-      upyime: process.uptime(),
+      uptime: process.uptime(),
       startedAt: new Date(Date.now() - process.uptime() * 1000).toISOString(),
     };
   }
