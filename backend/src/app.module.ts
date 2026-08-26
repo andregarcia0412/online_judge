@@ -4,11 +4,11 @@ import { APP_GUARD } from '@nestjs/core';
 import { ThrottlerGuard, ThrottlerModule } from '@nestjs/throttler';
 import * as Joi from 'joi';
 import { AuthModule } from './modules/auth/auth.module';
+import { HealthModule } from './modules/health/health.module';
 import { LlmModule } from './modules/llm/llm.module';
 import { ProblemModule } from './modules/problem/problem.module';
 import { SeedsModule } from './modules/seeds/seeds.module';
 import { SubmissionModule } from './modules/submission/submission.module';
-import { SystemModule } from './modules/system/system.module';
 import { UserModule } from './modules/user/user.module';
 import { DatabaseModule } from './shared/database/database.module';
 import { CacheModule } from './shared/provider/cache/cache.module';
@@ -92,8 +92,8 @@ import { CacheModule } from './shared/provider/cache/cache.module';
     ProblemModule,
     AuthModule,
     LlmModule,
-    SystemModule,
     SeedsModule,
+    HealthModule,
   ],
   providers: [
     {
