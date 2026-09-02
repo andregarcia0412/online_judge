@@ -1,6 +1,11 @@
-import { ConflictException, NotFoundException } from '@nestjs/common';
+import {
+  BadRequestException,
+  ConflictException,
+  NotFoundException,
+} from '@nestjs/common';
 import { UserService } from 'src/modules/user/user.service';
 import { UserFactory } from 'test/factories/user.factory';
+import { ReturnAvatarDto } from 'src/modules/user/dto/return-avatar.dto';
 import { ReturnUserDto } from 'src/modules/user/dto/return-user.dto';
 import { User } from 'src/modules/user/entities/user.entity';
 
@@ -20,6 +25,8 @@ describe('UserService', () => {
       useCaseMocks.updateUserUseCase as any,
       useCaseMocks.deleteUserUseCase as any,
       useCaseMocks.updateUserStreakOnSubmissionUseCase as any,
+      useCaseMocks.getAvatarUseCase as any,
+      useCaseMocks.putAvatarUseCase as any,
     );
   });
 
@@ -262,6 +269,82 @@ describe('UserService', () => {
       expect(
         useCaseMocks.updateUserStreakOnSubmissionUseCase.execute,
       ).toHaveBeenCalledWith(userEntity);
+    });
+  });
+
+  describe('Get User Avatar', () => {
+    it('should delegate to GetAvatarUseCase and wrap the url in ReturnAvatarDto', async () => {
+      const userId = '123';
+      const avatarUrl = 'https://bucket.s3.amazonaws.com/users/123/avatar.png';
+
+      useCaseMocks.getAvatarUseCase.execute.mockResolvedValue(avatarUrl);
+
+      const result = await service.getUserAvatar(userId);
+
+      expect(useCaseMocks.getAvatarUseCase.execute).toHaveBeenCalledWith(
+        userId,
+      );
+      expect(useCaseMocks.getAvatarUseCase.execute).toHaveBeenCalledTimes(1);
+      expect(result).toBeInstanceOf(ReturnAvatarDto);
+      expect(result.avatarUrl).toBe(avatarUrl);
+    });
+
+    it('should return a null url when the user has no avatar', async () => {
+      const userId = '123';
+
+      useCaseMocks.getAvatarUseCase.execute.mockResolvedValue(null);
+
+      const result = await service.getUserAvatar(userId);
+
+      expect(result).toBeInstanceOf(ReturnAvatarDto);
+      expect(result.avatarUrl).toBeNull();
+    });
+
+    it('should propagate not found exception when id does not match', async () => {
+      const userId = '123';
+
+      useCaseMocks.getAvatarUseCase.execute.mockRejectedValue(
+        new NotFoundException('User not found'),
+      );
+
+      const getPromise = service.getUserAvatar(userId);
+
+      await expect(getPromise).rejects.toThrow(NotFoundException);
+      await expect(getPromise).rejects.toThrow('User not found');
+    });
+  });
+
+  describe('Create User Avatar', () => {
+    it('should delegate to PutAvatarUseCase and wrap the url in ReturnAvatarDto', async () => {
+      const userId = '123';
+      const file = UserFactory.makeAvatarFile();
+      const avatarUrl = 'https://bucket.s3.amazonaws.com/users/123/avatar.png';
+
+      useCaseMocks.putAvatarUseCase.execute.mockResolvedValue(avatarUrl);
+
+      const result = await service.createUserAvatar(userId, file);
+
+      expect(useCaseMocks.putAvatarUseCase.execute).toHaveBeenCalledWith(
+        userId,
+        file,
+      );
+      expect(useCaseMocks.putAvatarUseCase.execute).toHaveBeenCalledTimes(1);
+      expect(result).toBeInstanceOf(ReturnAvatarDto);
+      expect(result.avatarUrl).toBe(avatarUrl);
+    });
+
+    it('should propagate bad request exception when the mimetype is unsupported', async () => {
+      const userId = '123';
+      const file = UserFactory.makeAvatarFile();
+
+      useCaseMocks.putAvatarUseCase.execute.mockRejectedValue(
+        new BadRequestException('Unsupported Mimetype'),
+      );
+
+      const createPromise = service.createUserAvatar(userId, file);
+
+      await expect(createPromise).rejects.toThrow(BadRequestException);
+      await expect(createPromise).rejects.toThrow('Unsupported Mimetype');
     });
   });
 });

@@ -2,7 +2,7 @@ import { TransactionHost } from '@nestjs-cls/transactional';
 import { TransactionalAdapterTypeOrm } from '@nestjs-cls/transactional-adapter-typeorm';
 import { Injectable } from '@nestjs/common';
 import { TestResult } from 'src/modules/test-runner/dto/test-result.dto';
-import { EntityManager, Repository } from 'typeorm';
+import { Repository } from 'typeorm';
 import { Submission } from '../entities/submission.entity';
 import { SubmissionStatusEnum } from '../../../shared/enum/submission-status';
 import { SubmissionRepositoryPort } from '../interface/submission.repository.port';
@@ -16,10 +16,8 @@ export class SubmissionRepository implements SubmissionRepositoryPort {
     idUser: string,
     language: string,
     idProblem: number,
-    manager?: EntityManager,
   ): Promise<Submission | null> {
-    const repository = this.getRepository(manager);
-    return await repository.findOne({
+    return await this.submissionRepository.findOne({
       where: {
         idUser,
         status: SubmissionStatusEnum.ACCEPTED,
@@ -28,12 +26,8 @@ export class SubmissionRepository implements SubmissionRepositoryPort {
       },
     });
   }
-  async findLastUserSubmission(
-    idUser: string,
-    manager?: EntityManager,
-  ): Promise<Submission | null> {
-    const repository = this.getRepository(manager);
-    return await repository.findOne({
+  async findLastUserSubmission(idUser: string): Promise<Submission | null> {
+    return await this.submissionRepository.findOne({
       where: {
         idUser,
       },
@@ -45,10 +39,8 @@ export class SubmissionRepository implements SubmissionRepositoryPort {
   async save(
     submission: Partial<Submission>,
     testResult: TestResult,
-    manager?: EntityManager,
   ): Promise<Submission> {
-    const repository = this.getRepository(manager);
-    const createdSubmission = repository.create({
+    const createdSubmission = this.submissionRepository.create({
       ...submission,
       status: testResult.status,
       executionTime: testResult.executionTime,
@@ -56,47 +48,38 @@ export class SubmissionRepository implements SubmissionRepositoryPort {
       memoryUsageMB: testResult.memoryUsageMB,
       testCasesPassed: testResult.testCasesPassed,
     });
-    return await repository.save(createdSubmission);
+    return await this.submissionRepository.save(createdSubmission);
   }
-  async findAll(manager?: EntityManager): Promise<Submission[]> {
-    const repository = this.getRepository(manager);
-    return await repository.find();
+  async findAll(): Promise<Submission[]> {
+    return await this.submissionRepository.find();
   }
-  async findOneById(
-    id: string,
-    manager?: EntityManager,
-  ): Promise<Submission | null> {
-    const repository = this.getRepository(manager);
-    return await repository.findOneBy({ id });
+  async findOneById(id: string): Promise<Submission | null> {
+    return await this.submissionRepository.findOneBy({ id });
   }
-  async findAllByUserId(
-    idUser: string,
-    manager?: EntityManager,
-  ): Promise<Submission[]> {
-    const repository = this.getRepository(manager);
-    return await repository.findBy({ idUser });
+  async findAllByUserId(idUser: string): Promise<Submission[]> {
+    return await this.submissionRepository.findBy({ idUser });
   }
   async updateById(
     id: string,
     updateSubmission: Partial<Submission>,
-    manager?: EntityManager,
   ): Promise<Submission | null> {
-    const repository = this.getRepository(manager);
-    const submission = await repository.findOneBy({ id });
+    const submission = await this.submissionRepository.findOneBy({ id });
 
     if (!submission) {
       return null;
     }
 
-    const merged = repository.merge(submission, updateSubmission);
-    return await repository.save(merged);
+    const merged = this.submissionRepository.merge(
+      submission,
+      updateSubmission,
+    );
+    return await this.submissionRepository.save(merged);
   }
-  async remove(id: string, manager?: EntityManager): Promise<void> {
-    const repository = this.getRepository(manager);
-    await repository.delete(id);
+  async remove(id: string): Promise<void> {
+    await this.submissionRepository.delete(id);
   }
 
-  private getRepository(manager?: EntityManager): Repository<Submission> {
-    return (manager ?? this.txHost.tx).getRepository(Submission);
+  private get submissionRepository(): Repository<Submission> {
+    return this.txHost.tx.getRepository(Submission);
   }
 }

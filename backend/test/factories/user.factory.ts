@@ -58,6 +58,8 @@ export class UserFactory {
     const updateUserUseCase = { execute: jest.fn() };
     const deleteUserUseCase = { execute: jest.fn() };
     const updateUserStreakOnSubmissionUseCase = { execute: jest.fn() };
+    const getAvatarUseCase = { execute: jest.fn() };
+    const putAvatarUseCase = { execute: jest.fn() };
 
     return {
       createUserUseCase,
@@ -68,7 +70,16 @@ export class UserFactory {
       updateUserUseCase,
       deleteUserUseCase,
       updateUserStreakOnSubmissionUseCase,
+      getAvatarUseCase,
+      putAvatarUseCase,
     };
+  }
+
+  static makeAvatarFile(): Express.Multer.File {
+    return {
+      mimetype: 'image/png',
+      buffer: Buffer.from('avatar'),
+    } as Express.Multer.File;
   }
 
   static makeHashProviderMock() {

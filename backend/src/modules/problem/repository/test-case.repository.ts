@@ -1,7 +1,7 @@
 import { TransactionHost } from '@nestjs-cls/transactional';
 import { TransactionalAdapterTypeOrm } from '@nestjs-cls/transactional-adapter-typeorm';
 import { Injectable } from '@nestjs/common';
-import { EntityManager, Repository } from 'typeorm';
+import { Repository } from 'typeorm';
 import { TestCase } from '../entities/test-case.entity';
 import { TestCaseRepositoryPort } from '../interface/repository/test-case.repository.port';
 
@@ -10,67 +10,45 @@ export class TestCaseRepository implements TestCaseRepositoryPort {
   constructor(
     private readonly txHost: TransactionHost<TransactionalAdapterTypeOrm>,
   ) {}
-  async findByProblemId(
-    idProblem: number,
-    manager?: EntityManager,
-  ): Promise<TestCase[]> {
-    const repository = this.getRepository(manager);
-    return await repository.findBy({ idProblem });
+  async findByProblemId(idProblem: number): Promise<TestCase[]> {
+    return await this.testCaseRepository.findBy({ idProblem });
   }
-  async createAndSave(
-    createTestCase: Partial<TestCase>,
-    manager?: EntityManager,
-  ): Promise<TestCase> {
-    const repository = this.getRepository(manager);
-    const createdTestCase = repository.create(createTestCase);
-    return await repository.save(createdTestCase);
+  async createAndSave(createTestCase: Partial<TestCase>): Promise<TestCase> {
+    const createdTestCase = this.testCaseRepository.create(createTestCase);
+    return await this.testCaseRepository.save(createdTestCase);
   }
   async createAndSaveMany(
     createTestCases: Partial<TestCase>[],
-    manager?: EntityManager,
   ): Promise<TestCase[]> {
-    const repository = this.getRepository(manager);
-    const createdTestCases = repository.create(createTestCases);
-    return await repository.save(createdTestCases);
+    const createdTestCases = this.testCaseRepository.create(createTestCases);
+    return await this.testCaseRepository.save(createdTestCases);
   }
-  async findAll(manager?: EntityManager): Promise<TestCase[]> {
-    const repository = this.getRepository(manager);
-    return await repository.find();
+  async findAll(): Promise<TestCase[]> {
+    return await this.testCaseRepository.find();
   }
-  async findOneById(
-    id: string,
-    manager?: EntityManager,
-  ): Promise<TestCase | null> {
-    const repository = this.getRepository(manager);
-    return await repository.findOneBy({ id });
+  async findOneById(id: string): Promise<TestCase | null> {
+    return await this.testCaseRepository.findOneBy({ id });
   }
   async updateById(
     id: string,
     updateTestCase: Partial<TestCase>,
-    manager?: EntityManager,
   ): Promise<TestCase | null> {
-    const repository = this.getRepository(manager);
-    const testCase = await repository.findOneBy({ id });
+    const testCase = await this.testCaseRepository.findOneBy({ id });
 
     if (!testCase) {
       return null;
     }
 
-    const merged = repository.merge(testCase, updateTestCase);
-    return await repository.save(merged);
+    const merged = this.testCaseRepository.merge(testCase, updateTestCase);
+    return await this.testCaseRepository.save(merged);
   }
-  async delete(id: string, manager?: EntityManager): Promise<void> {
-    const repository = this.getRepository(manager);
-    await repository.delete(id);
+  async delete(id: string): Promise<void> {
+    await this.testCaseRepository.delete(id);
   }
-  async deleteByProblemId(
-    idProblem: number,
-    manager?: EntityManager,
-  ): Promise<void> {
-    const repository = this.getRepository(manager);
-    await repository.delete({ idProblem });
+  async deleteByProblemId(idProblem: number): Promise<void> {
+    await this.testCaseRepository.delete({ idProblem });
   }
-  private getRepository(manager?: EntityManager): Repository<TestCase> {
-    return (manager ?? this.txHost.tx).getRepository(TestCase);
+  private get testCaseRepository(): Repository<TestCase> {
+    return this.txHost.tx.getRepository(TestCase);
   }
 }

@@ -1,9 +1,9 @@
-import { EntityManager } from 'typeorm';
+import { Inject } from '@nestjs/common';
+import { ProblemRepositoryPort } from 'src/modules/problem/interface/repository/problem.repository.port';
 import { SeedResultDto } from '../dto/seed-result.dto';
 import { SeedRunner } from '../interface/seed-runner.interface';
 import { PROBLEM_SEED } from '../resource/problem.seed';
-import { Inject } from '@nestjs/common';
-import { ProblemRepositoryPort } from 'src/modules/problem/interface/repository/problem.repository.port';
+import { Transactional } from '@nestjs-cls/transactional';
 
 export class ProblemSeedRunner implements SeedRunner {
   constructor(
@@ -11,17 +11,15 @@ export class ProblemSeedRunner implements SeedRunner {
     private readonly problemRepository: ProblemRepositoryPort,
   ) {}
 
-  async run(manager: EntityManager): Promise<SeedResultDto> {
+  @Transactional()
+  async run(): Promise<SeedResultDto> {
     const result = new SeedResultDto();
 
     for (const seed of PROBLEM_SEED) {
-      const exists = await this.problemRepository.findByTitle(
-        seed.title,
-        manager,
-      );
+      const exists = await this.problemRepository.findByTitle(seed.title);
 
       if (!exists) {
-        await this.problemRepository.createAndSave(seed, manager);
+        await this.problemRepository.createAndSave(seed);
         result.created++;
       } else {
         result.skipped++;
