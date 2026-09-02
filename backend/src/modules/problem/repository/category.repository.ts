@@ -1,7 +1,7 @@
 import { TransactionHost } from '@nestjs-cls/transactional';
 import { TransactionalAdapterTypeOrm } from '@nestjs-cls/transactional-adapter-typeorm';
 import { Injectable } from '@nestjs/common';
-import { EntityManager, Repository } from 'typeorm';
+import { Repository } from 'typeorm';
 import { Category } from '../entities/category.entity';
 import { CategoryRepositoryPort } from '../interface/repository/category.repository.port';
 
@@ -10,78 +10,58 @@ export class CategoryRepository implements CategoryRepositoryPort {
   constructor(
     private readonly txHost: TransactionHost<TransactionalAdapterTypeOrm>,
   ) {}
-  async findByProblemId(
-    idProblem: number,
-    manager?: EntityManager,
-  ): Promise<Category[]> {
-    const repository = this.getRepository(manager);
-    return await repository.findBy({ idProblem });
+  async findByProblemId(idProblem: number): Promise<Category[]> {
+    return await this.categoryRepository.findBy({ idProblem });
   }
   async createAndSave(
     createCategory: Partial<Category>,
     problemId: number,
-    manager?: EntityManager,
   ): Promise<Category> {
-    const repository = this.getRepository(manager);
-    const createdCategory = repository.create({
+    const createdCategory = this.categoryRepository.create({
       category: createCategory.category,
       idProblem: problemId,
     });
-    return await repository.save(createdCategory);
+    return await this.categoryRepository.save(createdCategory);
   }
   async createAndSaveMany(
     createCategories: Partial<Category>[],
     problemId: number,
-    manager?: EntityManager,
   ): Promise<Category[]> {
-    const repository = this.getRepository(manager);
-    const createdCategories = repository.create(
+    const createdCategories = this.categoryRepository.create(
       createCategories.map((dto) => ({
         category: dto.category,
         idProblem: problemId,
       })),
     );
-    return await repository.save(createdCategories);
+    return await this.categoryRepository.save(createdCategories);
   }
-  async findAll(manager?: EntityManager): Promise<Category[]> {
-    const repository = this.getRepository(manager);
-    return await repository.find();
+  async findAll(): Promise<Category[]> {
+    return await this.categoryRepository.find();
   }
-  async findById(
-    id: number,
-    manager?: EntityManager,
-  ): Promise<Category | null> {
-    const repository = this.getRepository(manager);
-    return await repository.findOneBy({ id });
+  async findById(id: number): Promise<Category | null> {
+    return await this.categoryRepository.findOneBy({ id });
   }
   async updateById(
     id: number,
     updateCategory: Partial<Category>,
-    manager?: EntityManager,
   ): Promise<Category | null> {
-    const repository = this.getRepository(manager);
-    const category = await repository.findOneBy({ id });
+    const category = await this.categoryRepository.findOneBy({ id });
 
     if (!category) {
       return null;
     }
 
-    const merged = repository.merge(category, updateCategory);
+    const merged = this.categoryRepository.merge(category, updateCategory);
 
-    return await repository.save(merged);
+    return await this.categoryRepository.save(merged);
   }
-  async delete(id: number, manager?: EntityManager): Promise<void> {
-    const repository = this.getRepository(manager);
-    await repository.delete(id);
+  async delete(id: number): Promise<void> {
+    await this.categoryRepository.delete(id);
   }
-  async deleteByProblemId(
-    idProblem: number,
-    manager?: EntityManager,
-  ): Promise<void> {
-    const repository = this.getRepository(manager);
-    await repository.delete({ idProblem });
+  async deleteByProblemId(idProblem: number): Promise<void> {
+    await this.categoryRepository.delete({ idProblem });
   }
-  private getRepository(manager?: EntityManager): Repository<Category> {
-    return (manager ?? this.txHost.tx).getRepository(Category);
+  private get categoryRepository(): Repository<Category> {
+    return this.txHost.tx.getRepository(Category);
   }
 }
