@@ -1,15 +1,14 @@
+import { Transactional } from '@nestjs-cls/transactional';
 import { Injectable, Logger } from '@nestjs/common';
-import { DataSource } from 'typeorm';
-import { ProblemSeedRunner } from './runner/problem.seed-runner';
-import { SeedRunner } from './interface/seed-runner.interface';
 import { ConfigService } from '@nestjs/config';
+import type { SeedRunner } from './interface/seed-runner.interface';
+import { ProblemSeedRunner } from './runner/problem.seed-runner';
 
 @Injectable()
 export class SeedsService {
   private readonly logger = new Logger(SeedsService.name);
   private readonly runSeeds: boolean;
   constructor(
-    private readonly dataSource: DataSource,
     private readonly problemSeed: ProblemSeedRunner,
     private readonly configService: ConfigService,
   ) {
@@ -26,11 +25,10 @@ export class SeedsService {
     }
   }
 
+  @Transactional()
   private async runSeed(name: string, seed: SeedRunner) {
     try {
-      const result = await this.dataSource.transaction(
-        async (manager) => await seed.run(manager),
-      );
+      const result = await seed.run();
       this.logger.log(
         `Seed ${name} applied successfuly (${result.created}) entities created - ${result.skipped} entities skipped`,
       );
