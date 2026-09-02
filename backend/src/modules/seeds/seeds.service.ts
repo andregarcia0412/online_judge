@@ -1,4 +1,3 @@
-import { Transactional } from '@nestjs-cls/transactional';
 import { Injectable, Logger } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import type { SeedRunner } from './interface/seed-runner.interface';
@@ -25,7 +24,6 @@ export class SeedsService {
     }
   }
 
-  @Transactional()
   private async runSeed(name: string, seed: SeedRunner) {
     try {
       const result = await seed.run();
