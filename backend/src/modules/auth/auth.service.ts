@@ -24,6 +24,7 @@ import { InvalidateAllUseCase } from './use-case/invalidate-all.use-case';
 import { MarkAsUsedUseCase } from './use-case/mark-used.use-case';
 import { ValidateCodeUseCase } from './use-case/validate-code.use-case';
 import { CacheProviderPort } from 'src/shared/provider/cache/cache.provider.port';
+import { ReturnUserDto } from '../user/dto/return-user.dto';
 
 @Injectable()
 export class AuthService implements AuthServicePort {
@@ -65,7 +66,7 @@ export class AuthService implements AuthServicePort {
 
     await this.userService.updateUserStreak(user);
 
-    return this.generateTokens(user.id);
+    return this.generateTokens(user.id, this.buildClaims(user));
   }
 
   async refresh(refreshTokenDto: RefreshTokenDto): Promise<AuthResponseDto> {
@@ -91,20 +92,21 @@ export class AuthService implements AuthServicePort {
       ttl,
     );
 
+    let user: ReturnUserDto;
     try {
-      await this.userService.findOneById(sub);
+      user = await this.userService.findOneById(sub);
     } catch (e) {
       if (e instanceof NotFoundException) throw new UnauthorizedException();
       throw e;
     }
 
-    return this.generateTokens(sub);
+    return this.generateTokens(sub, this.buildClaims(user));
   }
 
   async register(createUserDto: CreateUserDto): Promise<AuthResponseDto> {
     const user = await this.userService.create(createUserDto);
 
-    return this.generateTokens(user.id);
+    return this.generateTokens(user.id, this.buildClaims(user));
   }
 
   async revokeSession(refreshTokenDto: RefreshTokenDto): Promise<void> {
@@ -179,9 +181,12 @@ export class AuthService implements AuthServicePort {
     });
   }
 
-  private generateTokens(userId: string): AuthResponseDto {
+  private generateTokens(
+    userId: string,
+    accessPayload?: object,
+  ): AuthResponseDto {
     return new AuthResponseDto(
-      this.jwtProvider.generateAccessToken(userId),
+      this.jwtProvider.generateAccessToken(userId, accessPayload),
       this.jwtProvider.generateRefreshToken(userId),
     );
   }
@@ -201,5 +206,15 @@ export class AuthService implements AuthServicePort {
         <p style="font-size:14px;color:#666">If you didn't request this, you can safely ignore this email.</p>
       </td></tr>
     </table>`;
+  }
+
+  private buildClaims(user: ReturnUserDto): Record<string, unknown> {
+    return {
+      username: user.username,
+      points: user.points,
+      streak: user.streak,
+      totalResolved: user.totalResolved,
+      totalSubmissions: user.totalSubmissions,
+    };
   }
 }
