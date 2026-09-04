@@ -5,6 +5,8 @@ import { ClassSerializerInterceptor, ValidationPipe } from '@nestjs/common';
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
+  const prefix = 'api/v1';
+  app.setGlobalPrefix(prefix);
   app.useGlobalPipes(
     new ValidationPipe({
       whitelist: true,
@@ -21,7 +23,7 @@ async function bootstrap() {
     .build();
 
   const document = SwaggerModule.createDocument(app, config);
-  SwaggerModule.setup('docs', app, document);
+  SwaggerModule.setup(`${prefix}/docs`, app, document);
 
   app.enableCors({
     origin:
@@ -35,6 +37,6 @@ async function bootstrap() {
   await app.listen(port, '0.0.0.0');
 
   console.log(`🚀 Service running on port ${port}`);
-  console.log(`📚 Swagger docs on http://localhost:${port}/docs`);
+  console.log(`📚 Swagger docs on http://localhost:${port}/${prefix}/docs`);
 }
-bootstrap();
+bootstrap().catch(console.error);
