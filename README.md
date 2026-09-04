@@ -314,7 +314,7 @@ Stated openly, because they are deliberate choices rather than oversights:
 
 ## License
 
-Distributed under the MIT License. See [`LICENSE.md`](LICENSE.md) for details.
+Distributed under the AGPL-3.0 License. See [`LICENSE.md`](LICENSE.md) for details.
 
 ## Author
 
