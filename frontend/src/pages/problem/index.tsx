@@ -11,6 +11,7 @@ import { HomeHeader } from "../../components/home-header/HomeHeader";
 import Button from "../../components/input/button/Button";
 import { useAuthContext } from "../../contexts/AuthContext";
 import { LanguageConstants } from "../../data/constants/language.constants";
+import { ThemeColors } from "../../data/constants/theme.constants";
 import type { Submission } from "../../data/dto/submission.dto";
 import { useFetch } from "../../hooks/useFetch";
 import { celebrate } from "../../utils/celebrate";
@@ -143,7 +144,7 @@ export const ProblemScreen = () => {
               <h3>Description</h3>
               <p>{problem.description}</p>
             </div>
-            <hr color="#30363d" style={{ width: "100%" }} />
+            <hr className="w-full border-border" />
             <div className="problem-card-row">
               <h3>Input</h3>
               <p>
@@ -151,12 +152,12 @@ export const ProblemScreen = () => {
                   "There are no inputs for this problem."}
               </p>
             </div>
-            <hr color="#30363d" style={{ width: "100%" }} />
+            <hr className="w-full border-border" />
             <div className="problem-card-row">
               <h3>Output</h3>
               <p>{problem.output_description}</p>
             </div>
-            <hr color="#30363d" style={{ width: "100%" }} />
+            <hr className="w-full border-border" />
             <div className="problem-card-row">
               <h3>Examples</h3>
               <div className="problem-examples">
@@ -188,8 +189,8 @@ export const ProblemScreen = () => {
                 theme={{
                   algorithm: theme.darkAlgorithm,
                   token: {
-                    colorPrimaryHover: "#8B5CF6",
-                    colorPrimary: "#8B5CF6",
+                    colorPrimaryHover: ThemeColors.brand,
+                    colorPrimary: ThemeColors.brand,
                   },
                 }}
               >
@@ -217,7 +218,7 @@ export const ProblemScreen = () => {
                 onClick={handleTestSubmit}
                 loading={loadingRun}
                 text="Run"
-                background="#000"
+                background="var(--color-background)"
               />
 
               <Button
@@ -226,7 +227,7 @@ export const ProblemScreen = () => {
                 onClick={handleSubmit}
                 loading={loadingSubmit}
                 text="Submit"
-                background="#8B5CF6"
+                background="var(--color-brand)"
               />
             </div>
           </div>

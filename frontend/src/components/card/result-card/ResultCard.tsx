@@ -73,7 +73,9 @@ export const ResultCard = ({
             >
               <img draggable={false} src={accepted ? checkCircle : xcircle} />
             </div>
-            <h1 style={accepted ? { color: "#4ade80" } : { color: "#f87171" }}>
+            <h1 style={accepted
+                ? { color: "var(--color-success)" }
+                : { color: "var(--color-danger)" }}>
               {accepted ? "Accepted" : "Wrong Answer"}
             </h1>
             <p className="result-card-test-cases">
@@ -81,7 +83,7 @@ export const ResultCard = ({
             </p>
           </div>
 
-          <hr color="#30363d" style={{ width: "100%" }} />
+          <hr className="w-full border-border" />
 
           <div className="result-card-metrics-wrapper">
             <div style={{ width: "48%" }}>
@@ -107,27 +109,27 @@ export const ResultCard = ({
 
           <div className="result-card-footer">
             <div className="result-card-footer-inner">
-              <p style={{ color: "rgba(255,255,255,0.8)" }}>Status</p>
+              <p style={{ color: "var(--color-foreground-translucent)" }}>Status</p>
               <p>{capitalizeWords(status)}</p>
             </div>
 
             <div className="result-card-footer-inner">
-              <p style={{ color: "rgba(255,255,255,0.8)" }}>Language</p>
+              <p style={{ color: "var(--color-foreground-translucent)" }}>Language</p>
               <p>{language}</p>
             </div>
             <div className="result-card-footer-inner">
-              <p style={{ color: "rgba(255,255,255,0.8)" }}>Points Awarded</p>
+              <p style={{ color: "var(--color-foreground-translucent)" }}>Points Awarded</p>
               <p>{accepted ? points : "0.00"}</p>
             </div>
             <div className="result-card-footer-inner">
-              <p style={{ color: "rgba(255, 255, 255, 0.8)" }}>Date/Hour</p>
+              <p style={{ color: "var(--color-foreground-translucent)" }}>Date/Hour</p>
               <p>{formattedSubmissionDate}</p>
             </div>
           </div>
 
           <div className="result-card-footer-buttons">
             <Button
-              background="#000"
+              background="var(--color-background)"
               text="Back to editor"
               loading={false}
               onClick={onClickLeft || handleClose}
@@ -136,7 +138,7 @@ export const ResultCard = ({
             />
 
             <Button
-              background="#8B5CF6"
+              background="var(--color-brand)"
               text="Next problem"
               loading={false}
               onClick={onClickRight}

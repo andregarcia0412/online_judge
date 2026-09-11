@@ -19,8 +19,8 @@ export const CategoryBadge = ({
 
   return (
     <div
-      className={`flex justify-center items-center py-1.5 px-4 text-xs bg-[rgba(17, 24, 39, 0.4)] border border-[#30363d] rounded-[10px] cursor-pointer w-fit transition-all duration-100 ease-in ${
-        isMarked ? "bg-[#8b5cf6]! border-[#8b5cf6]! font-bold!" : ""
+      className={`flex justify-center items-center py-1.5 px-4 text-xs bg-surface border border-border rounded-[10px] cursor-pointer w-fit transition-all duration-100 ease-in ${
+        isMarked ? "bg-brand! border-brand! font-bold!" : ""
       } ${readonly ? "cursor-auto!" : ""}`}
       onClick={() => {
         if (isMarked && onSelectedClick) {
@@ -32,7 +32,7 @@ export const CategoryBadge = ({
     >
       <div className="flex justify-center items-center gap-2">
         {isMarked && <img className="h-4 w-4" src={checkCircleWhite} />}
-        <p className={readonly ? "text-white!" : ""}>{title}</p>
+        <p className={readonly ? "text-foreground!" : ""}>{title}</p>
       </div>
     </div>
   );

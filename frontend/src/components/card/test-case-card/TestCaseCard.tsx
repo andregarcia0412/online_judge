@@ -13,15 +13,15 @@ export const TestCaseCard = ({
   output,
   onDelete,
 }: TestCaseCardProps) => {
-  const inputStyles = "bg-black border border-[#30363d] p-3";
-  const inputParagraphStyles = "text-[#4ade80] font-md opacity-100";
+  const inputStyles = "bg-background border border-border p-3";
+  const inputParagraphStyles = "text-success font-md opacity-100";
 
   return (
-    <div className="flex flex-col p-5 border border-[#374151] rounded-xl gap-3">
+    <div className="flex flex-col p-5 border border-border-muted rounded-xl gap-3">
       <div className="flex items-center justify-between">
         <p>Test Case #{index}</p>
         <img
-          className="cursor-pointer transition-all duration-150 ease-in bg-transparent p-0.5 hover:bg-[rgba(239,68,68,0.1)] hover:rounded-md"
+          className="cursor-pointer transition-all duration-150 ease-in bg-transparent p-0.5 hover:bg-danger-soft hover:rounded-md"
           src={closeSmall}
           onClick={onDelete}
         />
