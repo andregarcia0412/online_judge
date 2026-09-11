@@ -36,8 +36,8 @@ export const RegisterCard = ({
     }
   };
   return (
-    <div className="relative flex flex-col justify-center items-center h-[85vh] min-h-168.75 min-w-87.5 w-120 bg-[linear-gradient(rgba(0, 0, 0, 0.14))] backdrop-blur-[5px] border-solid border rounded-[20px] border-[#afafaf] p-12.5 z-1">
-      <div className="flex flex-col justify-center text-white self-start pb-6">
+    <div className="relative flex flex-col justify-center items-center h-[85vh] min-h-168.75 min-w-87.5 w-120 bg-overlay-subtle backdrop-blur-[5px] border-solid border rounded-[20px] border-border-light p-12.5 z-1">
+      <div className="flex flex-col justify-center text-foreground self-start pb-6">
         <h1 className="text-4xl">Register</h1>
         <p className="text-base">Just some details to get you in!</p>
       </div>
@@ -67,7 +67,7 @@ export const RegisterCard = ({
           </div>
 
           <Checkbox
-            checkedColor="linear-gradient(to bottom, #5fa0ff, #7d8bff)"
+            checkedColor="linear-gradient(to bottom, var(--color-check-alt-start), var(--color-accent-lighter))"
             label={"Remember me"}
             checked={checked}
             setChecked={setChecked}
@@ -79,9 +79,9 @@ export const RegisterCard = ({
             text="Register"
             onClick={register}
             loading={loading}
-            background="linear-gradient(to right, #2E4CEE 0%, #221EBF 53%, #040F75 100%)"
+            background="linear-gradient(to right, var(--color-action-blue-start) 0%, var(--color-action-blue-mid) 53%, var(--color-action-blue-end) 100%)"
           />
-          {errorMessage && <p className="text-[#f44336]">{errorMessage}</p>}
+          {errorMessage && <p className="text-danger-strong">{errorMessage}</p>}
         </div>
       </div>
 
@@ -92,7 +92,7 @@ export const RegisterCard = ({
         <img src={githubIcon} className="h-9 w-9 cursor-pointer invert" />
       </div>
 
-      <p className="absolute text-white justify-self-end bottom-[1.5%]">
+      <p className="absolute text-foreground justify-self-end bottom-[1.5%]">
         Already have an account?{" "}
         <span
           className="font-bold cursor-pointer hover:underline"

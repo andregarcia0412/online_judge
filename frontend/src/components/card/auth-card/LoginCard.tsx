@@ -33,8 +33,8 @@ export const LoginCard = ({
   };
 
   return (
-    <div className="relative flex flex-col justify-center items-center h-[85vh] min-h-168.75 min-w-87.5 w-120 bg-[linear-gradient(rgba(0, 0, 0, 0.14))] backdrop-blur-[5px] border-solid border rounded-[20px] border-[#afafaf] p-12.5 z-1">
-      <div className="flex flex-col justify-center text-white self-start pb-6">
+    <div className="relative flex flex-col justify-center items-center h-[85vh] min-h-168.75 min-w-87.5 w-120 bg-overlay-subtle backdrop-blur-[5px] border-solid border rounded-[20px] border-border-light p-12.5 z-1">
+      <div className="flex flex-col justify-center text-foreground self-start pb-6">
         <h1 className="text-4xl">Login</h1>
         <p className="text-base">Glad you're back!</p>
       </div>
@@ -64,10 +64,10 @@ export const LoginCard = ({
             text="Login"
             onClick={login}
             loading={loading}
-            background="linear-gradient(to right, #628eff 0%, #8740cd 53%, #8740cd 100%)"
+            background="linear-gradient(to right, var(--color-action-violet-start) 0%, var(--color-brand-deep) 53%, var(--color-brand-deep) 100%)"
           />
-          {errorMessage && <p className="text-[#f44336]">{errorMessage}</p>}
-          <a href="/" className="text-white no-underline hover:underline">
+          {errorMessage && <p className="text-danger-strong">{errorMessage}</p>}
+          <a href="/" className="text-foreground no-underline hover:underline">
             Forgot password?
           </a>
         </div>
@@ -80,7 +80,7 @@ export const LoginCard = ({
         <img src={githubIcon} className="h-9 w-9 cursor-pointer invert" />
       </div>
 
-      <p className="absolute text-white justify-self-end bottom-[1.5%]">
+      <p className="absolute text-foreground justify-self-end bottom-[1.5%]">
         Don't have an account?{" "}
         <span
           className="font-bold cursor-pointer hover:underline"
