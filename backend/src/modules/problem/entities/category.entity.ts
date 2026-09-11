@@ -1,6 +1,7 @@
 import {
   Column,
   Entity,
+  Index,
   JoinColumn,
   ManyToOne,
   PrimaryGeneratedColumn,
@@ -19,6 +20,7 @@ export class Category {
   @JoinColumn({ name: 'id_problem' })
   problem!: Problem;
 
+  @Index()
   @Column({ name: 'id_problem', type: 'integer' })
   idProblem!: number;
 
