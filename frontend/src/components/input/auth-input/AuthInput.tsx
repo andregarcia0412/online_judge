@@ -17,7 +17,7 @@ const AuthInput = ({
 }: AuthInputProps) => {
   const [visible, setVisible] = React.useState<boolean>(false);
   const authInputStyles =
-    "text-white border border-solid border-[#afafaf] rounded-xl outline-none bg-transparent placeholder-white py-3.5 px-4 w-full h-13.75 text-base";
+    "text-foreground border border-solid border-border-light rounded-xl outline-none bg-transparent placeholder-foreground py-3.5 px-4 w-full h-13.75 text-base";
 
   return (
     <div className="w-full">

@@ -12,6 +12,7 @@ import { HomeHeader } from "../../components/home-header/HomeHeader";
 import Button from "../../components/input/button/Button";
 import { CreateProblemInput } from "../../components/input/create-problem-input/CreateProblemInput";
 import { Popover } from "../../components/popover/Popover";
+import { ThemeColors } from "../../data/constants/theme.constants";
 import type {
   CategoryDto,
   CreateProblemDto,
@@ -165,7 +166,7 @@ export const CreateProblem = () => {
     <div>
       <HomeHeader setText={() => {}} handleSearch={() => {}} text="" />
       <div className="create-container flex flex-col gap-8 w-full h-screen p-6">
-        <div className="flex flex-col text-white gap-2">
+        <div className="flex flex-col text-foreground gap-2">
           <h1>Create New Problem</h1>
           <p className="opacity-70">
             Fill in the fields below to create a new programming problem
@@ -176,13 +177,13 @@ export const CreateProblem = () => {
           theme={{
             algorithm: theme.darkAlgorithm,
             token: {
-              colorBgElevated: "rgba(0, 0, 0, 0.8)",
-              colorBorder: "#30363d",
+              colorBgElevated: ThemeColors.overlaySolid,
+              colorBorder: ThemeColors.border,
               borderRadiusLG: 6,
             },
             components: {
               Notification: {
-                colorBgElevated: "rgba(0, 0, 0, 0.8)",
+                colorBgElevated: ThemeColors.overlaySolid,
               },
             },
           }}
@@ -235,10 +236,10 @@ export const CreateProblem = () => {
               theme={{
                 algorithm: theme.darkAlgorithm,
                 token: {
-                  colorPrimaryHover: "#8B5CF6",
-                  colorPrimary: "#8B5CF6",
-                  colorBgBase: "rgba(17, 24, 39, 0.2)",
-                  colorBorder: "#374151",
+                  colorPrimaryHover: ThemeColors.brand,
+                  colorPrimary: ThemeColors.brand,
+                  colorBgBase: ThemeColors.surfaceMuted,
+                  colorBorder: ThemeColors.borderMuted,
                 },
               }}
             >
@@ -247,7 +248,7 @@ export const CreateProblem = () => {
                 styles={{
                   popup: {
                     root: {
-                      backgroundColor: "rgba(17, 24, 39, 1)",
+                      backgroundColor: "var(--color-surface-solid)",
                     },
                   },
                 }}
@@ -277,7 +278,7 @@ export const CreateProblem = () => {
               <p className="text-sm">Categories</p>
 
               <button
-                className="flex justify-center items-center border-none rounded-md cursor-pointer p-1 bg-linear-to-r from-[#9333ea] to-[#2563eb] hover:opacity-70"
+                className="flex justify-center items-center border-none rounded-md cursor-pointer p-1 bg-linear-to-r from-brand-strong to-accent-strong hover:opacity-70"
                 onClick={() => setVisiblePopover((prev) => !prev)}
               >
                 <img className="h-5 w-5" src={add} />
@@ -320,9 +321,9 @@ export const CreateProblem = () => {
                 </Popover>
               }
             </div>
-            <div className="bg-black border border-[#30363d] p-3 flex gap-3">
+            <div className="bg-background border border-border p-3 flex gap-3">
               {createProblemForm.categories.length <= 0 ? (
-                <p className="text-white opacity-50 text-sm">
+                <p className="text-foreground opacity-50 text-sm">
                   No selected categories
                 </p>
               ) : (
@@ -442,7 +443,7 @@ export const CreateProblem = () => {
                 );
               })}
 
-            <div className="flex flex-col p-6 border-2 border-dashed border-[#30363d] rounded-xl gap-4">
+            <div className="flex flex-col p-6 border-2 border-dashed border-border rounded-xl gap-4">
               <p>Add new test case</p>
               <div className={inputsRowStyle}>
                 <CreateProblemInput
@@ -473,7 +474,7 @@ export const CreateProblem = () => {
                 />
               </div>
               <Button
-                background="linear-gradient(to right, #9333EA, #2563EB)"
+                background="linear-gradient(to right, var(--color-brand-strong), var(--color-accent-strong))"
                 loading={false}
                 onClick={handleCreateTestCase}
                 text="Add Test Case"
@@ -489,15 +490,15 @@ export const CreateProblem = () => {
 
         <div className="flex gap-4 pb-12">
           <Button
-            background="rgba(0, 0, 0, 0.5)"
+            background="var(--color-overlay)"
             loading={false}
             onClick={() => ""}
             text="Cancel"
-            border="1px solid #374151"
+            border="1px solid var(--color-border-muted)"
             height={40}
           />
           <Button
-            background="linear-gradient(to right, #9333EA, #2563EB)"
+            background="linear-gradient(to right, var(--color-brand-strong), var(--color-accent-strong))"
             loading={loadingCreate}
             onClick={handleCreateProblem}
             text="Create Problem"

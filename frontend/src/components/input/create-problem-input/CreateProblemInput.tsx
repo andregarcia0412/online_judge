@@ -18,7 +18,7 @@ export const CreateProblemInput = ({
   type = "input",
 }: CreateProblemInputProps) => {
   const inputStyle =
-    "w-full text-white outline-none bg-[rgba(17,24,39,0.4)] border border-[#374151] rounded-lg py-2 px-3 resize-none transition-colors duration-150 ease-in focus:border-[#8b5cf6]";
+    "w-full text-foreground outline-none bg-surface border border-border-muted rounded-lg py-2 px-3 resize-none transition-colors duration-150 ease-in focus:border-brand";
 
   return (
     <div>

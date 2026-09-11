@@ -26,7 +26,7 @@ const Button = ({
   return (
     <button
       type="button"
-      className={`relative flex justify-center items-center w-full h-13.75 text-base font-bold rounded-xl border-none text-white ${!disabled && "hover:opacity-[0.8] cursor-pointer"} ${disabled && "opacity-[0.5] cursor-auto"}`}
+      className={`relative flex justify-center items-center w-full h-13.75 text-base font-bold rounded-xl border-none text-foreground ${!disabled && "hover:opacity-[0.8] cursor-pointer"} ${disabled && "opacity-[0.5] cursor-auto"}`}
       onClick={onClick}
       style={{ background, height, border, fontSize }}
       disabled={disabled}
