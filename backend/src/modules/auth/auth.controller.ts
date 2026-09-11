@@ -11,13 +11,14 @@ import {
   ApiNoContentResponse,
   ApiOkResponse,
 } from '@nestjs/swagger';
+import { Throttle } from '@nestjs/throttler';
 import { CreateUserDto } from 'src/modules/user/dto/create-user.dto';
 import { AuthResponseDto } from './dto/auth-response.dto';
 import { LoginDto } from './dto/login.dto';
-import { RefreshTokenDto } from './dto/refresh-token.dto';
-import { AuthServicePort } from './interface/auth.service.port';
 import { PasswordResetRequestDto } from './dto/password-reset-request.dto';
+import { RefreshTokenDto } from './dto/refresh-token.dto';
 import { ResetPasswordDto } from './dto/reset-password.dto';
+import { AuthServicePort } from './interface/auth.service.port';
 
 @Controller('auth')
 export class AuthController {
@@ -26,6 +27,7 @@ export class AuthController {
     private readonly authService: AuthServicePort,
   ) {}
 
+  @Throttle({ default: { ttl: 60000, limit: 5 } })
   @HttpCode(HttpStatus.OK)
   @Post('/login')
   @ApiOkResponse({ type: AuthResponseDto })
@@ -33,6 +35,7 @@ export class AuthController {
     return await this.authService.login(LoginDto);
   }
 
+  @Throttle({ default: { ttl: 60000, limit: 5 } })
   @HttpCode(HttpStatus.OK)
   @Post('/refresh')
   @ApiOkResponse({ type: AuthResponseDto })
@@ -42,6 +45,7 @@ export class AuthController {
     return await this.authService.refresh(refreshTokenDto);
   }
 
+  @Throttle({ default: { ttl: 60000, limit: 5 } })
   @Post('/register')
   @ApiCreatedResponse({ type: AuthResponseDto })
   async register(
@@ -50,6 +54,7 @@ export class AuthController {
     return await this.authService.register(createUserDto);
   }
 
+  @Throttle({ default: { ttl: 60000, limit: 5 } })
   @HttpCode(HttpStatus.NO_CONTENT)
   @Post('/logout')
   @ApiNoContentResponse()
@@ -57,6 +62,7 @@ export class AuthController {
     await this.authService.revokeSession(refreshTokenDto);
   }
 
+  @Throttle({ default: { ttl: 60000, limit: 5 } })
   @HttpCode(HttpStatus.NO_CONTENT)
   @Post('/forgot-password')
   @ApiNoContentResponse()
@@ -66,6 +72,7 @@ export class AuthController {
     await this.authService.requestPasswordReset(passwordResetRequestDto);
   }
 
+  @Throttle({ default: { ttl: 60000, limit: 5 } })
   @HttpCode(HttpStatus.NO_CONTENT)
   @Post('/reset-password')
   @ApiNoContentResponse()
