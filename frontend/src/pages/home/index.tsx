@@ -91,7 +91,7 @@ export const Home = () => {
         </div>
 
         <div>
-          <div className="mt-16 mb-8 text-white">
+          <div className="mt-16 mb-8 text-foreground">
             <h2>Problems</h2>
             <p className="opacity-60">
               Challenge yourself with coding problems

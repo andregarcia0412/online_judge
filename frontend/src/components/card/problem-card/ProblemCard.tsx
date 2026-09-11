@@ -18,10 +18,10 @@ export const ProblemCard = ({
 }: ProblemCardProps) => {
   const color =
     problem.difficulty === "easy"
-      ? "#4ADE80"
+      ? "var(--color-success)"
       : problem.difficulty === "medium"
-        ? "#FACC15"
-        : "#F87171";
+        ? "var(--color-warning)"
+        : "var(--color-danger)";
 
   const iconSrc = () => {
     const submission = userSubmissions.find(
@@ -46,7 +46,7 @@ export const ProblemCard = ({
   };
   return (
     <div
-      className="grid grid-cols-[32px_minmax(260px,1fr)_220px_90px] items-center gap-x-7 w-full bg-[rgba(17,24,39,0.4)] border border-[#30363d] text-white py-5 px-6 rounded-xl cursor-pointer transition-colors duration-150 ease hover:border-[#8b5cf6]"
+      className="grid grid-cols-[32px_minmax(260px,1fr)_220px_90px] items-center gap-x-7 w-full bg-surface border border-border text-foreground py-5 px-6 rounded-xl cursor-pointer transition-colors duration-150 ease hover:border-brand"
       onClick={onRedirect}
     >
       <div className="flex items-center justify-center">
@@ -61,10 +61,10 @@ export const ProblemCard = ({
 
       <div className="min-w-55">
         <Progress
-          strokeColor={"#4ADE80"}
-          railColor="#1F2937"
+          strokeColor={"var(--color-success)"}
+          railColor="var(--color-surface-strong)"
           format={(percent) => (
-            <span style={{ color: "rgba(255, 255, 255, 0.8)" }}>
+            <span style={{ color: "var(--color-foreground-translucent)" }}>
               {percent}%
             </span>
           )}
