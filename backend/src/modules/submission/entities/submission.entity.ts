@@ -1,14 +1,33 @@
-import { Entity, PrimaryGeneratedColumn, Column } from 'typeorm';
+import { User } from 'src/modules/user/entities/user.entity';
+import {
+  Column,
+  Entity,
+  Index,
+  JoinColumn,
+  ManyToOne,
+  PrimaryGeneratedColumn,
+} from 'typeorm';
 import { SubmissionStatusEnum } from '../../../shared/enum/submission-status';
+import { Problem } from 'src/modules/problem/entities/problem.entity';
 
+@Index('idx_submission_user_date', ['idUser', 'submissionDate'])
 @Entity('Submission')
 export class Submission {
   @PrimaryGeneratedColumn('uuid')
   id: string;
 
+  @ManyToOne(() => User, { onDelete: 'CASCADE', nullable: false })
+  @JoinColumn({ name: 'id_user' })
+  user!: User;
+
+  @ManyToOne(() => Problem, { onDelete: 'RESTRICT', nullable: false })
+  @JoinColumn({ name: 'id_problem' })
+  problem!: Problem;
+
   @Column({ name: 'id_user', type: 'uuid' })
   idUser: string;
 
+  @Index()
   @Column({ name: 'id_problem', type: 'integer' })
   idProblem: number;
 
